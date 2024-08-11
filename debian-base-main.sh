@@ -38,6 +38,13 @@ if ! [ -r "$SRC_DIR/Packages" ]; then
     exit
 fi
 
+# Check if "Contents-amd64" file is present and readable in SRC_DIR
+
+if ! [ -r "$SRC_DIR/Contents-amd64" ]; then
+    printf "File \"Contents-amd64\" in source directory is not readable or does not exist\n"
+    exit
+fi
+
 # Simplify debian package listing
 
 OUTPUT="simplified"
@@ -173,34 +180,46 @@ done
 
 # Extract package file listings
 
+NAME_FIRST="$DEST_DIR/name-first"
+
+cp -v "$SRC_DIR/Contents-amd64" "$NAME_FIRST"
+
+# Switch columns and replace separator with '\t'
+
+ex -s "$NAME_FIRST" << EOF
+%s/^\(.*\)\s\(.*\)$/\2\t\1/g
+w
+q
+EOF
+
+sort "$NAME_FIRST" -o "$NAME_FIRST"
+
+# Make list of output file names in listing
+
+PKG_NAMES="$DEST_DIR/pkg-names"
+
+cut -f1 "$NAME_FIRST" > "$PKG_NAMES"
+
+sort "$PKG_NAMES" -o "$PKG_NAMES"
+
+uniq "$PKG_NAMES" | rev | cut -d'/' -f1 | rev | sponge "$PKG_NAMES"
+
+# Create empty output files
+
 LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
 
-SEARCH_DIR="$DEST_DIR/pkgs-by-section"
-
-cd "$SEARCH_DIR" || exit
-
-for section in *
+while IFS= read -r line
 do
-    for pkg_file in "$section"/*
-    do
-        pkg="$(printf "%s" "$pkg_file" | sed -e 's/.txt//')"
-        printf "%s\n" "$pkg"
-        pkg_name="$(basename "$pkg")"
-        grep "$pkg" "$SRC_DIR/Contents-amd64" > "$LISTING_DIR/$pkg_name.lst"
-    done
-done
+    true > "$LISTING_DIR/$line.lst"
+done < "$PKG_NAMES"
 
-cd - || exit
+# Sort contents of original listing into previously created files
 
-# Remove empty listings
-
-find "$LISTING_DIR" -maxdepth 1 -type f -size 0 -delete
-
-# Remove package name column from all listings
-
-for listing in "$LISTING_DIR"/*
+while IFS= read -r line
 do
-    cut -d' ' -f1 "$listing" | sponge "$listing"
-done
+    pkg_name=$(printf "%s" "$line" | cut -f1 | rev | cut -d'/' -f1 | rev)
+    printf "%s\n" "$pkg_name"
+    printf "%s\n" "$line" | cut -f2 >> "$LISTING_DIR/$pkg_name.lst"
+done < "$NAME_FIRST"
 

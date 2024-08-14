@@ -221,5 +221,24 @@ do
     pkg_name=$(printf "%s" "$line" | cut -f1 | rev | cut -d'/' -f1 | rev)
     printf "%s\n" "$pkg_name"
     printf "%s\n" "$line" | cut -f2 >> "$LISTING_DIR/$pkg_name.lst"
+    sort -o "$LISTING_DIR/$pkg_name.lst" -o "$LISTING_DIR/$pkg_name.lst"
 done < "$NAME_FIRST"
+
+# All package file listing
+
+ALL_PKG_LST="$DEST_DIR/all-pkg.lst"
+
+cp -v "$SRC_DIR/Contents-amd64" "$ALL_PKG_LST"
+
+# Remove name column
+
+ex -s "$ALL_PKG_LST" << EOF
+%s/^\(.*\)\s.*$/\1/g
+w
+q
+EOF
+
+sort "$ALL_PKG_LST" -o "$ALL_PKG_LST"
+
+uniq "$ALL_PKG_LST" | sponge "$ALL_PKG_LST"
 

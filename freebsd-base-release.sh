@@ -178,15 +178,18 @@ q
 EOF
 done
 
-# Potential exceptions
+# Create deduplicated single file all base system package file listing
 
-# # FreeBSD-certctl-14.1.lst
-# # FreeBSD-kernel-generic-mmccam-14.1p2.lst
-# # FreeBSD-kernel-minimal-dbg-14.1p2.lst
-# # FreeBSD-rescue-14.1p1.lst
-# # FreeBSD-runtime-14.1p2.lst
-# # FreeBSD-runtime-man-14.1.lst
-# # FreeBSD-src-14.1p2.lst
-# # FreeBSD-utilities-dbg-14.1p1.lst
-# # FreeBSD-src-sys-14.1p2.lst
+cat "$LISTING_DIR"/* > "$DEST_DIR/all-pkg.lst"
+
+ex -s "$DEST_DIR/all-pkg.lst" << EOF
+g/"files":/d
+g/"config":/d
+g/"directories":/d
+g/^$/d
+%s/:"y"//g
+%s/"//g
+w
+q
+EOF
 

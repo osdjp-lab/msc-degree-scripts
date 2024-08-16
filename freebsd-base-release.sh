@@ -107,29 +107,6 @@ EOF
 
 sort "$TARGET_DIR/simplified" -o "$TARGET_DIR/simplified"
 
-cp -v "$TARGET_DIR/simplified" "$TARGET_DIR/no-man-dbg-dev-lib32"
-
-ex -s "$TARGET_DIR/no-man-dbg-dev-lib32" << EOF
-set verbose=1
-g/-dbg$/d
-g/-dbg-/d
-g/-man$/d
-g/-dev$/d
-g/-dev-/d
-g/-lib32$/d
-w
-q
-EOF
-
-# Extract no-man-dbg-dev-lib32 packages into seperate directory
-
-TARGET_DIR="$DEST_DIR/pkgs-no-man-dbg-dev-lib32"
-mkdir -pv "$TARGET_DIR"
-
-while IFS= read -r pkgname; do
-    ln -vsr "$(find "$DEST_DIR/pkgs" -type f -name "FreeBSD-$pkgname.txt")" "$TARGET_DIR"
-done < "$DEST_DIR/names/no-man-dbg-dev-lib32"
-
 # Extract "+MANIFEST" files from all .pkg files
 
 PKG_FILES_DIR=$(realpath "$SRC_DIR/pkgs")

@@ -1,14 +1,12 @@
 #!/usr/bin/env sh
 
-set -x
-
 #
 # SPDX-License-Identifier: MIT
 # 
 # Copyright (C) 2024 Oscar Szumiak
 #
 
-# Manual grouping of FreeBSD base system packages by type
+# Deduplication and manual grouping of FreeBSD base system packages
 
 # Verify number of positional parameters
 
@@ -26,22 +24,60 @@ if ! [ -d "$WORK_DIR" ]; then
     exit
 fi
 
-FREEBSD_BASE_LISTING="$WORK_DIR/names/no-man-dbg-dev-lib32"
-FREEBSD_BASE_PKGS="$WORK_DIR/pkgs-no-man-dbg-dev-lib32"
+# Check if "names/simplified" file is present and readable in WORK_DIR
 
-# Check if "$FREEBSD_BASE_LISTING" file is present and readable in WORK_DIR
+SIMPLIFIED_LISTING="$WORK_DIR/names/simplified"
 
-if ! [ -r "$FREEBSD_BASE_LISTING" ]; then
-    printf "File \"names/no-man-dbg-dev-lib32\" in work directory is not readable or does not exist\n" 
+if ! [ -r "$SIMPLIFIED_LISTING" ]; then
+    printf "File \"names/simplified\" in work directory is not readable or does not exist\n" 
     exit
 fi
 
-# Check if "$FREEBSD_BASE_PKGS" directory is present and readable in WORK_DIR
+# Check if "pkgs" directory exists
 
-if ! [ -d "$FREEBSD_BASE_PKGS" ]; then
-    printf "\"pkgs-no-man-dbg-dev-lib32\" does not exist or is not a directory\n"
+ALL_PKGS="$WORK_DIR/pkgs"
+
+if ! [ -d "$ALL_PKGS" ]; then
+    printf "\"pkgs\" does not exist or is not a directory\n"
     exit
 fi
+
+# Check if "pkgs" directory contains all package metadata files
+
+if ! [ "$(wc -l "$SIMPLIFIED_LISTING" | cut -d' ' -f1)" = "525" ]; then
+    printf "\"pkgs\" directory does not contain all pkg listings\n"
+    exit
+fi
+
+# Create deduplicated package name listing
+
+DEDUPLICATED_LISTING="$WORK_DIR/names/no-man-dbg-dev-lib32"
+
+cp -v "$SIMPLIFIED_LISTING" "$DEDUPLICATED_LISTING"
+
+ex -s "$DEDUPLICATED_LISTING" << EOF
+set verbose=1
+g/-dbg$/d
+g/-dbg-/d
+g/-man$/d
+g/-dev$/d
+g/-dev-/d
+g/-lib32$/d
+w
+q
+EOF
+
+# Extract deduplicated packages into seperate directory
+
+DEDUPLICATED_PKGS="$WORK_DIR/pkgs-no-man-dbg-dev-lib32"
+
+mkdir -pv "$DEDUPLICATED_PKGS"
+
+while IFS= read -r pkgname; do
+    ln -vsr "$(find "$ALL_PKGS" -type f -name "FreeBSD-$pkgname.txt")" "$DEDUPLICATED_PKGS"
+done < "$DEDUPLICATED_LISTING"
+
+# Create base directory for grouping packages by type
 
 BY_TYPE="$WORK_DIR/by-type"
 
@@ -52,9 +88,7 @@ mkdir -pv "$BY_TYPE"
 BASE="$BY_TYPE/base"
 mkdir -pv "$BASE"
 
-find "$FREEBSD_BASE_PKGS" -exec cp -vt "$BASE" {} +
-
-ls "$BASE"
+find "$DEDUPLICATED_PKGS" -exec cp -vt "$BASE" {} +
 
 # Libraries
 
@@ -242,8 +276,6 @@ mkdir -pv "$DEST_DIR"
 KEY="util"
 grep -lri "$KEY" "$BASE" | xargs mv -vt "$DEST_DIR"
 mv -vt "$DEST_DIR" "$BASE/FreeBSD-dpv.txt" \
-                   "$BASE/FreeBSD-ufs.txt" \
-                   "$BASE/FreeBSD-zfs.txt" \
                    "$BASE/FreeBSD-quotacheck.txt"
 
 # Data

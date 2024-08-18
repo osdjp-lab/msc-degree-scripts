@@ -290,3 +290,30 @@ mv -vt "$DEST_DIR" "$BASE/FreeBSD-vt-data.txt" \
 
 rmdir -v "$BASE"
 
+# Create base directory for grouping packages by relevance
+
+BY_RELEVANCE="$WORK_DIR/by-relevance"
+
+mkdir -pv "$BY_RELEVANCE"
+
+# Relevant packages
+
+DEST_DIR="$BY_RELEVANCE/relevant"
+mkdir -pv "$DEST_DIR"
+
+find "$BY_TYPE/net" -exec cp -vt "$DEST_DIR" {} +
+find "$BY_TYPE/system" -exec cp -vt "$DEST_DIR" {} +
+find "$BY_TYPE/util" -exec cp -vt "$DEST_DIR" {} +
+find "$BY_TYPE/virt" -exec cp -vt "$DEST_DIR" {} +
+find "$BY_TYPE/lib" -exec cp -vt "$DEST_DIR" {} +
+
+# Irrelevant packages
+
+DEST_DIR="$BY_RELEVANCE/irrelevant"
+mkdir -pv "$DEST_DIR"
+
+find "$BY_TYPE/data" -exec cp -vt "$DEST_DIR" {} +
+find "$BY_TYPE/dev-tools" -exec cp -vt "$DEST_DIR" {} +
+find "$BY_TYPE/driver" -exec cp -vt "$DEST_DIR" {} +
+find "$BY_TYPE/other" -exec cp -vt "$DEST_DIR" {} +
+

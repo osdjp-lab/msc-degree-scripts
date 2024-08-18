@@ -118,7 +118,7 @@ cd "$MANIFEST_DIR" || exit
 
 for pkg in "$PKG_FILES_DIR"/*; do
     bsdtar -xvf "$pkg" "+MANIFEST"
-    mv "+MANIFEST" "$(basename "$pkg" | sed "s/pkg/manifest/")"
+    mv "+MANIFEST" "$(basename "$pkg" | sed "s/\.pkg/\.manifest/")"
 done
 
 cd - || exit
@@ -155,6 +155,9 @@ q
 EOF
 done
 
+find "$MANIFEST_DIR" -type f -name "*.manifest" -delete
+rmdir "$MANIFEST_DIR"
+
 # Create deduplicated single file all base system package file listing
 
 cat "$LISTING_DIR"/* > "$DEST_DIR/all-pkg.lst"
@@ -169,4 +172,30 @@ g/^$/d
 w
 q
 EOF
+
+# Extract package man pages
+
+MAN_DIR="$DEST_DIR/pkg-man-pages"
+mkdir -pv "$MAN_DIR"
+
+TMP_DIR="$DEST_DIR/tmp"
+mkdir "$TMP_DIR"
+
+find "$PKG_FILES_DIR" -name "*man*" > "$DEST_DIR/man-pkgs"
+
+cd "$TMP_DIR" || exit
+
+while IFS= read -r pkg; do
+    bsdtar -xvf "$pkg"
+    rm "+MANIFEST" "+COMPACT_MANIFEST"
+    pkg_name="$(basename "$pkg" | sed "s/FreeBSD-\(.*\)-man.*/\1/")"
+    mkdir -pv "$MAN_DIR/$pkg_name"
+    find . -type f -exec mv -vt "$MAN_DIR/$pkg_name" {} +
+done < "$DEST_DIR/man-pkgs"
+
+cd - || exit
+
+rm "$DEST_DIR/man-pkgs"
+
+find "$TMP_DIR" -type d -empty -delete
 

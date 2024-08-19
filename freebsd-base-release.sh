@@ -160,18 +160,25 @@ rmdir "$MANIFEST_DIR"
 
 # Create deduplicated single file all base system package file listing
 
-cat "$LISTING_DIR"/* > "$DEST_DIR/all-pkg.lst"
+ALL_PKG_LST="$DEST_DIR/all-pkg.lst"
 
-ex -s "$DEST_DIR/all-pkg.lst" << EOF
+cat "$LISTING_DIR"/* > "$ALL_PKG_LST"
+
+ex -s "$ALL_PKG_LST" << EOF
 g/"files":/d
 g/"config":/d
 g/"directories":/d
 g/^$/d
 %s/:"y"//g
 %s/"//g
+%s/^\///g
 w
 q
 EOF
+
+sort "$ALL_PKG_LST" -o "$ALL_PKG_LST"
+
+uniq "$ALL_PKG_LST" | sponge "$ALL_PKG_LST"
 
 # Extract package man pages
 

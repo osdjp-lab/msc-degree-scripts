@@ -230,10 +230,11 @@ ALL_PKG_LST="$DEST_DIR/all-pkg.lst"
 
 cp -v "$SRC_DIR/Contents-amd64" "$ALL_PKG_LST"
 
-# Remove name column
+# Remove name column and empty spaces at ends of lines
 
 ex -s "$ALL_PKG_LST" << EOF
 %s/^\(.*\)\s.*$/\1/g
+%s/\s*$//g
 w
 q
 EOF

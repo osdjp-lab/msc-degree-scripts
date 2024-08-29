@@ -263,24 +263,16 @@ pkg_man_tmp="$(mktemp)"
 
 find "$PLAIN_MAN_DIR" -mindepth 1 -type d > "$pkg_man_dir_tmp"
 
-export MANWIDTH=10000
-
 while IFS= read -r pkg; do
     find "$pkg" -type f > "$pkg_man_tmp"
     while IFS= read -r man_page; do
         printf "%s\n" "$man_page"
-        pkg_basename="$(man -l "$man_page" | head -n 1 | cut -d' ' -f 1 | sed -e 's/^\(.*\)(\(.*\))$/\1-\2/' | tr '[:upper:]' '[:lower:]')"
-        if [ -z "$pkg_basename" ]; then
-            pkg_basename="$(man -l "$man_page" | head -n 2 | tail -n 1 | cut -d' ' -f 1 | sed -e 's/^\(.*\)(\(.*\))$/\1-\2/' | tr '[:upper:]' '[:lower:]')"
-        fi
-        dest_file_name="$PLAIN_MAN_DIR/$(basename "$pkg")/$pkg_basename"
-        dest_file="${dest_file_name}-$(cksum "$man_page" | cut -d' ' -f1).txt"
-        man -l "$man_page" 2>/dev/null | awk '/NAME/,/^[[:blank:]]*$/; /DESCRIPTION/,/^[[:blank:]]*$/' > "$dest_file"
+        man_page_basename="$(basename "$man_page" | sed 's/gz/txt/')"
+        dest_file="$PLAIN_MAN_DIR/$(basename "$pkg")/$man_page_basename"
+        zcat "$man_page" | groff -t -e -mandoc -Tascii 2>/dev/null | col -bx > "$dest_file"
         rm "$man_page"
     done < "$pkg_man_tmp"
 done < "$pkg_man_dir_tmp"
-
-unset MANWIDTH
 
 rm "$pkg_man_dir_tmp" "$pkg_man_tmp"
 

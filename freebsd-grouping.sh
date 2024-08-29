@@ -77,6 +77,17 @@ while IFS= read -r pkgname; do
     ln -vsr "$(find "$ALL_PKGS" -type f -name "FreeBSD-$pkgname.txt")" "$DEDUPLICATED_PKGS"
 done < "$DEDUPLICATED_LISTING"
 
+# Generate listing of packages without man pages
+
+MAN_PKGS="$WORK_DIR/names/man-pkgs"
+NO_MAN_PKGS="$WORK_DIR/names/no-man-pkgs"
+
+ls "$WORK_DIR/pkg-man-pages" > "$MAN_PKGS"
+
+sort "$MAN_PKGS" -o "$MAN_PKGS"
+
+comm -23 "$DEDUPLICATED_PKGS" "$MAN_PKGS" > "$NO_MAN_PKGS"
+
 # Create base directory for grouping packages by type
 
 BY_TYPE="$WORK_DIR/by-type"

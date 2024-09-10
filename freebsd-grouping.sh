@@ -86,7 +86,7 @@ ls "$WORK_DIR/pkg-man-pages" > "$MAN_PKGS"
 
 sort "$MAN_PKGS" -o "$MAN_PKGS"
 
-comm -23 "$DEDUPLICATED_PKGS" "$MAN_PKGS" > "$NO_MAN_PKGS"
+comm -23 "$DEDUPLICATED_LISTING" "$MAN_PKGS" > "$NO_MAN_PKGS"
 
 # Create base directory for grouping packages by type
 

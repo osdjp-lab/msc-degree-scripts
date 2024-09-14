@@ -78,4 +78,5 @@ mkdir -pv "$MAN_DIR"
 PLAIN_MAN_DIR="$DEST_DIR/pkg-man-txt"
 mkdir -pv "$PLAIN_MAN_DIR"
 "$SCRIPT_DIR/extract-txt-man-pages.sh" "$MAN_DIR" "$PLAIN_MAN_DIR"
+"$SCRIPT_DIR/group-txt-man-pages.sh" "$PLAIN_MAN_DIR"
 

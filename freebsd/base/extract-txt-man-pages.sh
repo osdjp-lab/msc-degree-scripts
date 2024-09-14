@@ -43,7 +43,7 @@ while IFS= read -r pkg; do
     find "$pkg" -type f > "$pkg_man_tmp"
     while IFS= read -r man_page; do
         printf "%s\n" "$man_page"
-        man_page_basename="$(basename "$man_page" | sed 's/gz/txt/')"
+        man_page_basename="$(basename "$man_page" | sed 's/gz$/txt/')"
         dest_file="$PLAIN_MAN_DIR/$(basename "$pkg")/$man_page_basename"
         zcat "$man_page" | groff -t -e -mandoc -Tascii 2>/dev/null | col -bx > "$dest_file"
         rm "$man_page"

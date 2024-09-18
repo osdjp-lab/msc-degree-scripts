@@ -86,7 +86,7 @@ ls "$WORK_DIR/pkg-man-pages" > "$MAN_PKGS"
 
 sort "$MAN_PKGS" -o "$MAN_PKGS"
 
-comm -23 "$DEDUPLICATED_PKGS" "$MAN_PKGS" > "$NO_MAN_PKGS"
+comm -23 "$DEDUPLICATED_LISTING" "$MAN_PKGS" > "$NO_MAN_PKGS"
 
 # Create base directory for grouping packages by type
 
@@ -101,6 +101,39 @@ mkdir -pv "$BASE"
 
 find "$DEDUPLICATED_PKGS" -exec cp -vt "$BASE" {} +
 
+# Bundles
+
+DEST_DIR="$BY_TYPE/bundle"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-runtime.txt" \
+                   "$BASE/FreeBSD-utilities.txt"
+
+# Data
+
+DEST_DIR="$BY_TYPE/data"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-locales.txt" \
+                   "$BASE/FreeBSD-mtree.txt" \
+                   "$BASE/FreeBSD-syscons.txt" \
+                   "$BASE/FreeBSD-vt-data.txt" \
+                   "$BASE/FreeBSD-zoneinfo.txt"
+
+# Dev-tools
+
+DEST_DIR="$BY_TYPE/dev-tools"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-clang.txt" \
+                   "$BASE/FreeBSD-ctf-tools.txt" \
+                   "$BASE/FreeBSD-dtrace.txt" \
+                   "$BASE/FreeBSD-dwatch.txt" \
+                   "$BASE/FreeBSD-elftoolchain.txt" \
+                   "$BASE/FreeBSD-lldb.txt" \
+                   "$BASE/FreeBSD-lld.txt" \
+                   "$BASE/FreeBSD-tests.txt"
+
 # Libraries
 
 DEST_DIR="$BY_TYPE/lib"
@@ -109,111 +142,47 @@ mkdir -pv "$DEST_DIR"
 KEY="lib"
 find "$BASE" -name "*$KEY*" -exec mv -vt "$DEST_DIR" {} +
 
-# Packet filtering
-
-DEST_DIR="$BY_TYPE/net/pf"
-mkdir -pv "$DEST_DIR"
-
-KEY="pf"
-grep -lri "$KEY" "$BASE" | xargs mv -vt "$DEST_DIR"
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-blocklist.txt"
-
-# Kernel images
-
-DEST_DIR="$BY_TYPE/system/kernel"
-mkdir -pv "$DEST_DIR"
-
-KEY="kernel"
-find "$BASE" -name "*$KEY*" -exec mv -vt "$DEST_DIR" {} +
-
-# Editors
-
-DEST_DIR="$BY_TYPE/system/editor"
-mkdir -pv "$DEST_DIR"
-
-KEY="editor"
-grep -lri "$KEY" "$BASE" | xargs mv -vt "$DEST_DIR"
-
-# Dev-tools
-
-DEST_DIR="$BY_TYPE/dev-tools"
-mkdir -pv "$DEST_DIR"
-
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-clang.txt" \
-                   "$BASE/FreeBSD-lldb.txt" \
-                   "$BASE/FreeBSD-elftoolchain.txt" \
-                   "$BASE/FreeBSD-tests.txt" \
-                   "$BASE/FreeBSD-ctf-tools.txt" \
-                   "$BASE/FreeBSD-dtrace.txt" \
-                   "$BASE/FreeBSD-dwatch.txt" \
-                   "$BASE/FreeBSD-lld.txt"
-
-# SSL
-
-DEST_DIR="$BY_TYPE/net/ssl"
-mkdir -pv "$DEST_DIR"
-
-KEY="ssl"
-grep -lri "$KEY" "$BASE" | xargs mv -vt "$DEST_DIR"
-
-# Other
-
-DEST_DIR="$BY_TYPE/other"
-mkdir -pv "$DEST_DIR"
-
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-games.txt" \
-                   "$BASE/FreeBSD-src.txt" \
-                   "$BASE/FreeBSD-bsdinstall.txt" \
-                   "$BASE/FreeBSD-pkg-bootstrap.txt" \
-                   "$BASE/FreeBSD-src-sys.txt"
-
-# Power management
-
-DEST_DIR="$BY_TYPE/other/power"
-mkdir -pv "$DEST_DIR"
-
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-acpi.txt" \
-                   "$BASE/FreeBSD-apm.txt"
-
-# System
-
-DEST_DIR="$BY_TYPE/system"
-mkdir -pv "$DEST_DIR"
-
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-runtime.txt" \
-                   "$BASE/FreeBSD-csh.txt" \
-                   "$BASE/FreeBSD-devd.txt" \
-                   "$BASE/FreeBSD-rescue.txt" \
-                   "$BASE/FreeBSD-devmatch.txt" \
-                   "$BASE/FreeBSD-acct.txt" \
-                   "$BASE/FreeBSD-bootloader.txt" \
-                   "$BASE/FreeBSD-syslogd.txt" \
-                   "$BASE/FreeBSD-efi-tools.txt" \
-                   "$BASE/FreeBSD-rc.txt"
-
 # Networking
 
 DEST_DIR="$BY_TYPE/net"
 mkdir -pv "$DEST_DIR"
 
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-dhclient.txt" \
-                   "$BASE/FreeBSD-telnet.txt" \
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-bluetooth.txt" \
+                   "$BASE/FreeBSD-bsnmp.txt" \
+                   "$BASE/FreeBSD-dhclient.txt" \
+                   "$BASE/FreeBSD-fetch.txt" \
+                   "$BASE/FreeBSD-ftpd.txt" \
+                   "$BASE/FreeBSD-ftp.txt" \
+                   "$BASE/FreeBSD-inetd.txt" \
+                   "$BASE/FreeBSD-kerberos.txt" \
+                   "$BASE/FreeBSD-natd.txt" \
+                   "$BASE/FreeBSD-netmap.txt" \
                    "$BASE/FreeBSD-nuageinit.txt" \
                    "$BASE/FreeBSD-ppp.txt" \
-                   "$BASE/FreeBSD-yp.txt" \
-                   "$BASE/FreeBSD-tcpd.txt" \
-                   "$BASE/FreeBSD-ftp.txt" \
-                   "$BASE/FreeBSD-fetch.txt" \
-                   "$BASE/FreeBSD-ssh.txt" \
                    "$BASE/FreeBSD-rcmds.txt" \
-                   "$BASE/FreeBSD-kerberos.txt" \
-                   "$BASE/FreeBSD-bluetooth.txt" \
-                   "$BASE/FreeBSD-netmap.txt" \
-                   "$BASE/FreeBSD-ftpd.txt" \
-                   "$BASE/FreeBSD-natd.txt" \
-                   "$BASE/FreeBSD-inetd.txt"
+                   "$BASE/FreeBSD-rdma.txt" \
+                   "$BASE/FreeBSD-ssh.txt" \
+                   "$BASE/FreeBSD-tcpd.txt" \
+                   "$BASE/FreeBSD-telnet.txt" \
+                   "$BASE/FreeBSD-yp.txt"
 
-# Email
+## DNS
+
+DEST_DIR="$BY_TYPE/net/dns"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-resolvconf.txt" \
+                   "$BASE/FreeBSD-unbound.txt"
+
+## Ethernet adapter drivers
+
+DEST_DIR="$BY_TYPE/driver"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-cxgbe-tools.txt" \
+                   "$BASE/FreeBSD-mlx-tools.txt"
+
+## Email
 
 DEST_DIR="$BY_TYPE/net/mail"
 mkdir -pv "$DEST_DIR"
@@ -221,57 +190,137 @@ mkdir -pv "$DEST_DIR"
 mv -vt "$DEST_DIR" "$BASE/FreeBSD-dma.txt" \
                    "$BASE/FreeBSD-sendmail.txt"
 
-# WiFi 802.11
+## Packet filtering
+
+DEST_DIR="$BY_TYPE/net/packet-filter"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-blocklist.txt" \
+                   "$BASE/FreeBSD-ipfilter.txt" \
+                   "$BASE/FreeBSD-ipf.txt" \
+                   "$BASE/FreeBSD-ipfw.txt" \
+                   "$BASE/FreeBSD-pf.txt"
+
+## SSL
+
+DEST_DIR="$BY_TYPE/net/ssl"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-caroot.txt" \
+                   "$BASE/FreeBSD-certctl.txt" \
+                   "$BASE/FreeBSD-openssl.txt"
+
+## Network storage
+
+DEST_DIR="$BY_TYPE/net/storage"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-ggate.txt" \
+                   "$BASE/FreeBSD-hast.txt" \
+                   "$BASE/FreeBSD-iscsi.txt" \
+                   "$BASE/FreeBSD-nfs.txt"
+
+## WiFi 802.11
 
 DEST_DIR="$BY_TYPE/net/wifi"
 mkdir -pv "$DEST_DIR"
 
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-wpa.txt" \
-                   "$BASE/FreeBSD-hostapd.txt"
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-hostapd.txt" \
+                   "$BASE/FreeBSD-wpa.txt"
 
-# Networking file systems
+# Other
 
-DEST_DIR="$BY_TYPE/net/fs"
+DEST_DIR="$BY_TYPE/other"
 mkdir -pv "$DEST_DIR"
 
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-nfs.txt" \
-                   "$BASE/FreeBSD-hast.txt" \
-                   "$BASE/FreeBSD-geom.txt" \
-                   "$BASE/FreeBSD-ggate.txt"
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-bsdinstall.txt" \
+                   "$BASE/FreeBSD-fwget.txt" \
+                   "$BASE/FreeBSD-games.txt" \
+                   "$BASE/FreeBSD-pkg-bootstrap.txt" \
+                   "$BASE/FreeBSD-rc.txt" \
+                   "$BASE/FreeBSD-rescue.txt" \
+                   "$BASE/FreeBSD-src-sys.txt" \
+                   "$BASE/FreeBSD-src.txt"
 
-# DNS
+# System
 
-DEST_DIR="$BY_TYPE/net/dns"
+DEST_DIR="$BY_TYPE/system"
 mkdir -pv "$DEST_DIR"
 
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-unbound.txt" \
-                   "$BASE/FreeBSD-resolvconf.txt"
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-csh.txt"
 
-# Virtualization
+## Boot
 
-DEST_DIR="$BY_TYPE/virt"
+DEST_DIR="$BY_TYPE/system/boot"
 mkdir -pv "$DEST_DIR"
 
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-bhyve.txt" \
-                   "$BASE/FreeBSD-jail.txt" \
-                   "$BASE/FreeBSD-hyperv-tools.txt"
-# Drivers
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-bootloader.txt" \
+                   "$BASE/FreeBSD-efi-tools.txt"
 
-DEST_DIR="$BY_TYPE/driver"
+## Device management
+
+DEST_DIR="$BY_TYPE/system/device-management"
 mkdir -pv "$DEST_DIR"
 
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-syscons.txt" \
-                   "$BASE/FreeBSD-smbutils.txt" \
-                   "$BASE/FreeBSD-rdma.txt" \
-                   "$BASE/FreeBSD-nvme-tools.txt" \
-                   "$BASE/FreeBSD-mlx-tools.txt" \
-                   "$BASE/FreeBSD-cxgbe-tools.txt" \
-                   "$BASE/FreeBSD-bsnmp.txt" \
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-devd.txt" \
+                   "$BASE/FreeBSD-devmatch.txt"
+
+## Kernel images
+
+DEST_DIR="$BY_TYPE/system/kernel"
+mkdir -pv "$DEST_DIR"
+
+KEY="kernel"
+find "$BASE" -name "*$KEY*" -exec mv -vt "$DEST_DIR" {} +
+
+## Logging
+
+DEST_DIR="$BY_TYPE/system/logging"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-newsyslog.txt" \
+                   "$BASE/FreeBSD-syslogd.txt"
+
+## Storage
+
+DEST_DIR="$BY_TYPE/system/storage"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-autofs.txt" \
                    "$BASE/FreeBSD-ccdconfig.txt" \
-                   "$BASE/FreeBSD-autofs.txt" \
-                   "$BASE/FreeBSD-iscsi.txt"
+                   "$BASE/FreeBSD-geom.txt" \
+                   "$BASE/FreeBSD-nvme-tools.txt" \
+                   "$BASE/FreeBSD-ufs.txt" \
+                   "$BASE/FreeBSD-zfs.txt"
 
-# Scheduling
+# Utilities
+
+DEST_DIR="$BY_TYPE/util"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-acct.txt" \
+                   "$BASE/FreeBSD-console-tools.txt" \
+                   "$BASE/FreeBSD-dpv.txt" \
+                   "$BASE/FreeBSD-quotacheck.txt"
+
+## Editors
+
+DEST_DIR="$BY_TYPE/util/editor"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-ee.txt" \
+                   "$BASE/FreeBSD-vi.txt"
+
+## Power management
+
+DEST_DIR="$BY_TYPE/util/power"
+mkdir -pv "$DEST_DIR"
+
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-acpi.txt" \
+                   "$BASE/FreeBSD-apm.txt" \
+                   "$BASE/FreeBSD-smbutils.txt"
+
+## Scheduling
 
 DEST_DIR="$BY_TYPE/util/scheduling"
 mkdir -pv "$DEST_DIR"
@@ -279,25 +328,14 @@ mkdir -pv "$DEST_DIR"
 mv -vt "$DEST_DIR" "$BASE/FreeBSD-at.txt" \
                    "$BASE/FreeBSD-periodic.txt"
 
-# Utilities
+## Virtualization
 
-DEST_DIR="$BY_TYPE/util"
+DEST_DIR="$BY_TYPE/virt"
 mkdir -pv "$DEST_DIR"
 
-KEY="util"
-grep -lri "$KEY" "$BASE" | xargs mv -vt "$DEST_DIR"
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-dpv.txt" \
-                   "$BASE/FreeBSD-quotacheck.txt"
-
-# Data
-
-DEST_DIR="$BY_TYPE/data"
-mkdir -pv "$DEST_DIR"
-
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-vt-data.txt" \
-                   "$BASE/FreeBSD-zoneinfo.txt" \
-                   "$BASE/FreeBSD-mtree.txt" \
-                   "$BASE/FreeBSD-locales.txt"
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-bhyve.txt" \
+                   "$BASE/FreeBSD-hyperv-tools.txt" \
+                   "$BASE/FreeBSD-jail.txt"
 
 rmdir -v "$BASE"
 

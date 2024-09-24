@@ -78,11 +78,11 @@ mkdir -pv "$PLAIN_MAN_DIR"
 
 NAME_DIR="$DEST_DIR/names"
 mkdir -pv "$NAME_DIR"
-"$SCRIPT_DIR/generate-names.sh" "$PKG_META_DIR" "$NAME_DIR"
+"$SCRIPT_DIR/generate-names.sh" "$NAME_DIR" "$PKG_META_DIR" "$MAN_DIR"
 
 DEDUPLICATED_PKGS="$DEST_DIR/pkgs-no-man-dbg-dev-lib32"
 mkdir -pv "$DEDUPLICATED_PKGS"
-"$SCRIPT_DIR/deduplicate-pkgs.sh" "$NAME_DIR" "$DEDUPLICATED_PKGS"
+"$SCRIPT_DIR/deduplicate-pkgs.sh" "$NAME_DIR" "$PKG_META_DIR" "$DEDUPLICATED_PKGS"
 
 PKGS_BY_TYPE="$DEST_DIR/by-type"
 mkdir -pv "$PKGS_BY_TYPE"

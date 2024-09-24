@@ -10,7 +10,7 @@
 
 # Verify number of positional parameters
 
-if [ $# -eq 2 ]; then
+if [ $# -eq 3 ]; then
     NAME_DIR="$(realpath "$1")"
     PKG_META_DIR="$(realpath "$2")"
     MAN_DIR="$(realpath "$3")"
@@ -64,7 +64,7 @@ sort "$SIMPLIFIED_LISTING" -o "$SIMPLIFIED_LISTING"
 
 # Create deduplicated package name listing
 
-DEDUPLICATED_LISTING="$WORK_DIR/names/no-man-dbg-dev-lib32"
+DEDUPLICATED_LISTING="$NAME_DIR/no-man-dbg-dev-lib32"
 
 cp -v "$SIMPLIFIED_LISTING" "$DEDUPLICATED_LISTING"
 
@@ -82,8 +82,8 @@ EOF
 
 # Generate listing of packages without man pages
 
-MAN_PKGS="$WORK_DIR/names/man-pkgs"
-NO_MAN_PKGS="$WORK_DIR/names/no-man-pkgs"
+MAN_PKGS="$NAME_DIR/man-pkgs"
+NO_MAN_PKGS="$NAME_DIR/no-man-pkgs"
 
 ls "$MAN_DIR" > "$MAN_PKGS"
 

@@ -42,6 +42,7 @@ find "$PKG_FILES_DIR" -name "*man*" > "$MAN_PKGS_LST"
 cd "$TMP_DIR" || exit
 
 while IFS= read -r pkg; do
+    printf "%s\n" "$pkg"
     bsdtar -xvf "$pkg"
     rm "+MANIFEST" "+COMPACT_MANIFEST"
     pkg_name="$(basename "$pkg" | sed "s/FreeBSD-\(.*\)-man.*/\1/")"

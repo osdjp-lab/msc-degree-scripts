@@ -32,23 +32,16 @@ fi
 
 ########################################
 
-DEDUPLICATED_PKGS_LISTING="$NAME_DIR/deduplicated-pkgs"
 PKG_CONTENTS_LISTING="$NAME_DIR/pkg-contents"
 
-# Create empty output files
+cd "$LISTING_DIR" || exit
 
-while IFS= read -r pkg
-do
-    true > "$LISTING_DIR/$pkg.lst"
-done < "$DEDUPLICATED_PKGS_LISTING"
+awk '
+{
+    n = split($1, lines, "/")
+    filename = lines[n]
+    print $2 >> filename ".txt"
+}' "$PKG_CONTENTS_LISTING"
 
-# Sort contents of original listing into previously created files
-
-while IFS= read -r line
-do
-    pkg_name=$(printf "%s" "$line" | cut -f1 | rev | cut -d'/' -f1 | rev)
-    printf "%s\n" "$pkg_name"
-    printf "%s\n" "$line" | cut -f2 >> "$LISTING_DIR/$pkg_name.lst"
-    sort "$LISTING_DIR/$pkg_name.lst" -o "$LISTING_DIR/$pkg_name.lst"
-done < "$PKG_CONTENTS_LISTING"
+cd - || exit
 

@@ -64,10 +64,12 @@ mkdir -pv "$NAME_DIR"
 "$SCRIPT_DIR/generate-names.sh" "$CONTENTS_LISTING" "$PKG_META_DIR" "$NAME_DIR"
 "$SCRIPT_DIR/generate-all-pkg-lst.sh" "$CONTENTS_LISTING" "$NAME_DIR"
 
-PKG_FILES_DIR="$SRC_DIR/pkgs"
 LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
-"$SCRIPT_DIR/generate-pkg-lst.sh" "$NAME_DIR" "$LISTING_DIR"
+PKG_CONTENTS_LISTING="$NAME_DIR/pkg-contents"
+cd "$LISTING_DIR" || exit
+awk -f "$SCRIPT_DIR/generate-pkg-lst.awk" "$PKG_CONTENTS_LISTING"
+cd - || exit
 
 PKGS_BY_PRIORITY_DIR="$DEST_DIR/by-priority"
 mkdir -pv "$PKGS_BY_PRIORITY_DIR"

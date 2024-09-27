@@ -221,7 +221,7 @@ do
     pkg_name=$(printf "%s" "$line" | cut -f1 | rev | cut -d'/' -f1 | rev)
     printf "%s\n" "$pkg_name"
     printf "%s\n" "$line" | cut -f2 >> "$LISTING_DIR/$pkg_name.lst"
-    sort -o "$LISTING_DIR/$pkg_name.lst" -o "$LISTING_DIR/$pkg_name.lst"
+    sort "$LISTING_DIR/$pkg_name.lst" -o "$LISTING_DIR/$pkg_name.lst"
 done < "$NAME_FIRST"
 
 # All package file listing

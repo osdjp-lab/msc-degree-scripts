@@ -31,10 +31,10 @@ if ! [ -d "$DEST_DIR" ]; then
     exit
 fi
 
-# Check if "all-pkg.lst" file is present and readable in SRC_DIR subdirectories
+# Check if "all-pkg.lst" files are present and readable in SRC_DIR subdirectories
 
-DEBIAN_LST="$SRC_DIR/debian/all-pkg.lst"
-FREEBSD_LST="$SRC_DIR/freebsd/base/all-pkg.lst"
+DEBIAN_LST="$SRC_DIR/debian/names/all-pkg.lst"
+FREEBSD_LST="$SRC_DIR/freebsd/base/names/all-pkg.lst"
 
 if ! [ -r "$DEBIAN_LST" ]; then
     printf "File \"debian/all-pkg.lst\" in source directory is not readable or does not exist\n"
@@ -49,21 +49,27 @@ fi
 # Generate initial comparison results
 
 TARGET_DIR="$DEST_DIR/by-contents"
-mkdir -pv "$TARGET_DIR"
 
-comm -12 "$FREEBSD_LST" "$DEBIAN_LST" > "$TARGET_DIR/common"
-comm -23 "$FREEBSD_LST" "$DEBIAN_LST" > "$TARGET_DIR/freebsd-only"
-comm -13 "$FREEBSD_LST" "$DEBIAN_LST" > "$TARGET_DIR/debian-only"
+INITIAL_DIR="$TARGET_DIR/initial"
+mkdir -pv "$INITIAL_DIR"
+
+comm -12 "$FREEBSD_LST" "$DEBIAN_LST" > "$INITIAL_DIR/common"
+comm -23 "$FREEBSD_LST" "$DEBIAN_LST" > "$INITIAL_DIR/freebsd-only"
+comm -13 "$FREEBSD_LST" "$DEBIAN_LST" > "$INITIAL_DIR/debian-only"
 
 # Recover debian package data for common
 
-MATCHED_DEBIAN_PKGS="$TARGET_DIR/matched-pkgs"
+DEBIAN_PKG_CONTENTS="$SRC_DIR/debian/names/pkg-contents"
+MATCHED_DIR="$TARGET_DIR/matched"
+mkdir -pv "$MATCHED_DIR"
+
+MATCHED_DEBIAN_PKGS="$MATCHED_DIR/debian-pkgs"
 
 true > "$MATCHED_DEBIAN_PKGS"
 
 while IFS= read -r file; do
-    grep "$file" "$SRC_DIR/debian/name-first" | cut -f1 >> "$MATCHED_DEBIAN_PKGS"
-done < "$TARGET_DIR/common"
+    grep -F "$file" "$DEBIAN_PKG_CONTENTS" | cut -f1 >> "$MATCHED_DEBIAN_PKGS"
+done < "$INITIAL_DIR/common"
 
 sort "$MATCHED_DEBIAN_PKGS" -o "$MATCHED_DEBIAN_PKGS"
 
@@ -71,24 +77,24 @@ uniq "$MATCHED_DEBIAN_PKGS" | sponge "$MATCHED_DEBIAN_PKGS"
 
 # Filter unmatched files for matched debian packages
 
-MATCHED_DEBIAN_PKGS_ALL_FILES="$TARGET_DIR/matched-pkgs-all-files"
-MATCHED_DEBIAN_PKGS_UNMATCHED_FILES="$TARGET_DIR/matched-pkgs-unmatched-files"
-MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS="$TARGET_DIR/matched-pkg-unmatched-file-sets"
+MATCHED_DEBIAN_PKGS_ALL_FILES="$MATCHED_DIR/all-files"
+MATCHED_DEBIAN_PKGS_UNMATCHED_FILES="$MATCHED_DIR/unmatched-files"
+MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS="$MATCHED_DIR/unmatched-pkg-file-sets"
 
 true > "$MATCHED_DEBIAN_PKGS_ALL_FILES"
 true > "$MATCHED_DEBIAN_PKGS_UNMATCHED_FILES"
 true > "$MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS"
 
 while IFS= read -r pkg; do
-    grep "$pkg" "$SRC_DIR/debian/name-first" | cut -f2 >> "$MATCHED_DEBIAN_PKGS_ALL_FILES"
+    grep -F "$pkg" "$DEBIAN_PKG_CONTENTS" | cut -f2 >> "$MATCHED_DEBIAN_PKGS_ALL_FILES"
 done < "$MATCHED_DEBIAN_PKGS"
 
 sort "$MATCHED_DEBIAN_PKGS_ALL_FILES" -o "$MATCHED_DEBIAN_PKGS_ALL_FILES"
 
-comm -12 "$MATCHED_DEBIAN_PKGS_ALL_FILES" "$TARGET_DIR/debian-only" > "$MATCHED_DEBIAN_PKGS_UNMATCHED_FILES"
+comm -12 "$MATCHED_DEBIAN_PKGS_ALL_FILES" "$INITIAL_DIR/debian-only" > "$MATCHED_DEBIAN_PKGS_UNMATCHED_FILES"
 
 while IFS= read -r file; do
-    grep "$file" "$SRC_DIR/debian/name-first" >> "$MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS"
+    grep -F "$file" "$DEBIAN_PKG_CONTENTS" >> "$MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS"
 done < "$MATCHED_DEBIAN_PKGS"
 
 sort "$MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS" -o "$MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS"

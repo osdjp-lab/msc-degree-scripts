@@ -34,8 +34,8 @@ fi
 # Check if package name list files are present and readable
 # in SRC_DIR subdirectories
 
-DEBIAN_PKG_NAMES="$SRC_DIR/debian/pkg-names"
-FREEBSD_PKG_NAMES="$SRC_DIR/freebsd/base/names/simplified"
+DEBIAN_PKG_NAMES="$SRC_DIR/debian/names/deduplicated-pkgs"
+FREEBSD_PKG_NAMES="$SRC_DIR/freebsd/base/names/no-man-dbg-dev-lib32"
 
 if ! [ -r "$DEBIAN_PKG_NAMES" ]; then
     printf "File \"debian/pkg-names\" in source directory is not readable or does not exist\n"

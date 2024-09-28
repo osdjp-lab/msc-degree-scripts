@@ -63,7 +63,7 @@ LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
 "$SCRIPT_DIR/generate-pkg-lst.sh" "$PKG_FILES_DIR" "$LISTING_DIR"
 
-ALL_PKG_LST="$DEST_DIR/all-pkg.lst"
+ALL_PKG_LST="$NAME_DIR/all-pkg.lst"
 "$SCRIPT_DIR/generate-all-pkg-lst.sh" "$LISTING_DIR" "$ALL_PKG_LST"
 
 MAN_DIR="$DEST_DIR/pkg-man-pages"

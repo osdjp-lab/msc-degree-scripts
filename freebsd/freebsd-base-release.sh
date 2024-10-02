@@ -63,8 +63,31 @@ LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
 "$SCRIPT_DIR/generate-pkg-lst.sh" "$PKG_FILES_DIR" "$LISTING_DIR"
 
-ALL_PKG_LST="$NAME_DIR/all-pkg.lst"
-"$SCRIPT_DIR/generate-all-pkg-lst.sh" "$LISTING_DIR" "$ALL_PKG_LST"
+ALL_PKG_LISTING="$NAME_DIR/all-pkg.lst"
+"$SCRIPT_DIR/generate-all-pkg-lst.sh" "$LISTING_DIR" "$ALL_PKG_LISTING"
+
+SPLIT_LISTING_DIR="$SRC_DIR/split-lst"
+mkdir -pv "$SPLIT_LISTING_DIR"
+cd "$SPLIT_LISTING_DIR" || exit
+awk -f "$SCRIPT_DIR/generate-split-lst.awk" "$ALL_PKG_LISTING"
+cd - || exit
+
+usr_tmp="$(mktemp)"
+cp "$SPLIT_LISTING_DIR/usr.lst" "$usr_tmp"
+
+ex -s "$usr_tmp" << EOF
+%s/^usr\///g
+w
+q
+EOF
+
+USR_SPLIT_LISTING_DIR="$SPLIT_LISTING_DIR/usr"
+mkdir -pv "$USR_SPLIT_LISTING_DIR"
+cd "$USR_SPLIT_LISTING_DIR" || exit
+awk -f "$SCRIPT_DIR/generate-split-lst.awk" "$usr_tmp"
+cd - || exit
+
+rm "$usr_tmp"
 
 MAN_DIR="$DEST_DIR/pkg-man-pages"
 mkdir -pv "$MAN_DIR"

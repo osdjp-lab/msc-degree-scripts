@@ -64,6 +64,30 @@ mkdir -pv "$NAME_DIR"
 "$SCRIPT_DIR/generate-names.sh" "$CONTENTS_LISTING" "$PKG_META_DIR" "$NAME_DIR"
 "$SCRIPT_DIR/generate-all-pkg-lst.sh" "$CONTENTS_LISTING" "$NAME_DIR"
 
+SPLIT_LISTING_DIR="$SRC_DIR/split-lst"
+mkdir -pv "$SPLIT_LISTING_DIR"
+ALL_PKG_LISTING="$NAME_DIR/all-pkg.lst"
+cd "$SPLIT_LISTING_DIR" || exit
+awk -f "$SCRIPT_DIR/generate-split-lst.awk" "$ALL_PKG_LISTING"
+cd - || exit
+
+usr_tmp="$(mktemp)"
+cp "$SPLIT_LISTING_DIR/usr.lst" "$usr_tmp"
+
+ex -s "$usr_tmp" << EOF
+%s/^usr\///g
+w
+q
+EOF
+
+USR_SPLIT_LISTING_DIR="$SPLIT_LISTING_DIR/usr"
+mkdir -pv "$USR_SPLIT_LISTING_DIR"
+cd "$USR_SPLIT_LISTING_DIR" || exit
+awk -f "$SCRIPT_DIR/generate-split-lst.awk" "$usr_tmp"
+cd - || exit
+
+rm "$usr_tmp"
+
 LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
 PKG_CONTENTS_LISTING="$NAME_DIR/pkg-contents"

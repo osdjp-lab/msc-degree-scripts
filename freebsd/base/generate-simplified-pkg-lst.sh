@@ -6,7 +6,7 @@
 # Copyright (C) 2024 Oscar Szumiak
 #
 
-# Extract package file listings
+# Extract deduplicated simplified package file listings
 
 # Verify number of positional parameters
 
@@ -48,4 +48,9 @@ q
 EOF
     sort "$pkg" -o "$pkg"
 done
+
+find "$SIMPLIFIED_LISTING_DIR" -type f -name "*-man-*" -delete
+find "$SIMPLIFIED_LISTING_DIR" -type f -name "*-dbg-*" -delete
+find "$SIMPLIFIED_LISTING_DIR" -type f -name "*-dev-*" -delete
+find "$SIMPLIFIED_LISTING_DIR" -type f -name "*-lib32-*" -delete
 

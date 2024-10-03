@@ -63,7 +63,7 @@ LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
 "$SCRIPT_DIR/generate-pkg-lst.sh" "$PKG_FILES_DIR" "$LISTING_DIR"
 
-SIMPLIFIED_LISTING_DIR="$DEST_DIR/simplified-pkg-listings"
+SIMPLIFIED_LISTING_DIR="$DEST_DIR/deduplicated-simplified-pkg-listings"
 mkdir -pv "$SIMPLIFIED_LISTING_DIR"
 "$SCRIPT_DIR/generate-simplified-pkg-lst.sh" "$LISTING_DIR" "$SIMPLIFIED_LISTING_DIR"
 

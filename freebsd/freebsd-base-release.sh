@@ -119,3 +119,7 @@ PKGS_BY_RELEVANCE="$DEST_DIR/by-relevance"
 mkdir -pv "$PKGS_BY_RELEVANCE"
 "$SCRIPT_DIR/group-by-relevance.sh" "$PKGS_BY_TYPE" "$PKGS_BY_RELEVANCE"
 
+PKGS_BY_COMPARABILITY="$DEST_DIR/by-comparability"
+mkdir -pv "$PKGS_BY_COMPARABILITY"
+"$SCRIPT_DIR/group-by-comparability.sh" "$PKGS_BY_TYPE" "$PKGS_BY_COMPARABILITY"
+

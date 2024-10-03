@@ -106,6 +106,7 @@ mkdir -pv "$PLAIN_MAN_DIR"
 NAME_DIR="$DEST_DIR/names"
 mkdir -pv "$NAME_DIR"
 "$SCRIPT_DIR/generate-names.sh" "$NAME_DIR" "$PKG_META_DIR" "$MAN_DIR"
+"$SCRIPT_DIR/generate-pkg-contents-lst.sh" "$SIMPLIFIED_LISTING_DIR" "$NAME_DIR"
 
 DEDUPLICATED_PKGS="$DEST_DIR/pkgs-no-man-dbg-dev-lib32"
 mkdir -pv "$DEDUPLICATED_PKGS"

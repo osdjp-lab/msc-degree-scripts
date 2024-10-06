@@ -1,101 +1,69 @@
 #!/usr/bin/env sh
 
+set -x
+
 #
 # SPDX-License-Identifier: MIT
 # 
 # Copyright (C) 2024 Oscar Szumiak
 #
 
-# Compare package file contents listings from FreeBSD base
-# and Debian bookworm main 
+# Find Debian packages complementary to FreeBSD base packages
 
 # Verify number of positional parameters
 
-if [ $# -eq 2 ]; then
-    SRC_DIR="$(realpath "$1")"
-    DEST_DIR="$(realpath "$2")"
+if [ $# -eq 5 ]; then
+    FREEBSD_PKG_LST_DIR="$(realpath "$1")"
+    DEBIAN_ALL_PKG_LST="$(realpath "$2")"
+    DEBIAN_PKG_CONTENTS_LST="$(realpath "$3")"
+    DEBIAN_PKG_LST_DIR="$(realpath "$4")"
+    OUTPUT_DIR="$(realpath "$5")"
 else
-    printf "Usage: %s [SRC_DIR] [DEST_DIR]\n" "$(basename "$0")"
+    printf "Usage: %s [FREEBSD_PKG_LST_DIR] [DEBIAN_ALL_PKG_LST] [DEBIAN_PKG_CONTENTS_LST] [DEBIAN_PKG_LST_DIR] [OUTPUT_DIR]\n" "$(basename "$0")"
     exit
 fi
 
-# Verify values of SRC_DIR and DEST_DIR
+# Verify arguments
 
-if ! [ -d "$SRC_DIR" ]; then
-    printf "Source \"%s\" does not exist or is not a directory\n" "$SRC_DIR"
+if ! [ -d "$FREEBSD_PKG_LST_DIR" ]; then
+    printf "Source FREEBSD_PKG_LST_DIR does not exist or is not a directory\n"
     exit
 fi
 
-if ! [ -d "$DEST_DIR" ]; then
-    printf "Destination \"%s\" does not exist or is not a directory\n" "$DEST_DIR"
+if ! [ -r "$DEBIAN_ALL_PKG_LST" ]; then
+    printf "File DEBIAN_ALL_PKG_LST in source directory is not readable or does not exist\n"
     exit
 fi
 
-# Check if "all-pkg.lst" files are present and readable in SRC_DIR subdirectories
-
-DEBIAN_LST="$SRC_DIR/debian/names/all-pkg.lst"
-FREEBSD_LST="$SRC_DIR/freebsd/base/names/all-pkg.lst"
-
-if ! [ -r "$DEBIAN_LST" ]; then
-    printf "File \"debian/all-pkg.lst\" in source directory is not readable or does not exist\n"
+if ! [ -r "$DEBIAN_PKG_CONTENTS_LST" ]; then
+    printf "File DEBIAN_PKG_CONTENTS_LST in source directory is not readable or does not exist\n"
     exit
 fi
 
-if ! [ -r "$FREEBSD_LST" ]; then
-    printf "File \"freebsd/base/all-pkg.lst\" in source directory is not readable or does not exist\n"
+if ! [ -d "$DEBIAN_PKG_LST_DIR" ]; then
+    printf "Destination DEBIAN_PKG_LST_DIR does not exist or is not a directory\n"
     exit
 fi
 
-# Generate initial comparison results
+########################################
 
-TARGET_DIR="$DEST_DIR/by-contents"
+WORK_DIR="$(dirname "$(realpath "$0")")"
+SCRIPT_DIR="$WORK_DIR"
 
-INITIAL_DIR="$TARGET_DIR/initial"
-mkdir -pv "$INITIAL_DIR"
-
-comm -12 "$FREEBSD_LST" "$DEBIAN_LST" > "$INITIAL_DIR/common"
-comm -23 "$FREEBSD_LST" "$DEBIAN_LST" > "$INITIAL_DIR/freebsd-only"
-comm -13 "$FREEBSD_LST" "$DEBIAN_LST" > "$INITIAL_DIR/debian-only"
-
-# Recover debian package data for common
-
-DEBIAN_PKG_CONTENTS="$SRC_DIR/debian/names/pkg-contents"
-MATCHED_DIR="$TARGET_DIR/matched"
-mkdir -pv "$MATCHED_DIR"
-
-MATCHED_DEBIAN_PKGS="$MATCHED_DIR/debian-pkgs"
-
-true > "$MATCHED_DEBIAN_PKGS"
-
-while IFS= read -r file; do
-    grep -F "$file" "$DEBIAN_PKG_CONTENTS" | cut -f1 >> "$MATCHED_DEBIAN_PKGS"
-done < "$INITIAL_DIR/common"
-
-sort "$MATCHED_DEBIAN_PKGS" -o "$MATCHED_DEBIAN_PKGS"
-
-uniq "$MATCHED_DEBIAN_PKGS" | sponge "$MATCHED_DEBIAN_PKGS"
-
-# Filter unmatched files for matched debian packages
-
-MATCHED_DEBIAN_PKGS_ALL_FILES="$MATCHED_DIR/all-files"
-MATCHED_DEBIAN_PKGS_UNMATCHED_FILES="$MATCHED_DIR/unmatched-files"
-MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS="$MATCHED_DIR/unmatched-pkg-file-sets"
-
-true > "$MATCHED_DEBIAN_PKGS_ALL_FILES"
-true > "$MATCHED_DEBIAN_PKGS_UNMATCHED_FILES"
-true > "$MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS"
-
-while IFS= read -r pkg; do
-    grep -F "$pkg" "$DEBIAN_PKG_CONTENTS" | cut -f2 >> "$MATCHED_DEBIAN_PKGS_ALL_FILES"
-done < "$MATCHED_DEBIAN_PKGS"
-
-sort "$MATCHED_DEBIAN_PKGS_ALL_FILES" -o "$MATCHED_DEBIAN_PKGS_ALL_FILES"
-
-comm -12 "$MATCHED_DEBIAN_PKGS_ALL_FILES" "$INITIAL_DIR/debian-only" > "$MATCHED_DEBIAN_PKGS_UNMATCHED_FILES"
-
-while IFS= read -r file; do
-    grep -F "$file" "$DEBIAN_PKG_CONTENTS" >> "$MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS"
-done < "$MATCHED_DEBIAN_PKGS"
-
-sort "$MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS" -o "$MATCHED_DEBIAN_PKG_UNMATCHED_FILE_SETS"
+for freebsd_pkg in "$FREEBSD_PKG_LST_DIR"/*; do
+    pkg_name="$(basename "$freebsd_pkg" | sed -e "s/FreeBSD-\(.*\)-.*/\1/")"
+    TARGET_DIR="$OUTPUT_DIR/$pkg_name"
+    mkdir -pv "$TARGET_DIR"
+    comm -12 "$freebsd_pkg" "$DEBIAN_ALL_PKG_LST" > "$TARGET_DIR/common"
+    comm -23 "$freebsd_pkg" "$DEBIAN_ALL_PKG_LST" > "$TARGET_DIR/freebsd-only"
+    comm -13 "$freebsd_pkg" "$DEBIAN_ALL_PKG_LST" > "$TARGET_DIR/debian-only"
+    "$SCRIPT_DIR/names-from-lst.sh" "$TARGET_DIR/common" "$DEBIAN_PKG_CONTENTS_LST" "$TARGET_DIR/debian-matched-pkgs"
+    while IFS= read -r debian_pkg; do
+        pkg_lst="$DEBIAN_PKG_LST_DIR/$debian_pkg.txt"
+        pkg_dir="$TARGET_DIR/$debian_pkg"
+        mkdir -pv "$pkg_dir"
+        comm -12 "$TARGET_DIR/common" "$pkg_lst" > "$pkg_dir/matched"
+        comm -13 "$TARGET_DIR/common" "$pkg_lst" > "$pkg_dir/unmatched"
+    done < "$TARGET_DIR/debian-matched-pkgs"
+done
 

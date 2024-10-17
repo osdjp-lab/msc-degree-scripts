@@ -61,53 +61,34 @@
 
 ## Networking
 
-### dns
+### DNS
 
 - resolvconf    - Framework for managing multiple DNS configurations
 - unbound       - A validating, recursive, caching DNS resolver
 
-### driver
+### Drivers
 
 - cxgbe-tools   - Command line tools for the Chelsio Ethernet adapter driver
 - mlx-tools     - Command line tools for managing Mellanox network adapters
 
-### bluetooth   - Bluetooth control utilites
-### bsnmp       - SNMP daemon
-### dhclient    - DHCP client
-### fetch       - Uniform Resource Locator (URL) file transfer tool and library
-### ftpd        - File Transfer Protocol (FTP) daemon (deprecated)
-### ftp         - File Transfer Protocol (FTP) client
-### inetd       - Internet service dispatcher ("Super Server") daemon
-### kerberos    - Kerberos utilities
-### natd        - Network Address Translation (NAT) daemon
-### netmap      - Utility for managing Virtual Local Ethernet (VALE) switches
-### nuageinit   - Limited cloud init configuration
-### ppp         - Point-to-point protocol (PPP) user implementation
-### rcmds       - Local machine network status utilities (rwho, rwhod and ruptime)
-### rdma        - Remote Direct Memory Access (RDMA) utilites
-### ssh         - Secure Shell (SSH) utilities
-### tcpd        - TCP/IP daemon wrapper utilities for monitoring and filtering requests
-### telnet      - Telnet client
-### yp          - NIS formerly Yellow Pages (YP) domain database utilites
-
-### mail
+### Mail
 
 - dma           - DragonFly Mail Agent - Mail Transport Agent (MTA)
 - sendmail      - Sendmail - Mail Transport Agent (MTA)
 
-### packet-filter
+### Packet filtering
 
 - blocklist     - Blacklistd daemon and library to block and release ports on demand
 - ipf           - Packet filtering and Network Address Translation (NAT) libraries and utilites
 - ipfw          - Firewall, traffic shaper, packet scheduling and in-kernel NAT management utility
 - pf            - Packet Filter (PF) device management and logging utilites
 
-### ssl
+### SSL
 
 - certctl       - Tool for managing trusted and untrusted TLS certificates
 - openssl       - OpenSSL Transport Layer Security (TLS) toolkit
 
-### storage
+### Storage
 
 - ggate         - GEOM framework gate protocol daemon and control utilities
 - hast          - Highly Available Storage (HAST) protocol daemon and control utility
@@ -115,12 +96,33 @@
 - nfs           - Network File System (NFS) protocol
 - smbutils      - Server Message Block (SMB) utility
 
-### wifi
+### Wi-Fi
 
 - hostapd   - IEEE 802.11 network authentication utilities
 - wpa       - Wi-Fi Protected Access (WPA) supplicant utilities
 
-## Other (BSD specific packages)
+### Other
+
+- bluetooth   - Bluetooth control utilites
+- bsnmp       - SNMP daemon
+- dhclient    - DHCP client
+- fetch       - Uniform Resource Locator (URL) file transfer tool and library
+- ftpd        - File Transfer Protocol (FTP) daemon (deprecated)
+- ftp         - File Transfer Protocol (FTP) client
+- inetd       - Internet service dispatcher ("Super Server") daemon
+- kerberos    - Kerberos utilities
+- natd        - Network Address Translation (NAT) daemon
+- netmap      - Utility for managing Virtual Local Ethernet (VALE) switches
+- nuageinit   - Limited cloud init configuration
+- ppp         - Point-to-point protocol (PPP) user implementation
+- rcmds       - Local machine network status utilities (rwho, rwhod and ruptime)
+- rdma        - Remote Direct Memory Access (RDMA) utilites
+- ssh         - Secure Shell (SSH) utilities
+- tcpd        - TCP/IP daemon wrapper utilities for monitoring and filtering requests
+- telnet      - Telnet client
+- yp          - NIS formerly Yellow Pages (YP) domain database utilites
+
+## BSD specific
 
 - bsdinstall    - FreeBSD system install and sysadmins disk editor (sade)
 - fwget         - Firmware installer
@@ -133,29 +135,29 @@
 
 ## System
 
-### boot
+### Boot
 
 - bootloader    - Bootloader
 - efi-tools     - Extensible Firmware Interface (EFI) tools
 
-### device-management
+### Device management
 
 - devd          - Device state change daemon
 - devmatch      - Utility for printing information about unattached devices
 
 ### csh         - Tcsh c-shell
-### kernel
+### Kernel
 
 - kernel-generic-mmccam     - FreeBSD kernel with the MultiMediaCard (MMC) stack using the Common Access Method (CAM) framework enable (MMCCAM)
 - kernel-generic            - FreeBSD kernel generic config
 - kernel-minimal            - FreeBSD kernel minimal config
 
-### logging
+### Logging
 
 - newsyslog     - Utility for maintaining system log files at manageable sizes
 - syslogd       - System logging daemon
 
-### storage
+### Storage
 
 - autofs        - Automated file system mounting daemon and utilities
 - ccdconfig     - Concatenated Disk Driver (CCD) configuration utility
@@ -171,11 +173,7 @@
 - ee    - Easy Editor (EE)
 - vi    - Vi editor
 
-### acct                - System Accounting utilities
-### console-tools       - Keyboard system console (syscons) and virtual terminal (vt) control utilities
-### dpv                 - Dialog Progress Viewer (DPV) tool and libraries
-### quotacheck          - File system quota consistency checker
-### power
+### Power
 
 - acpi          - Advanced Configuration and Power Interface (ACPI) control utilities
 - apm           - Advanced Power Management (APM) utility
@@ -184,6 +182,13 @@
 
 - at            - One time scheduling utilities
 - periodic      - Repetitive scheduling utility
+
+### Other
+
+- acct                - System Accounting utilities
+- console-tools       - Keyboard system console (syscons) and virtual terminal (vt) control utilities
+- dpv                 - Dialog Progress Viewer (DPV) tool and libraries
+- quotacheck          - File system quota consistency checker
 
 ## Virtualization
 - bhyve             - Virtual machine hypervisor and control utilities

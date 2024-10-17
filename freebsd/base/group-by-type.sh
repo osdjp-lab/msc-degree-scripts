@@ -52,7 +52,9 @@ mv -vt "$DEST_DIR" "$BASE/FreeBSD-runtime.txt" \
 DEST_DIR="$PKGS_BY_TYPE/data"
 mkdir -pv "$DEST_DIR"
 
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-locales.txt" \
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-caroot.txt" \
+                   "$BASE/FreeBSD-ipfilter.txt" \
+                   "$BASE/FreeBSD-locales.txt" \
                    "$BASE/FreeBSD-mtree.txt" \
                    "$BASE/FreeBSD-syscons.txt" \
                    "$BASE/FreeBSD-vt-data.txt" \
@@ -134,7 +136,6 @@ DEST_DIR="$PKGS_BY_TYPE/net/packet-filter"
 mkdir -pv "$DEST_DIR"
 
 mv -vt "$DEST_DIR" "$BASE/FreeBSD-blocklist.txt" \
-                   "$BASE/FreeBSD-ipfilter.txt" \
                    "$BASE/FreeBSD-ipf.txt" \
                    "$BASE/FreeBSD-ipfw.txt" \
                    "$BASE/FreeBSD-pf.txt"
@@ -144,8 +145,7 @@ mv -vt "$DEST_DIR" "$BASE/FreeBSD-blocklist.txt" \
 DEST_DIR="$PKGS_BY_TYPE/net/ssl"
 mkdir -pv "$DEST_DIR"
 
-mv -vt "$DEST_DIR" "$BASE/FreeBSD-caroot.txt" \
-                   "$BASE/FreeBSD-certctl.txt" \
+mv -vt "$DEST_DIR" "$BASE/FreeBSD-certctl.txt" \
                    "$BASE/FreeBSD-openssl.txt"
 
 ## Network storage
@@ -156,7 +156,8 @@ mkdir -pv "$DEST_DIR"
 mv -vt "$DEST_DIR" "$BASE/FreeBSD-ggate.txt" \
                    "$BASE/FreeBSD-hast.txt" \
                    "$BASE/FreeBSD-iscsi.txt" \
-                   "$BASE/FreeBSD-nfs.txt"
+                   "$BASE/FreeBSD-nfs.txt" \
+                   "$BASE/FreeBSD-smbutils.txt"
 
 ## WiFi 802.11
 
@@ -255,8 +256,7 @@ DEST_DIR="$PKGS_BY_TYPE/util/power"
 mkdir -pv "$DEST_DIR"
 
 mv -vt "$DEST_DIR" "$BASE/FreeBSD-acpi.txt" \
-                   "$BASE/FreeBSD-apm.txt" \
-                   "$BASE/FreeBSD-smbutils.txt"
+                   "$BASE/FreeBSD-apm.txt"
 
 ## Scheduling
 

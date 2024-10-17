@@ -47,7 +47,7 @@ if ! [ -r "$FREEBSD_PKG_NAMES" ]; then
     exit
 fi
 
-# Generate initial comparison results
+# Generate initial exact match comparison
 
 TARGET_DIR="$DEST_DIR/by-name"
 mkdir -pv "$TARGET_DIR"
@@ -55,4 +55,8 @@ mkdir -pv "$TARGET_DIR"
 comm -12 "$FREEBSD_PKG_NAMES" "$DEBIAN_PKG_NAMES" > "$TARGET_DIR/common"
 comm -23 "$FREEBSD_PKG_NAMES" "$DEBIAN_PKG_NAMES" > "$TARGET_DIR/freebsd-only"
 comm -13 "$FREEBSD_PKG_NAMES" "$DEBIAN_PKG_NAMES" > "$TARGET_DIR/debian-only"
+
+# Generate partial matches
+
+# (...)
 

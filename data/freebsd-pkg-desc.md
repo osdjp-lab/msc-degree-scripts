@@ -1,4 +1,4 @@
-# Detailed FreeBSD packages described
+# Detailed FreeBSD package descriptions
 
 ## Bundles
 

@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
-set -x
-
 #
 # SPDX-License-Identifier: MIT
 # 

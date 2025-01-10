@@ -6,11 +6,12 @@
 # Copyright (C) 2024 Oscar Szumiak
 #
 
-# Download metadata "packagesite.yaml" file and individual package
-# files for FreeBSD:14:amd64/base_release_1
+# Download FreeBSD:14:amd64 "packagesite.yaml" metadata files and individual package files for FreeBSD:14:amd64/base_release_1
 
-BASE_URL="http://pkg.freebsd.org/FreeBSD:14:amd64/base_release_1/"
-PACKAGESITE_SRC="$BASE_URL/packagesite.txz"
+BASE_URL="http://pkg.freebsd.org/FreeBSD:14:amd64"
+BASE_PKGS="$BASE_URL/base_release_1/"
+BASE_RELEASE_1_SRC="$BASE_URL/base_release_1/packagesite.txz"
+RELEASE_1_SRC="$BASE_URL/release_1/packagesite.txz"
 
 # Verify number of positional parameters
 
@@ -30,39 +31,64 @@ fi
 
 ########################################
 
+# Get base_release_1 data
+
 # Get packagesite.yaml
 
-PACKAGESITE_XZ="${DEST_DIR}/packagesite.txz"
+BASE_DIR="$DEST_DIR/base"
 
-wget "$PACKAGESITE_SRC" -O "$PACKAGESITE_XZ"
+mkdir "$BASE_DIR"
+
+PACKAGESITE_XZ="${BASE_DIR}/packagesite.txz"
+
+wget "$BASE_RELEASE_1_SRC" -O "$PACKAGESITE_XZ"
 
 unxz "$PACKAGESITE_XZ"
 
-PACKAGESITE_TAR="${DEST_DIR}/packagesite.tar"
+PACKAGESITE_TAR="${BASE_DIR}/packagesite.tar"
 
-tar -xf "$PACKAGESITE_TAR" -C "${DEST_DIR}" "packagesite.yaml"
+tar -xf "$PACKAGESITE_TAR" -C "${BASE_DIR}" "packagesite.yaml"
 
 rm "$PACKAGESITE_TAR"
 
 # Get package files
 
-PKG_LIST="${DEST_DIR}/pkg-urls"
+PKG_LIST="${BASE_DIR}/pkg-urls"
 
-wget "$BASE_URL" -O "$PKG_LIST"
+wget "$BASE_PKGS" -O "$PKG_LIST"
 
 ex -s "$PKG_LIST" << EOF
 %s/^.*\(FreeBSD.*\.pkg\).*$/\1/g
 g!/FreeBSD.*\.pkg/d
-%s?^?$BASE_URL?g
+%s?^?$BASE_PKGS?g
 w
 q
 EOF
 
-PKG_DIR="${DEST_DIR}/pkgs"
+PKG_DIR="${BASE_DIR}/pkgs"
 
 mkdir "$PKG_DIR"
 
 wget -i "$PKG_LIST" -P "$PKG_DIR"
 
 rm "$PKG_LIST"
+
+# Get release_1 data
+
+RELEASE_DIR="$DEST_DIR/release"
+
+mkdir "$RELEASE_DIR"
+
+PACKAGESITE_XZ="${RELEASE_DIR}/packagesite.txz"
+
+wget "$RELEASE_1_SRC" -O "$PACKAGESITE_XZ"
+
+unxz "$PACKAGESITE_XZ"
+
+PACKAGESITE_TAR="${RELEASE_DIR}/packagesite.tar"
+
+tar -xf "$PACKAGESITE_TAR" -C "${RELEASE_DIR}" "packagesite.yaml"
+
+rm "$PACKAGESITE_TAR"
+
 

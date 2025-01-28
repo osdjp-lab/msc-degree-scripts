@@ -64,7 +64,7 @@ mkdir -pv "$NAME_DIR"
 "$SCRIPT_DIR/generate-names.sh" "$CONTENTS_LISTING" "$PKG_META_DIR" "$NAME_DIR"
 "$SCRIPT_DIR/generate-all-pkg-lst.sh" "$CONTENTS_LISTING" "$NAME_DIR"
 
-SPLIT_LISTING_DIR="$SRC_DIR/split-lst"
+SPLIT_LISTING_DIR="$DEST_DIR/split-lst"
 mkdir -pv "$SPLIT_LISTING_DIR"
 ALL_PKG_LISTING="$NAME_DIR/all-pkg.lst"
 cd "$SPLIT_LISTING_DIR" || exit

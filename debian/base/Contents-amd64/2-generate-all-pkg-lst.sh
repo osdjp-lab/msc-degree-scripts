@@ -12,42 +12,35 @@
 
 if [ $# -eq 2 ]; then
     CONTENTS_LISTING="$(realpath "$1")"
-    NAME_DIR="$(realpath "$2")"
+    ALL_PKG_LISTING="$(realpath "$2")"
 else
-    printf "Usage: %s [CONTENTS_LISTING] [NAME_DIR]\n" "$(basename "$0")"
+    printf "Usage: %s [CONTENTS_LISTING] [ALL_PKG_LISTING]\n" "$(basename "$0")"
     exit
 fi
 
-# Verify CONTENTS_LISTING and NAME_DIR
+# Verify CONTENTS_LISTING
 
 if ! [ -r "$CONTENTS_LISTING" ]; then
     printf "File CONTENTS_LISTING is not readable or does not exist\n"
     exit
 fi
 
-if ! [ -d "$NAME_DIR" ]; then
-    printf "Destination NAME_DIR does not exist or is not a directory\n"
-    exit
-fi
-
 ########################################
 
-# All package file listing
+# Copy contents listing file to all package listing file
 
-ALL_PKG_LST="$NAME_DIR/all-pkg.lst"
-
-cp -v "$CONTENTS_LISTING" "$ALL_PKG_LST"
+cp -v "$CONTENTS_LISTING" "$ALL_PKG_LISTING"
 
 # Remove name column and empty spaces at ends of lines
 
-ex -s "$ALL_PKG_LST" << EOF
+ex -s "$ALL_PKG_LISTING" << EOF
 %s/^\(.*\)\s.*$/\1/g
 %s/\s*$//g
 w
 q
 EOF
 
-sort "$ALL_PKG_LST" -o "$ALL_PKG_LST"
+sort "$ALL_PKG_LISTING" -o "$ALL_PKG_LISTING"
 
-uniq "$ALL_PKG_LST" | sponge "$ALL_PKG_LST"
+uniq "$ALL_PKG_LISTING" | sponge "$ALL_PKG_LISTING"
 

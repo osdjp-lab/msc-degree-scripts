@@ -55,3 +55,7 @@ cd - || exit
 
 rm "$usr_tmp"
 
+# Primary interest directories
+# Binaries - /bin; /sbin; /usr/bin; /usr/sbin
+# Libraries - /lib; /lib32; /lib64; /libx32; /usr/lib; /usr/lib32; /usr/lib64; /usr/libx32
+

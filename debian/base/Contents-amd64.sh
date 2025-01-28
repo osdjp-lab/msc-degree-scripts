@@ -38,19 +38,23 @@ SCRIPT_DIR="$WORK_DIR/Contents-amd64"
 
 NAME_DIR="$DEST_DIR/names"
 mkdir -pv "$NAME_DIR"
-"$SCRIPT_DIR/1-generate-names.sh" "$CONTENTS_LISTING" "$NAME_DIR"
+
+PKG_CONTENTS_LISTING="$NAME_DIR/pkg-contents"
+"$SCRIPT_DIR/1-generate-contents-lst.sh" "$CONTENTS_LISTING" "$PKG_CONTENTS_LISTING"
+
+PKG_LISTING="$NAME_DIR/pkgs"
+"$SCRIPT_DIR/2-generate-pkg-lst.sh" "$PKG_CONTENTS_LISTING" "$PKG_LISTING"
 
 ALL_PKG_LISTING="$NAME_DIR/all-pkg.lst"
-"$SCRIPT_DIR/2-generate-all-pkg-lst.sh" "$CONTENTS_LISTING" "$ALL_PKG_LISTING"
+"$SCRIPT_DIR/3-generate-all-pkg-lst.sh" "$CONTENTS_LISTING" "$ALL_PKG_LISTING"
 
 SPLIT_LISTING_DIR="$DEST_DIR/split-lst"
 mkdir -pv "$SPLIT_LISTING_DIR"
-"$SCRIPT_DIR/3-split-lst-by-dir.sh" "$ALL_PKG_LISTING" "$SPLIT_LISTING_DIR"
+"$SCRIPT_DIR/4-split-lst-by-dir.sh" "$ALL_PKG_LISTING" "$SPLIT_LISTING_DIR"
 
 LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
-PKG_CONTENTS_LISTING="$NAME_DIR/pkg-contents"
 cd "$LISTING_DIR" || exit
-awk -f "$SCRIPT_DIR/4-generate-pkg-lst.awk" "$PKG_CONTENTS_LISTING"
+awk -f "$SCRIPT_DIR/5-generate-pkg-lst.awk" "$PKG_CONTENTS_LISTING"
 cd - || exit
 

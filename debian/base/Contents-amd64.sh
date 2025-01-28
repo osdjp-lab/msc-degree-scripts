@@ -45,31 +45,12 @@ ALL_PKG_LISTING="$NAME_DIR/all-pkg.lst"
 
 SPLIT_LISTING_DIR="$DEST_DIR/split-lst"
 mkdir -pv "$SPLIT_LISTING_DIR"
-cd "$SPLIT_LISTING_DIR" || exit
-awk -f "$SCRIPT_DIR/generate-split-lst.awk" "$ALL_PKG_LISTING"
-cd - || exit
-
-usr_tmp="$(mktemp)"
-cp "$SPLIT_LISTING_DIR/usr.lst" "$usr_tmp"
-
-ex -s "$usr_tmp" << EOF
-%s/^usr\///g
-w
-q
-EOF
-
-USR_SPLIT_LISTING_DIR="$SPLIT_LISTING_DIR/usr"
-mkdir -pv "$USR_SPLIT_LISTING_DIR"
-cd "$USR_SPLIT_LISTING_DIR" || exit
-awk -f "$SCRIPT_DIR/generate-split-lst.awk" "$usr_tmp"
-cd - || exit
-
-rm "$usr_tmp"
+"$SCRIPT_DIR/3-split-lst-by-dir.sh" "$ALL_PKG_LISTING" "$SPLIT_LISTING_DIR"
 
 LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
 PKG_CONTENTS_LISTING="$NAME_DIR/pkg-contents"
 cd "$LISTING_DIR" || exit
-awk -f "$SCRIPT_DIR/generate-pkg-lst.awk" "$PKG_CONTENTS_LISTING"
+awk -f "$SCRIPT_DIR/4-generate-pkg-lst.awk" "$PKG_CONTENTS_LISTING"
 cd - || exit
 

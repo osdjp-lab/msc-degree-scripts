@@ -43,15 +43,21 @@ fi
 WORK_DIR="$(dirname "$(realpath "$0")")"
 SCRIPT_DIR="$WORK_DIR/release"
 
+SRC_DIR="$DEST_DIR/src"
+if ! [ -d "$SRC_DIR" ]; then
+    mkdir -pv "$SRC_DIR"
+    "$SCRIPT_DIR/1-get-data.sh" "$SRC_DIR"
+fi
+
 BASE_LISTING="$SRC_DIR/packagesite.yaml" 
 SIMPLIFIED_LISTING="$DEST_DIR/simplified"
-"$SCRIPT_DIR/simplify-lst.sh" "$BASE_LISTING" "$SIMPLIFIED_LISTING"
+"$SCRIPT_DIR/2-simplify-lst.sh" "$BASE_LISTING" "$SIMPLIFIED_LISTING"
 
 PKG_META_DIR="$DEST_DIR/pkgs"
 mkdir -pv "$PKG_META_DIR"
-"$SCRIPT_DIR/split-lst.sh" "$SIMPLIFIED_LISTING" "$PKG_META_DIR"
+"$SCRIPT_DIR/3-split-lst.sh" "$SIMPLIFIED_LISTING" "$PKG_META_DIR"
 
 NAME_DIR="$DEST_DIR/names"
 mkdir -pv "$NAME_DIR"
-"$SCRIPT_DIR/generate-names.sh" "$NAME_DIR" "$PKG_META_DIR"
+"$SCRIPT_DIR/4-generate-names.sh" "$NAME_DIR" "$PKG_META_DIR"
 

@@ -11,30 +11,17 @@
 
 # Verify number of positional parameters
 
-if [ $# -eq 2 ]; then
-    SRC_DIR="$(realpath "$1")"
-    DEST_DIR="$(realpath "$2")"
+if [ $# -eq 1 ]; then
+    DEST_DIR="$(realpath "$1")"
 else
-    printf "Usage: %s [SRC_DIR] [DEST_DIR]\n" "$(basename "$0")"
+    printf "Usage: %s [DEST_DIR]\n" "$(basename "$0")"
     exit
 fi
 
-# Verify values of SRC_DIR and DEST_DIR
-
-if ! [ -d "$SRC_DIR" ]; then
-    printf "Source \"%s\" does not exist or is not a directory\n" "$SRC_DIR"
-    exit
-fi
+# Verify value of DEST_DIR
 
 if ! [ -d "$DEST_DIR" ]; then
     printf "Destination \"%s\" does not exist or is not a directory\n" "$DEST_DIR"
-    exit
-fi
-
-# Check if "packagesite.yaml" file is present and readable in SRC_DIR
-
-if ! [ -r "$SRC_DIR/packagesite.yaml" ]; then
-    printf "File \"packagesite.yaml\" in SRC_DIR is not readable or does not exist\n"
     exit
 fi
 

@@ -1,6 +1,6 @@
-# Work notes
+# Todo
 
-## All
+## General
 
 1. Consistency in for/while loop do placement and if then placement
 2. If DEST_DIR does not exist make it

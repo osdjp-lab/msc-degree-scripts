@@ -48,13 +48,17 @@ PKG_LISTING="$NAME_DIR/pkgs"
 ALL_PKG_LISTING="$NAME_DIR/all-pkg.lst"
 "$SCRIPT_DIR/3-generate-all-pkg-lst.sh" "$CONTENTS_LISTING" "$ALL_PKG_LISTING"
 
-SPLIT_LISTING_DIR="$DEST_DIR/split-lst"
-mkdir -pv "$SPLIT_LISTING_DIR"
-"$SCRIPT_DIR/4-split-lst-by-dir.sh" "$ALL_PKG_LISTING" "$SPLIT_LISTING_DIR"
+SPLIT_LISTINGS_DIR="$DEST_DIR/split-lst"
+mkdir -pv "$SPLIT_LISTINGS_DIR"
+"$SCRIPT_DIR/4-split-lst-by-dir.sh" "$ALL_PKG_LISTING" "$SPLIT_LISTINGS_DIR"
+
+MERGED_LISTINGS_DIR="$DEST_DIR/merged-lst"
+mkdir -pv "$MERGED_LISTINGS_DIR"
+"$SCRIPT_DIR/5-generate-merged-dir-lst.sh" "$SPLIT_LISTINGS_DIR" "$MERGED_LISTINGS_DIR"
 
 LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
 cd "$LISTING_DIR" || exit
-awk -f "$SCRIPT_DIR/5-generate-pkg-lst.awk" "$PKG_CONTENTS_LISTING"
+awk -f "$SCRIPT_DIR/6-generate-pkg-lst.awk" "$PKG_CONTENTS_LISTING"
 cd - || exit
 

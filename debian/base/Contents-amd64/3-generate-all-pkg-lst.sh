@@ -42,5 +42,5 @@ EOF
 
 sort "$ALL_PKG_LISTING" -o "$ALL_PKG_LISTING"
 
-uniq "$ALL_PKG_LISTING" | sponge "$ALL_PKG_LISTING"
+# uniq "$ALL_PKG_LISTING" | sponge "$ALL_PKG_LISTING"
 

@@ -11,6 +11,7 @@
 7. In any command always put options first positional arguments last
 8. Split long pipelines with pipe on newline
 9. Performance stats.sh script for testing both individual debian and freebsd extraction scripts
+10. Conditional execution of scripts (reduced runtime)
 
 ## Debian
 

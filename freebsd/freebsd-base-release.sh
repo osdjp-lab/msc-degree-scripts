@@ -52,75 +52,56 @@ SCRIPT_DIR="$WORK_DIR/base"
 
 BASE_LISTING="$SRC_DIR/packagesite.yaml" 
 SIMPLIFIED_LISTING="$DEST_DIR/simplified"
-"$SCRIPT_DIR/simplify-lst.sh" "$BASE_LISTING" "$SIMPLIFIED_LISTING"
+"$SCRIPT_DIR/1-simplify-lst.sh" "$BASE_LISTING" "$SIMPLIFIED_LISTING"
 
 PKG_META_DIR="$DEST_DIR/pkgs"
 mkdir -pv "$PKG_META_DIR"
-"$SCRIPT_DIR/split-lst.sh" "$SIMPLIFIED_LISTING" "$PKG_META_DIR"
+"$SCRIPT_DIR/2-split-lst.sh" "$SIMPLIFIED_LISTING" "$PKG_META_DIR"
 
 PKG_FILES_DIR="$SRC_DIR/pkgs"
 LISTING_DIR="$DEST_DIR/pkg-listings"
 mkdir -pv "$LISTING_DIR"
-"$SCRIPT_DIR/generate-pkg-lst.sh" "$PKG_FILES_DIR" "$LISTING_DIR"
+"$SCRIPT_DIR/3-generate-pkg-lst.sh" "$PKG_FILES_DIR" "$LISTING_DIR"
 
 SIMPLIFIED_LISTING_DIR="$DEST_DIR/deduplicated-simplified-pkg-listings"
 mkdir -pv "$SIMPLIFIED_LISTING_DIR"
-"$SCRIPT_DIR/generate-simplified-pkg-lst.sh" "$LISTING_DIR" "$SIMPLIFIED_LISTING_DIR"
+"$SCRIPT_DIR/4-generate-simplified-pkg-lst.sh" "$LISTING_DIR" "$SIMPLIFIED_LISTING_DIR"
 
 ALL_PKG_LISTING="$NAME_DIR/all-pkg.lst"
-"$SCRIPT_DIR/generate-all-pkg-lst.sh" "$LISTING_DIR" "$ALL_PKG_LISTING"
+"$SCRIPT_DIR/5-generate-all-pkg-lst.sh" "$LISTING_DIR" "$ALL_PKG_LISTING"
 
 SPLIT_LISTING_DIR="$SRC_DIR/split-lst"
 mkdir -pv "$SPLIT_LISTING_DIR"
-cd "$SPLIT_LISTING_DIR" || exit
-awk -f "$SCRIPT_DIR/generate-split-lst.awk" "$ALL_PKG_LISTING"
-cd - || exit
-
-usr_tmp="$(mktemp)"
-cp "$SPLIT_LISTING_DIR/usr.lst" "$usr_tmp"
-
-ex -s "$usr_tmp" << EOF
-%s/^usr\///g
-w
-q
-EOF
-
-USR_SPLIT_LISTING_DIR="$SPLIT_LISTING_DIR/usr"
-mkdir -pv "$USR_SPLIT_LISTING_DIR"
-cd "$USR_SPLIT_LISTING_DIR" || exit
-awk -f "$SCRIPT_DIR/generate-split-lst.awk" "$usr_tmp"
-cd - || exit
-
-rm "$usr_tmp"
+"$SCRIPT_DIR/6-split-lst-by-dir.sh" "$ALL_PKG_LISTING" "$SPLIT_LISTING_DIR"
 
 MAN_DIR="$DEST_DIR/pkg-man-pages"
 mkdir -pv "$MAN_DIR"
-"$SCRIPT_DIR/extract-man-pages.sh" "$PKG_FILES_DIR" "$MAN_DIR"
-"$SCRIPT_DIR/deduplicate-man-pages.sh" "$MAN_DIR"
+"$SCRIPT_DIR/7-extract-man-pages.sh" "$PKG_FILES_DIR" "$MAN_DIR"
+"$SCRIPT_DIR/8-deduplicate-man-pages.sh" "$MAN_DIR"
 
 PLAIN_MAN_DIR="$DEST_DIR/pkg-man-txt"
 mkdir -pv "$PLAIN_MAN_DIR"
-"$SCRIPT_DIR/extract-txt-man-pages.sh" "$MAN_DIR" "$PLAIN_MAN_DIR"
-"$SCRIPT_DIR/group-txt-man-pages.sh" "$PLAIN_MAN_DIR"
+"$SCRIPT_DIR/9-extract-txt-man-pages.sh" "$MAN_DIR" "$PLAIN_MAN_DIR"
+"$SCRIPT_DIR/10-group-txt-man-pages.sh" "$PLAIN_MAN_DIR"
 
 NAME_DIR="$DEST_DIR/names"
 mkdir -pv "$NAME_DIR"
-"$SCRIPT_DIR/generate-names.sh" "$NAME_DIR" "$PKG_META_DIR" "$MAN_DIR"
-"$SCRIPT_DIR/generate-pkg-contents-lst.sh" "$SIMPLIFIED_LISTING_DIR" "$NAME_DIR"
+"$SCRIPT_DIR/11-generate-names.sh" "$NAME_DIR" "$PKG_META_DIR" "$MAN_DIR"
+"$SCRIPT_DIR/12-generate-pkg-contents-lst.sh" "$SIMPLIFIED_LISTING_DIR" "$NAME_DIR"
 
 DEDUPLICATED_PKGS="$DEST_DIR/pkgs-no-man-dbg-dev-lib32"
 mkdir -pv "$DEDUPLICATED_PKGS"
-"$SCRIPT_DIR/deduplicate-pkgs.sh" "$NAME_DIR" "$PKG_META_DIR" "$DEDUPLICATED_PKGS"
+"$SCRIPT_DIR/13-deduplicate-pkgs.sh" "$NAME_DIR" "$PKG_META_DIR" "$DEDUPLICATED_PKGS"
 
 PKGS_BY_TYPE="$DEST_DIR/by-type"
 mkdir -pv "$PKGS_BY_TYPE"
-"$SCRIPT_DIR/group-by-type.sh" "$DEDUPLICATED_PKGS" "$PKGS_BY_TYPE"
+"$SCRIPT_DIR/14-group-by-type.sh" "$DEDUPLICATED_PKGS" "$PKGS_BY_TYPE"
 
 PKGS_BY_RELEVANCE="$DEST_DIR/by-relevance"
 mkdir -pv "$PKGS_BY_RELEVANCE"
-"$SCRIPT_DIR/group-by-relevance.sh" "$PKGS_BY_TYPE" "$PKGS_BY_RELEVANCE"
+"$SCRIPT_DIR/15-group-by-relevance.sh" "$PKGS_BY_TYPE" "$PKGS_BY_RELEVANCE"
 
 PKGS_BY_COMPARABILITY="$DEST_DIR/by-comparability"
 mkdir -pv "$PKGS_BY_COMPARABILITY"
-"$SCRIPT_DIR/group-by-comparability.sh" "$PKGS_BY_TYPE" "$PKGS_BY_COMPARABILITY"
+"$SCRIPT_DIR/16-group-by-comparability.sh" "$PKGS_BY_TYPE" "$PKGS_BY_COMPARABILITY"
 

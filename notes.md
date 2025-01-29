@@ -8,6 +8,8 @@
 4. Verification message (print only basename)
 5. Make regeneration of output easy (no duplication, errors, etc.)
 6. Consistency of input checks and argument order (input then output)
+7. In any command always put options first positional arguments last
+8. Split long pipelines with pipe on newline
 
 ## Debian
 

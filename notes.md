@@ -10,6 +10,7 @@
 6. Consistency of input checks and argument order (input then output)
 7. In any command always put options first positional arguments last
 8. Split long pipelines with pipe on newline
+9. Performance stats.sh script for testing both individual debian and freebsd extraction scripts
 
 ## Debian
 

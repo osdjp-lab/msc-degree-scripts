@@ -145,7 +145,10 @@
 - devd          - Device state change daemon
 - devmatch      - Utility for printing information about unattached devices
 
-### csh         - Tcsh c-shell
+### Shell
+
+- csh           - Tcsh c-shell
+
 ### Kernel
 
 - kernel-generic-mmccam     - FreeBSD kernel with the MultiMediaCard (MMC) stack using the Common Access Method (CAM) framework enable (MMCCAM)
@@ -191,6 +194,7 @@
 - quotacheck          - File system quota consistency checker
 
 ## Virtualization
+
 - bhyve             - Virtual machine hypervisor and control utilities
 - hyperv-tools      - Windows Hyper-V integration support system utilities
 - jail              - Jail (OS-level virtualisation) management utilities

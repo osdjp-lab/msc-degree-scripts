@@ -31,14 +31,14 @@ WORK_DIR="$(dirname "$(realpath "$0")")"
 SCRIPT_DIR="$WORK_DIR/base"
 
 SRC_DIR="$DEST_DIR/src"
-mkdir "$SRC_DIR"
+mkdir -pv "$SRC_DIR"
 "$SCRIPT_DIR/get-data.sh" "$SRC_DIR"
 
 CONTENTS_DIR="$DEST_DIR/Contents-amd64"
-mkdir "$CONTENTS_DIR"
+mkdir -pv "$CONTENTS_DIR"
 "$SCRIPT_DIR/Contents-amd64.sh" "$SRC_DIR/Contents-amd64" "$CONTENTS_DIR"
 
 PACKAGES_DIR="$DEST_DIR/Packages"
-mkdir "$PACKAGES_DIR"
+mkdir -pv "$PACKAGES_DIR"
 "$SCRIPT_DIR/Packages.sh" "$SRC_DIR/Packages" "$PACKAGES_DIR"
 

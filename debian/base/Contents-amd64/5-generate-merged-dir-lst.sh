@@ -54,6 +54,8 @@ sed -e 's?^bin/??'      \
     -e 's?^usr/sbin/??' \
     "$BIN_DEDUPLICATED" | sponge "$BIN_DEDUPLICATED"
 
+sort -o "$BIN_DEDUPLICATED" "$BIN_DEDUPLICATED"
+
 uniq "$BIN_DEDUPLICATED" | sponge "$BIN_DEDUPLICATED"
 
 # Libraries
@@ -82,6 +84,8 @@ sed -e 's?^lib/??'        \
     -e 's?^usr/lib32/??'  \
     -e 's?^usr/libx32/??' \
     "$LIB_DEDUPLICATED" | sponge "$LIB_DEDUPLICATED"
+
+sort -o "$LIB_DEDUPLICATED" "$LIB_DEDUPLICATED"
 
 uniq "$LIB_DEDUPLICATED" | sponge "$LIB_DEDUPLICATED"
 

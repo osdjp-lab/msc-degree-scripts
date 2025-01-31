@@ -83,8 +83,18 @@ true > "$FREEBSD_COMMON_BIN_FULL"
 true > "$DEBIAN_COMMON_BIN_FULL"
 
 while IFS= read -r file; do
-    grep -Fhm 1 "$file" "$FREEBSD_BIN" >> "$FREEBSD_COMMON_BIN_FULL"
-    grep -Fhm 1 "$file" "$DEBIAN_BIN" >> "$DEBIAN_COMMON_BIN_FULL"
+    2>/dev/null grep -h "bin\/$file$" "$FREEBSD_BIN" \
+        >> "$FREEBSD_COMMON_BIN_FULL"
+    if [ "$?" -eq 2 ]; then
+        2>/dev/null grep -Fh "$file" "$FREEBSD_BIN" \
+            >> "$FREEBSD_COMMON_BIN_FULL"
+    fi
+    2>/dev/null grep -h "bin\/$file$" "$DEBIAN_BIN" \
+        >> "$DEBIAN_COMMON_BIN_FULL"
+    if [ "$?" -eq 2 ]; then
+        2>/dev/null grep -Fh "$file" "$FREEBSD_BIN" \
+            >> "$DEBIAN_COMMON_BIN_FULL"
+    fi
 done < "$OUTPUT_DIR/bin/common.lst"
 
 FREEBSD_LIB="$FREEBSD_MERGED_LST_DIR/lib"
@@ -116,7 +126,12 @@ FREEBSD_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/bin/freebsd-common-pkgs-contents"
 true > "$FREEBSD_COMMON_PKGS_CONTENTS"
 
 while IFS= read -r file; do
-    grep -Fhm 1 "$file" "$FREEBSD_PKG_CONTENTS_LST" >> "$FREEBSD_COMMON_PKGS_CONTENTS"
+    2>/dev/null grep -h "$file$" "$FREEBSD_PKG_CONTENTS_LST" \
+        >> "$FREEBSD_COMMON_PKGS_CONTENTS"
+    if [ "$?" -eq 2 ]; then
+        2>/dev/null grep -Fh "$file" "$FREEBSD_PKG_CONTENTS_LST"\
+            >> "$FREEBSD_COMMON_PKGS_CONTENTS"
+    fi
 done < "$OUTPUT_DIR/bin/freebsd-common-full.lst"
 
 FREEBSD_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/lib/freebsd-common-pkgs-contents"
@@ -124,7 +139,12 @@ FREEBSD_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/lib/freebsd-common-pkgs-contents"
 true > "$FREEBSD_COMMON_PKGS_CONTENTS"
 
 while IFS= read -r file; do
-    grep -Fhm 1 "$file" "$FREEBSD_PKG_CONTENTS_LST" >> "$FREEBSD_COMMON_PKGS_CONTENTS"
+    2>/dev/null grep -h "$file$" "$FREEBSD_PKG_CONTENTS_LST" \
+        >> "$FREEBSD_COMMON_PKGS_CONTENTS"
+    if [ "$?" -eq 2 ]; then
+        2>/dev/null grep -Fh "$file" "$FREEBSD_PKG_CONTENTS_LST" \
+            >> "$FREEBSD_COMMON_PKGS_CONTENTS"
+    fi
 done < "$OUTPUT_DIR/lib/freebsd-common-full.lst"
 
 DEBIAN_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/bin/debian-common-pkgs-contents"
@@ -132,7 +152,12 @@ DEBIAN_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/bin/debian-common-pkgs-contents"
 true > "$DEBIAN_COMMON_PKGS_CONTENTS"
 
 while IFS= read -r file; do
-    grep -Fhm 1 "$file" "$DEBIAN_PKG_CONTENTS_LST" >> "$DEBIAN_COMMON_PKGS_CONTENTS"
+    2>/dev/null grep -h "$file$" "$DEBIAN_PKG_CONTENTS_LST" \
+        >> "$DEBIAN_COMMON_PKGS_CONTENTS"
+    if [ "$?" -eq 2 ]; then
+        2>/dev/null grep -Fh "$file" "$DEBIAN_PKG_CONTENTS_LST" \
+            >> "$DEBIAN_COMMON_PKGS_CONTENTS"
+    fi
 done < "$OUTPUT_DIR/bin/debian-common-full.lst"
 
 DEBIAN_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/lib/debian-common-pkgs-contents"
@@ -140,7 +165,12 @@ DEBIAN_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/lib/debian-common-pkgs-contents"
 true > "$DEBIAN_COMMON_PKGS_CONTENTS"
 
 while IFS= read -r file; do
-    grep -Fhm 1 "$file" "$DEBIAN_PKG_CONTENTS_LST" >> "$DEBIAN_COMMON_PKGS_CONTENTS"
+    2>/dev/null grep -h "$file$" "$DEBIAN_PKG_CONTENTS_LST" \
+        >> "$DEBIAN_COMMON_PKGS_CONTENTS"
+    if [ "$?" -eq 2 ]; then
+        2>/dev/null grep -Fh "$file" "$DEBIAN_PKG_CONTENTS_LST" \
+            >> "$DEBIAN_COMMON_PKGS_CONTENTS"
+    fi
 done < "$OUTPUT_DIR/lib/debian-common-full.lst"
 
 # Cross-reference (packages only)

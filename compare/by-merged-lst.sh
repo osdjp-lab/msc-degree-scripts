@@ -72,6 +72,13 @@ comm -12 "$FREEBSD_LIB" "$DEBIAN_LIB" > "$TARGET_DIR/common.lst"
 comm -23 "$FREEBSD_LIB" "$DEBIAN_LIB" > "$TARGET_DIR/freebsd-only.lst"
 comm -13 "$FREEBSD_LIB" "$DEBIAN_LIB" > "$TARGET_DIR/debian-only.lst"
 
+ALL_COMMON_LST="$OUTPUT_DIR/all-common.lst"
+
+cat "$OUTPUT_DIR/bin/common.lst" "$OUTPUT_DIR/lib/common.lst" \
+    > "$ALL_COMMON_LST"
+
+sort -o "$ALL_COMMON_LST" "$ALL_COMMON_LST"
+
 # Inverse backtracking
 
 FREEBSD_BIN="$FREEBSD_MERGED_LST_DIR/bin"
@@ -109,6 +116,20 @@ while IFS= read -r file; do
     grep -Fhm 1 "$file" "$FREEBSD_LIB" >> "$FREEBSD_COMMON_LIB_FULL"
     grep -Fhm 1 "$file" "$DEBIAN_LIB" >> "$DEBIAN_COMMON_LIB_FULL"
 done < "$OUTPUT_DIR/lib/common.lst"
+
+FREEBSD_COMMON_FULL="$OUTPUT_DIR/freebsd-common-full.lst"
+
+cat "$FREEBSD_COMMON_BIN_FULL" "$FREEBSD_COMMON_LIB_FULL" \
+    > "$FREEBSD_COMMON_FULL"
+
+sort -o "$FREEBSD_COMMON_FULL" "$FREEBSD_COMMON_FULL"
+
+DEBIAN_COMMON_FULL="$OUTPUT_DIR/debian-common-full.lst"
+
+cat "$DEBIAN_COMMON_BIN_FULL" "$DEBIAN_COMMON_LIB_FULL" \
+    > "$DEBIAN_COMMON_FULL"
+
+sort -o "$DEBIAN_COMMON_FULL" "$DEBIAN_COMMON_FULL"
 
 # Cross-reference (package-contents listings)
 
@@ -205,7 +226,73 @@ cut -f1 "$FREEBSD_ALL_COMMON_PKGS_CONTENTS" > "$FREEBSD_ALL_COMMON_PKGS"
 
 uniq "$FREEBSD_ALL_COMMON_PKGS" | sponge "$FREEBSD_ALL_COMMON_PKGS"
 
-# Exclude false positive matches
+# Match FreeBSD and Debian packages based on common files and exclude
+# false positives
 
 # Create listing containing 3 columns: freebsd-pkg, debian-pkg, file
+
+FREEBSD_DEBIAN_PKG_LST="$OUTPUT_DIR/freebsd-debian-pkg.lst"
+true > "$FREEBSD_DEBIAN_PKG_LST"
+
+EXCEPTIONS="$OUTPUT_DIR/freebsd-debian-exceptions"
+true > "$EXCEPTIONS"
+
+while IFS= read -r file; do
+
+    # Get FreeBSD match count and string
+    FREEBSD_MATCH_COUNT=$(2>/dev/null grep -c "$file$" \
+        "$FREEBSD_ALL_COMMON_PKGS_CONTENTS")
+    freebsd_pkg=$(2>/dev/null grep -h "$file$" \
+        "$FREEBSD_ALL_COMMON_PKGS_CONTENTS" \
+        | sed -e 's/^\(.*\)\t\(.*\)$/\1/')
+    if [ "$FREEBSD_MATCH_COUNT" = "" ]; then
+        FREEBSD_MATCH_COUNT=$(2>/dev/null grep -Fc "$file" \
+            "$FREEBSD_ALL_COMMON_PKGS_CONTENTS")
+        freebsd_pkg=$(2>/dev/null grep -Fh "$file" \
+            "$FREEBSD_ALL_COMMON_PKGS_CONTENTS" \
+            | sed -e 's/^\(.*\)\t\(.*\)$/\1/')
+    fi
+    
+    # Get Debian match count and string
+    DEBIAN_MATCH_COUNT=$(2>/dev/null grep -c "$file$" \
+        "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")
+    debian_pkg=$(2>/dev/null grep -h "$file$" \
+        "$DEBIAN_ALL_COMMON_PKGS_CONTENTS" \
+        | sed -e 's/^\(.*\)\t\(.*\)$/\1/')
+    if [ "$DEBIAN_MATCH_COUNT" = "" ]; then
+        DEBIAN_MATCH_COUNT=$(2>/dev/null grep -Fc "$file" \
+            "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")
+        debian_pkg=$(2>/dev/null grep -Fh "$file$" \
+            "$DEBIAN_ALL_COMMON_PKGS_CONTENTS" \
+            | sed -e 's/^\(.*\)\t\(.*\)$/\1/')
+    fi
+
+    if [ "$FREEBSD_MATCH_COUNT" -eq 1 ]; then
+        if [ "$DEBIAN_MATCH_COUNT" -eq 1 ]; then
+            # 1:1
+            printf "%s\t%s\t%s\n" "$file" "${freebsd_pkg}" \
+                "${debian_pkg}" >> "$FREEBSD_DEBIAN_PKG_LST"
+        else
+            # 1:n
+            printf "%s\t%s\t%s\n" "$file" "${freebsd_pkg}" "*" \
+                >> "$FREEBSD_DEBIAN_PKG_LST"
+            printf "%s\n" "$file" >> "$EXCEPTIONS"
+        fi
+    else
+        if [ "$DEBIAN_MATCH_COUNT" -eq 1 ]; then
+            # m:1
+            printf "%s\t%s\t%s\n" "$file" "*" "${debian_pkg}" \
+                >> "$FREEBSD_DEBIAN_PKG_LST"
+            printf "%s\n" "$file" >> "$EXCEPTIONS"
+        else
+            # m:n
+            printf "%s\t%s\t%s\n" "$file" "*" "*" \
+                >> "$FREEBSD_DEBIAN_PKG_LST"
+            printf "%s\n" "$file" >> "$EXCEPTIONS"
+        fi
+
+    fi
+done < "$ALL_COMMON_LST"
+
+column -t "$FREEBSD_DEBIAN_PKG_LST" | sponge "$FREEBSD_DEBIAN_PKG_LST"
 

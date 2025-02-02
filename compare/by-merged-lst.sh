@@ -155,6 +155,11 @@ while IFS= read -r file; do
     fi
 done < "$OUTPUT_DIR/bin/freebsd-common-full.lst"
 
+# Deduplicate overlap in search between sbin and usr/sbin as well as bin and usr/bin 
+
+sort "$FREEBSD_COMMON_PKGS_CONTENTS" \
+    | uniq | sponge "$FREEBSD_COMMON_PKGS_CONTENTS"
+
 FREEBSD_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/lib/freebsd-common-pkgs-contents"
 
 true > "$FREEBSD_COMMON_PKGS_CONTENTS"
@@ -167,6 +172,9 @@ while IFS= read -r file; do
             >> "$FREEBSD_COMMON_PKGS_CONTENTS"
     fi
 done < "$OUTPUT_DIR/lib/freebsd-common-full.lst"
+
+sort "$FREEBSD_COMMON_PKGS_CONTENTS" \
+    | uniq | sponge "$FREEBSD_COMMON_PKGS_CONTENTS"
 
 DEBIAN_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/bin/debian-common-pkgs-contents"
 
@@ -181,6 +189,9 @@ while IFS= read -r file; do
     fi
 done < "$OUTPUT_DIR/bin/debian-common-full.lst"
 
+sort "$DEBIAN_COMMON_PKGS_CONTENTS" \
+    | uniq | sponge "$DEBIAN_COMMON_PKGS_CONTENTS"
+
 DEBIAN_COMMON_PKGS_CONTENTS="$OUTPUT_DIR/lib/debian-common-pkgs-contents"
 
 true > "$DEBIAN_COMMON_PKGS_CONTENTS"
@@ -193,6 +204,9 @@ while IFS= read -r file; do
             >> "$DEBIAN_COMMON_PKGS_CONTENTS"
     fi
 done < "$OUTPUT_DIR/lib/debian-common-full.lst"
+
+sort "$DEBIAN_COMMON_PKGS_CONTENTS" \
+    | uniq | sponge "$DEBIAN_COMMON_PKGS_CONTENTS"
 
 # Cross-reference (packages only)
 
@@ -234,15 +248,18 @@ uniq "$FREEBSD_ALL_COMMON_PKGS" | sponge "$FREEBSD_ALL_COMMON_PKGS"
 FREEBSD_DEBIAN_PKG_LST="$OUTPUT_DIR/freebsd-debian-pkg.lst"
 true > "$FREEBSD_DEBIAN_PKG_LST"
 
+printf "file\tfreebsd-pkg\tdebian-pkg\n" >> "$FREEBSD_DEBIAN_PKG_LST"
+printf "\n" >> "$FREEBSD_DEBIAN_PKG_LST"
+
 EXCEPTIONS="$OUTPUT_DIR/freebsd-debian-exceptions"
-true > "$EXCEPTIONS"
+mkdir "$EXCEPTIONS"
 
 while IFS= read -r file; do
 
     # Get FreeBSD match count and string
-    FREEBSD_MATCH_COUNT=$(2>/dev/null grep -c "$file$" \
+    FREEBSD_MATCH_COUNT=$(2>/dev/null grep -c "\/$file$" \
         "$FREEBSD_ALL_COMMON_PKGS_CONTENTS")
-    freebsd_pkg=$(2>/dev/null grep -h "$file$" \
+    freebsd_pkg=$(2>/dev/null grep -h "\/$file$" \
         "$FREEBSD_ALL_COMMON_PKGS_CONTENTS" \
         | sed -e 's/^\(.*\)\t\(.*\)$/\1/')
     if [ "$FREEBSD_MATCH_COUNT" = "" ]; then
@@ -254,15 +271,15 @@ while IFS= read -r file; do
     fi
     
     # Get Debian match count and string
-    DEBIAN_MATCH_COUNT=$(2>/dev/null grep -c "$file$" \
+    DEBIAN_MATCH_COUNT=$(2>/dev/null grep -c "\/$file$" \
         "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")
-    debian_pkg=$(2>/dev/null grep -h "$file$" \
+    debian_pkg=$(2>/dev/null grep -h "\/$file$" \
         "$DEBIAN_ALL_COMMON_PKGS_CONTENTS" \
         | sed -e 's/^\(.*\)\t\(.*\)$/\1/')
     if [ "$DEBIAN_MATCH_COUNT" = "" ]; then
         DEBIAN_MATCH_COUNT=$(2>/dev/null grep -Fc "$file" \
             "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")
-        debian_pkg=$(2>/dev/null grep -Fh "$file$" \
+        debian_pkg=$(2>/dev/null grep -Fh "$file" \
             "$DEBIAN_ALL_COMMON_PKGS_CONTENTS" \
             | sed -e 's/^\(.*\)\t\(.*\)$/\1/')
     fi
@@ -274,21 +291,24 @@ while IFS= read -r file; do
                 "${debian_pkg}" >> "$FREEBSD_DEBIAN_PKG_LST"
         else
             # 1:n
-            printf "%s\t%s\t%s\n" "$file" "${freebsd_pkg}" "*" \
-                >> "$FREEBSD_DEBIAN_PKG_LST"
-            printf "%s\n" "$file" >> "$EXCEPTIONS"
+            printf "freebsd-pkg:\n\n" > "$EXCEPTIONS/$file"
+            printf "%s\n" "${freebsd_pkg}" >> "$EXCEPTIONS/$file"
+            printf "\ndebian-pkgs:\n\n" >> "$EXCEPTIONS/$file"
+            printf "%s\n" "${debian_pkg}" >> "$EXCEPTIONS/$file"
         fi
     else
         if [ "$DEBIAN_MATCH_COUNT" -eq 1 ]; then
             # m:1
-            printf "%s\t%s\t%s\n" "$file" "*" "${debian_pkg}" \
-                >> "$FREEBSD_DEBIAN_PKG_LST"
-            printf "%s\n" "$file" >> "$EXCEPTIONS"
+            printf "freebsd-pkgs:\n\n" > "$EXCEPTIONS/$file"
+            printf "%s\n" "${freebsd_pkg}" >> "$EXCEPTIONS/$file"
+            printf "\ndebian-pkg:\n\n" >> "$EXCEPTIONS/$file"
+            printf "%s\n" "${debian_pkg}" >> "$EXCEPTIONS/$file"
         else
             # m:n
-            printf "%s\t%s\t%s\n" "$file" "*" "*" \
-                >> "$FREEBSD_DEBIAN_PKG_LST"
-            printf "%s\n" "$file" >> "$EXCEPTIONS"
+            printf "freebsd-pkgs:\n\n" > "$EXCEPTIONS/$file"
+            printf "%s\n" "${freebsd_pkg}" >> "$EXCEPTIONS/$file"
+            printf "\ndebian-pkgs:\n\n" >> "$EXCEPTIONS/$file"
+            printf "%s\n" "${debian_pkg}" >> "$EXCEPTIONS/$file"
         fi
 
     fi

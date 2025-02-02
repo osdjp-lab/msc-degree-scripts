@@ -35,6 +35,7 @@ cp -v "$CONTENTS_LISTING" "$PKG_CONTENTS_LISTING"
 
 ex -s "$PKG_CONTENTS_LISTING" << EOF
 %s/^\(.*\)\s\(.*\)$/\2\t\1/g
+%s/\s*$//g
 w
 q
 EOF

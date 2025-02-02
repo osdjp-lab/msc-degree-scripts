@@ -31,8 +31,10 @@ WORK_DIR="$(dirname "$(realpath "$0")")"
 SCRIPT_DIR="$WORK_DIR/base"
 
 SRC_DIR="$DEST_DIR/src"
-mkdir -pv "$SRC_DIR"
-"$SCRIPT_DIR/get-data.sh" "$SRC_DIR"
+if ! [ -d "$SRC_DIR" ]; then
+    mkdir -pv "$SRC_DIR"
+    "$SCRIPT_DIR/get-data.sh" "$SRC_DIR"
+fi
 
 CONTENTS_DIR="$DEST_DIR/Contents-amd64"
 mkdir -pv "$CONTENTS_DIR"

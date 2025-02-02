@@ -12,6 +12,9 @@
 8. Split long pipelines with pipe on newline
 9. Performance stats.sh script for testing both individual debian and freebsd extraction scripts
 10. Conditional execution of scripts (reduced runtime)
+11. Replace ex with sed and sponge
+12. Group output of extraction and comparison commands into subdirectories for ease of traversal and interpretation
+13. Group numbered scripts from debian and freebsd by function or scope into subdirectories
 
 ## Debian
 
@@ -24,6 +27,8 @@
 1. Gather meaningful descriptions of every FreeBSD base package in a single location (maybe by extracting man pages from each package into corresponding directories)
 2. Deduplicate extracted man pages (by hash or cmp)
 3. Fix package groupings both by type and by relevance
+4. In freebsd/base/14-generate-pkg-contents-lst.sh substitute argument NAME_DIR for PKG_CONTENTS_LISTING
+5. Scope split for base (full and simplified/deduplicated)
 
 ## Cross-reference
 

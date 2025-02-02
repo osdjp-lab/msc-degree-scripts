@@ -6,7 +6,7 @@
 # Copyright (C) 2024 Oscar Szumiak
 #
 
-# Create deduplicated single file all base system package file listing
+# Create single file all base system package file listing
 
 # Verify number of positional parameters
 

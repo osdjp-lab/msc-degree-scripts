@@ -58,40 +58,43 @@ mkdir -pv "$NAME_DIR"
 ALL_PKG_LISTING="$NAME_DIR/all-pkg.lst"
 "$SCRIPT_DIR/6-generate-all-pkg-lst.sh" "$LISTING_DIR" "$ALL_PKG_LISTING"
 
+SIMPLIFIED_ALL_PKG_LISTING="$NAME_DIR/simplified-all-pkg.lst"
+"$SCRIPT_DIR/7-generate-simplified-all-pkg-lst.sh" "$SIMPLIFIED_LISTING_DIR" "$SIMPLIFIED_ALL_PKG_LISTING"
+
 SPLIT_LISTINGS_DIR="$DEST_DIR/split-lst"
 mkdir -pv "$SPLIT_LISTINGS_DIR"
-"$SCRIPT_DIR/7-split-lst-by-dir.sh" "$ALL_PKG_LISTING" "$SPLIT_LISTINGS_DIR"
+"$SCRIPT_DIR/8-split-lst-by-dir.sh" "$SIMPLIFIED_ALL_PKG_LISTING" "$SPLIT_LISTINGS_DIR"
 
 MERGED_LISTINGS_DIR="$DEST_DIR/merged-lst"
 mkdir -pv "$MERGED_LISTINGS_DIR"
-"$SCRIPT_DIR/8-generate-merged-dir-lst.sh" "$SPLIT_LISTINGS_DIR" "$MERGED_LISTINGS_DIR"
+"$SCRIPT_DIR/9-generate-merged-dir-lst.sh" "$SPLIT_LISTINGS_DIR" "$MERGED_LISTINGS_DIR"
 
 MAN_DIR="$DEST_DIR/pkg-man-pages"
 mkdir -pv "$MAN_DIR"
-"$SCRIPT_DIR/9-extract-man-pages.sh" "$PKG_FILES_DIR" "$MAN_DIR"
-"$SCRIPT_DIR/10-deduplicate-man-pages.sh" "$MAN_DIR"
+"$SCRIPT_DIR/10-extract-man-pages.sh" "$PKG_FILES_DIR" "$MAN_DIR"
+"$SCRIPT_DIR/11-deduplicate-man-pages.sh" "$MAN_DIR"
 
 PLAIN_MAN_DIR="$DEST_DIR/pkg-man-txt"
 mkdir -pv "$PLAIN_MAN_DIR"
-"$SCRIPT_DIR/11-extract-txt-man-pages.sh" "$MAN_DIR" "$PLAIN_MAN_DIR"
-"$SCRIPT_DIR/12-group-txt-man-pages.sh" "$PLAIN_MAN_DIR"
+"$SCRIPT_DIR/12-extract-txt-man-pages.sh" "$MAN_DIR" "$PLAIN_MAN_DIR"
+"$SCRIPT_DIR/13-group-txt-man-pages.sh" "$PLAIN_MAN_DIR"
 
-"$SCRIPT_DIR/13-generate-names.sh" "$NAME_DIR" "$PKG_META_DIR" "$MAN_DIR"
-"$SCRIPT_DIR/14-generate-pkg-contents-lst.sh" "$SIMPLIFIED_LISTING_DIR" "$NAME_DIR"
+"$SCRIPT_DIR/14-generate-names.sh" "$NAME_DIR" "$PKG_META_DIR" "$MAN_DIR"
+"$SCRIPT_DIR/15-generate-pkg-contents-lst.sh" "$SIMPLIFIED_LISTING_DIR" "$NAME_DIR"
 
 DEDUPLICATED_PKGS="$DEST_DIR/pkgs-no-man-dbg-dev-lib32"
 mkdir -pv "$DEDUPLICATED_PKGS"
-"$SCRIPT_DIR/15-deduplicate-pkgs.sh" "$NAME_DIR" "$PKG_META_DIR" "$DEDUPLICATED_PKGS"
+"$SCRIPT_DIR/16-deduplicate-pkgs.sh" "$NAME_DIR" "$PKG_META_DIR" "$DEDUPLICATED_PKGS"
 
 PKGS_BY_TYPE="$DEST_DIR/by-type"
 mkdir -pv "$PKGS_BY_TYPE"
-"$SCRIPT_DIR/16-group-by-type.sh" "$DEDUPLICATED_PKGS" "$PKGS_BY_TYPE"
+"$SCRIPT_DIR/17-group-by-type.sh" "$DEDUPLICATED_PKGS" "$PKGS_BY_TYPE"
 
 PKGS_BY_RELEVANCE="$DEST_DIR/by-relevance"
 mkdir -pv "$PKGS_BY_RELEVANCE"
-"$SCRIPT_DIR/17-group-by-relevance.sh" "$PKGS_BY_TYPE" "$PKGS_BY_RELEVANCE"
+"$SCRIPT_DIR/18-group-by-relevance.sh" "$PKGS_BY_TYPE" "$PKGS_BY_RELEVANCE"
 
 PKGS_BY_COMPARABILITY="$DEST_DIR/by-comparability"
 mkdir -pv "$PKGS_BY_COMPARABILITY"
-"$SCRIPT_DIR/18-group-by-comparability.sh" "$PKGS_BY_TYPE" "$PKGS_BY_COMPARABILITY"
+"$SCRIPT_DIR/19-group-by-comparability.sh" "$PKGS_BY_TYPE" "$PKGS_BY_COMPARABILITY"
 

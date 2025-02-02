@@ -314,5 +314,6 @@ while IFS= read -r file; do
     fi
 done < "$ALL_COMMON_LST"
 
-column -t "$FREEBSD_DEBIAN_PKG_LST" | sponge "$FREEBSD_DEBIAN_PKG_LST"
+column -t "$FREEBSD_DEBIAN_PKG_LST" | sort -k2,3 \
+    | sponge "$FREEBSD_DEBIAN_PKG_LST"
 

@@ -27,9 +27,12 @@ fi
 
 ########################################
 
-# Extract package-contents listing
+WORK_DIR="$(dirname "$(realpath "$0")")"
 
-cp -v "$CONTENTS_LISTING" "$PKG_CONTENTS_LISTING"
+# Split comma separated entries into multiple entries
+
+awk -f "$WORK_DIR/split-multi-pkg-entries.awk" "$CONTENTS_LISTING" \
+    > "$PKG_CONTENTS_LISTING"
 
 # Switch columns and replace separator with '\t'
 
@@ -40,7 +43,10 @@ w
 q
 EOF
 
-cut -d "/" -f "2-" "$PKG_CONTENTS_LISTING" | sponge "$PKG_CONTENTS_LISTING"
+# Remove category prefix from all package names
+
+cut -d "/" -f "2-" "$PKG_CONTENTS_LISTING" \
+    | sponge "$PKG_CONTENTS_LISTING"
 
 sort "$PKG_CONTENTS_LISTING" -o "$PKG_CONTENTS_LISTING"
 

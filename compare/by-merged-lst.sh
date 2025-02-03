@@ -302,6 +302,7 @@ while IFS= read -r file; do
                     "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")" \
                     >> "$EXCEPTIONS/$file"
             done
+            column -et "$EXCEPTIONS/$file" | sponge "$EXCEPTIONS/$file"
         fi
     else
         if [ "$DEBIAN_MATCH_COUNT" -eq 1 ]; then
@@ -320,6 +321,7 @@ while IFS= read -r file; do
                     "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")" \
                     >> "$EXCEPTIONS/$file"
             done
+            column -et "$EXCEPTIONS/$file" | sponge "$EXCEPTIONS/$file"
         else
             # m:n
             printf "freebsd-pkgs:\n\n" > "$EXCEPTIONS/$file"
@@ -336,8 +338,8 @@ while IFS= read -r file; do
                     "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")" \
                     >> "$EXCEPTIONS/$file"
             done
+            column -et "$EXCEPTIONS/$file" | sponge "$EXCEPTIONS/$file"
         fi
-
     fi
 done < "$ALL_COMMON_LST"
 

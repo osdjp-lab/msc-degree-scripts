@@ -250,6 +250,9 @@ true > "$FREEBSD_DEBIAN_PKG_LST"
 
 EXCEPTIONS="$OUTPUT_DIR/freebsd-debian-exceptions"
 mkdir "$EXCEPTIONS"
+mkdir "$EXCEPTIONS/1-n"
+mkdir "$EXCEPTIONS/m-1"
+mkdir "$EXCEPTIONS/m-n"
 
 while IFS= read -r file; do
 
@@ -288,57 +291,60 @@ while IFS= read -r file; do
                 "${debian_pkg}" >> "$FREEBSD_DEBIAN_PKG_LST"
         else
             # 1:n
-            printf "freebsd-pkg:\n\n" > "$EXCEPTIONS/$file"
+            TARGET_FILE="$EXCEPTIONS/1-n/$file"
+            printf "freebsd-pkg:\n\n" > "$TARGET_FILE"
             for pkg in ${freebsd_pkg}; do
                 search_string="${pkg}.*\/$file$"
                 printf "%s\n" "$(grep "$search_string" \
                     "$FREEBSD_ALL_COMMON_PKGS_CONTENTS")" \
-                    >> "$EXCEPTIONS/$file"
+                    >> "$TARGET_FILE"
             done
-            printf "\ndebian-pkgs:\n\n" >> "$EXCEPTIONS/$file"
+            printf "\ndebian-pkgs:\n\n" >> "$TARGET_FILE"
             for pkg in ${debian_pkg}; do
                 search_string="${pkg}.*\/$file$"
                 printf "%s\n" "$(grep "$search_string" \
                     "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")" \
-                    >> "$EXCEPTIONS/$file"
+                    >> "$TARGET_FILE"
             done
-            column -et "$EXCEPTIONS/$file" | sponge "$EXCEPTIONS/$file"
+            column -et "$TARGET_FILE" | sponge "$TARGET_FILE"
         fi
     else
         if [ "$DEBIAN_MATCH_COUNT" -eq 1 ]; then
             # m:1
-            printf "freebsd-pkgs:\n\n" > "$EXCEPTIONS/$file"
+            TARGET_FILE="$EXCEPTIONS/m-1/$file"
+            printf "freebsd-pkgs:\n\n" > "$TARGET_FILE"
             for pkg in ${freebsd_pkg}; do
                 search_string="${pkg}.*\/$file$"
                 printf "%s\n" "$(grep "$search_string" \
                     "$FREEBSD_ALL_COMMON_PKGS_CONTENTS")" \
-                    >> "$EXCEPTIONS/$file"
+                    >> "$TARGET_FILE"
             done
-            printf "\ndebian-pkg:\n\n" >> "$EXCEPTIONS/$file"
+            printf "\ndebian-pkg:\n\n" >> "$TARGET_FILE"
             for pkg in ${debian_pkg}; do
                 search_string="${pkg}.*\/$file$"
                 printf "%s\n" "$(grep "$search_string" \
                     "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")" \
-                    >> "$EXCEPTIONS/$file"
+                    >> "$TARGET_FILE"
             done
-            column -et "$EXCEPTIONS/$file" | sponge "$EXCEPTIONS/$file"
+            column -et "$TARGET_FILE" | sponge "$TARGET_FILE"
         else
             # m:n
-            printf "freebsd-pkgs:\n\n" > "$EXCEPTIONS/$file"
+            TARGET_FILE="$EXCEPTIONS/m-n/$file"
+            printf "freebsd-pkgs:\n\n" > "$TARGET_FILE"
             for pkg in ${freebsd_pkg}; do
                 search_string="${pkg}.*\/$file$"
                 printf "%s\n" "$(grep "$search_string" \
                     "$FREEBSD_ALL_COMMON_PKGS_CONTENTS")" \
-                    >> "$EXCEPTIONS/$file"
+                    >> "$TARGET_FILE"
             done
-            printf "\ndebian-pkgs:\n\n" >> "$EXCEPTIONS/$file"
+            printf "\ndebian-pkgs:\n\n" >> "$TARGET_FILE"
             for pkg in ${debian_pkg}; do
                 search_string="${pkg}.*\/$file$"
                 printf "%s\n" "$(grep "$search_string" \
                     "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")" \
-                    >> "$EXCEPTIONS/$file"
+                    >> "$TARGET_FILE"
             done
-            column -et "$EXCEPTIONS/$file" | sponge "$EXCEPTIONS/$file"
+            column -et "$TARGET_FILE" | sponge "$TARGET_FILE"
         fi
     fi
 done < "$ALL_COMMON_LST"

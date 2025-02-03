@@ -39,10 +39,5 @@ awk -f "$WORK_DIR/switch-columns.awk" "$CONTENTS_LISTING" \
 awk -f "$WORK_DIR/split-multi-pkg-entries.awk" \
     "$PKG_CONTENTS_LISTING" | sponge "$PKG_CONTENTS_LISTING"
 
-# Remove category prefix from all package names
-
-# cut -d "/" -f "2-" "$PKG_CONTENTS_LISTING" \
-#     | sponge "$PKG_CONTENTS_LISTING"
-
 sort "$PKG_CONTENTS_LISTING" -o "$PKG_CONTENTS_LISTING"
 

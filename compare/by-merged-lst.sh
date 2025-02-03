@@ -248,9 +248,6 @@ uniq "$FREEBSD_ALL_COMMON_PKGS" | sponge "$FREEBSD_ALL_COMMON_PKGS"
 FREEBSD_DEBIAN_PKG_LST="$OUTPUT_DIR/freebsd-debian-pkg.lst"
 true > "$FREEBSD_DEBIAN_PKG_LST"
 
-printf "file\tfreebsd-pkg\tdebian-pkg\n" >> "$FREEBSD_DEBIAN_PKG_LST"
-printf "\n" >> "$FREEBSD_DEBIAN_PKG_LST"
-
 EXCEPTIONS="$OUTPUT_DIR/freebsd-debian-exceptions"
 mkdir "$EXCEPTIONS"
 
@@ -275,13 +272,13 @@ while IFS= read -r file; do
         "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")
     debian_pkg=$(2>/dev/null grep -h "\/$file$" \
         "$DEBIAN_ALL_COMMON_PKGS_CONTENTS" \
-        | sed -e 's/^\(.*\)\t\(.*\)$/\1/')
+        | awk '{ print $1 }')
     if [ "$DEBIAN_MATCH_COUNT" = "" ]; then
         DEBIAN_MATCH_COUNT=$(2>/dev/null grep -Fc "$file" \
             "$DEBIAN_ALL_COMMON_PKGS_CONTENTS")
         debian_pkg=$(2>/dev/null grep -Fh "$file" \
             "$DEBIAN_ALL_COMMON_PKGS_CONTENTS" \
-            | sed -e 's/^\(.*\)\t\(.*\)$/\1/')
+            | awk '{ print $1 }')
     fi
 
     if [ "$FREEBSD_MATCH_COUNT" -eq 1 ]; then

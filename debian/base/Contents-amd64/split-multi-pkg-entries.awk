@@ -9,15 +9,20 @@
 # Split category prefixed multi package entries into individual
 # entries for the same file in Contents-amd64
 
-/,/ {
-    split($2, arr, ",")
+$1 ~ /,/ {
+    split($1, arr, ",")
     for (i in arr) {
-        sub(/^[a-z]*\//, "", arr[i])
-        print $1, arr[i]
+        sub(/^.*\//, "", arr[i])
+        printf ("%s ", arr[i])
+        for (i = 2; i <= NF; i++) {
+            printf ("%s ", $i)
+        }
+        printf ("\n")
     }
 }
 
-!/,/ {
+$1 !~ /,/ {
+    sub(/^.*\//, "", $1)
     print $0
 }
 

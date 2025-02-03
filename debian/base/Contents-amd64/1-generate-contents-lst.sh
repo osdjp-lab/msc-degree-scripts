@@ -29,24 +29,20 @@ fi
 
 WORK_DIR="$(dirname "$(realpath "$0")")"
 
-# Split comma separated entries into multiple entries
+# Switch columns
 
-awk -f "$WORK_DIR/split-multi-pkg-entries.awk" "$CONTENTS_LISTING" \
+awk -f "$WORK_DIR/switch-columns.awk" "$CONTENTS_LISTING" \
     > "$PKG_CONTENTS_LISTING"
 
-# Switch columns and replace separator with '\t'
+# Split comma separated entries into multiple entries
 
-ex -s "$PKG_CONTENTS_LISTING" << EOF
-%s/^\(.*\)\s\(.*\)$/\2\t\1/g
-%s/\s*$//g
-w
-q
-EOF
+awk -f "$WORK_DIR/split-multi-pkg-entries.awk" \
+    "$PKG_CONTENTS_LISTING" | sponge "$PKG_CONTENTS_LISTING"
 
 # Remove category prefix from all package names
 
-cut -d "/" -f "2-" "$PKG_CONTENTS_LISTING" \
-    | sponge "$PKG_CONTENTS_LISTING"
+# cut -d "/" -f "2-" "$PKG_CONTENTS_LISTING" \
+#     | sponge "$PKG_CONTENTS_LISTING"
 
 sort "$PKG_CONTENTS_LISTING" -o "$PKG_CONTENTS_LISTING"
 

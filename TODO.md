@@ -2,20 +2,21 @@
 
 ## General
 
-1. Consistency in for/while loop do placement and if then placement
-2. If DEST_DIR does not exist make it
-3. Conditional tool usage (bsdtar, sponge, etc.)
-4. Verification message (print only basename)
-5. Make regeneration of output easy (no duplication, errors, etc.)
-6. Consistency of input checks and argument order (input then output)
-7. In any command always put options first positional arguments last
-8. Split long pipelines with pipe on newline
-9. Performance stats.sh script for testing both individual debian and freebsd extraction scripts
-10. Conditional execution of scripts (reduced runtime)
-11. Replace ex with sed/awk and sponge
-12. Group output of extraction and comparison commands into subdirectories for ease of traversal and interpretation
-13. Group numbered scripts from debian and freebsd by function or scope into subdirectories
-14. Split long argument lists for commands over multiple lines
+- Consistency in for/while loop do placement and if then placement
+- If DEST_DIR does not exist make it
+- Conditional tool usage (bsdtar, sponge, etc.)
+- Verification message (print only basename)
+- Make regeneration of output easy (no duplication, errors, etc.)
+- Consistency of input checks and argument order (input then output)
+- In any command always put options first positional arguments last
+- Split long pipelines with pipe on newline
+- Performance stats.sh script for testing both individual debian and freebsd extraction scripts
+- Conditional execution of scripts (reduced runtime)
+- Replace ex with sed/awk and sponge
+- Group output of extraction and comparison commands into subdirectories for ease of traversal and interpretation
+- Group numbered scripts from debian and freebsd by function or scope into subdirectories
+- Split long argument lists for commands over multiple lines
+- Increase code modularity where possible
 
 ## Debian
 

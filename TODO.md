@@ -12,9 +12,10 @@
 8. Split long pipelines with pipe on newline
 9. Performance stats.sh script for testing both individual debian and freebsd extraction scripts
 10. Conditional execution of scripts (reduced runtime)
-11. Replace ex with sed and sponge
+11. Replace ex with sed/awk and sponge
 12. Group output of extraction and comparison commands into subdirectories for ease of traversal and interpretation
 13. Group numbered scripts from debian and freebsd by function or scope into subdirectories
+14. Split long argument lists for commands over multiple lines
 
 ## Debian
 

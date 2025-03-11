@@ -29,7 +29,7 @@ fi
 
 # Make list of deduplicated package names
 
-cut -f1 "$PKG_CONTENTS_LISTING" > "$PKG_LISTING"
+cut -d' ' -f1 "$PKG_CONTENTS_LISTING" > "$PKG_LISTING"
 
 sort "$PKG_LISTING" -o "$PKG_LISTING"
 

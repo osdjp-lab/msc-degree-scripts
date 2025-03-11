@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
-set -x
-
 #
 # SPDX-License-Identifier: MIT
 # 
@@ -221,7 +219,7 @@ sort -o "$DEBIAN_ALL_COMMON_PKGS_CONTENTS" \
 
 DEBIAN_ALL_COMMON_PKGS="$OUTPUT_DIR/debian-all-common-pkgs"
 
-cut -f1 "$DEBIAN_ALL_COMMON_PKGS_CONTENTS" > "$DEBIAN_ALL_COMMON_PKGS"
+cut -d' ' -f1 "$DEBIAN_ALL_COMMON_PKGS_CONTENTS" > "$DEBIAN_ALL_COMMON_PKGS"
 
 uniq "$DEBIAN_ALL_COMMON_PKGS" | sponge "$DEBIAN_ALL_COMMON_PKGS"
 

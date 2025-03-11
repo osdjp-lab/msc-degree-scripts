@@ -17,6 +17,11 @@
 - Group numbered scripts from debian and freebsd by function or scope into subdirectories
 - Split long argument lists for commands over multiple lines
 - Increase code modularity where possible
+- Add unit tests
+- For longer running scripts add progress update
+- Default to tab as the delimiter for any processed multi column data
+- Comment all used variables for clarity
+- Run automated stats for each script and subscript
 
 ## Debian
 

@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+
+'''Check stationarity and apply log differencing.'''
+
+import pandas as pd
+from statsmodels.tsa.stattools import adfuller
+
+input_file = 'data/2-filled.csv'
+output_file = 'data/3-differenced.csv'
+
+# Load the CSV file
+data = pd.read_csv(input_file, index_col='Date')
+
+# Perform ADF test on each column
+for column in data.columns:
+
+    # Perform ADF test
+    adf_result = adfuller(data[column])
+    
+    # Print the ADF test results
+    print('ADF Statistic: ', adf_result[0])
+    print('p-value: ', adf_result[1])
+    print('Critical Values: ')
+    for key, value in adf_result[4].items():
+        print('\t%s: %.3f' % (key, value))
+    
+    # Determine stationarity
+    if adf_result[1] < 0.05:
+        print(f"{column}: stationary")
+    else:
+        print(f"{column}: non-stationary")
+    print("-----------------------------------")
+
+# Select the columns you want to difference
+columns_to_diff = ['USD', 'JPY', 'CZK', 'DKK', 'GBP', 'HUF', 'PLN', 'SEK', 'CHF', 'NOK', 'AUD', 'CAD', 'HKD', 'KRW', 'NZD', 'SGD', 'ZAR']
+
+# Perform differencing
+data_diff = data[columns_to_diff].diff()
+
+# Drop the first row which will have NaN values after differencing
+data_diff = data_diff.dropna()
+
+# Reset the index to include the Date column
+data_diff_reset = data_diff.reset_index()
+
+# Save the differenced DataFrame to a CSV file
+data_diff_reset.to_csv(output_file, index=False)
+

@@ -3,6 +3,7 @@
 ## Requirements
 
 - python 3
+- numpy
 - pandas
 - scikit-learn
 - csvkit

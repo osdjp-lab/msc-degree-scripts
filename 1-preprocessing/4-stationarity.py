@@ -5,8 +5,8 @@
 import pandas as pd
 from statsmodels.tsa.stattools import adfuller
 
-input_file = 'data/2-filled.csv'
-output_file = 'data/3-differenced.csv'
+input_file = 'data/3-filled.csv'
+output_file = 'data/4-differenced.csv'
 
 # Load the CSV file
 data = pd.read_csv(input_file, index_col='Date')
@@ -31,11 +31,8 @@ for column in data.columns:
         print(f"{column}: non-stationary")
     print("-----------------------------------")
 
-# Select the columns you want to difference
-columns_to_diff = ['USD', 'JPY', 'CZK', 'DKK', 'GBP', 'HUF', 'PLN', 'SEK', 'CHF', 'NOK', 'AUD', 'CAD', 'HKD', 'KRW', 'NZD', 'SGD', 'ZAR']
-
 # Perform differencing
-data_diff = data[columns_to_diff].diff()
+data_diff = data.diff()
 
 # Drop the first row which will have NaN values after differencing
 data_diff = data_diff.dropna()

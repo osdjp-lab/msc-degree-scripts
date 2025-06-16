@@ -4,8 +4,8 @@
 
 import pandas as pd
 
-input_file = 'data/1-selected.csv'
-output_file = 'data/2-filled.csv'
+input_file = 'data/2-decorrelated.csv'
+output_file = 'data/3-filled.csv'
 
 # Load the CSV file
 data = pd.read_csv(input_file, index_col='Date', parse_dates=True)

@@ -5,8 +5,8 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-input_file  = 'data/3-differenced.csv'
-output_file = 'data/4-normalized.csv'
+input_file  = 'data/4-differenced.csv'
+output_file = 'data/5-normalized.csv'
 
 # Load the CSV file
 data = pd.read_csv(input_file, index_col='Date')

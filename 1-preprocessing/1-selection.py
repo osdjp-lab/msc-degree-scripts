@@ -10,6 +10,9 @@ output_file = 'data/1-selected.csv'
 # Read the CSV file
 df = pd.read_csv(input_file)
 
+# Create the output directory if it doesn't exist
+os.makedirs('data', exist_ok=True)
+
 # Drop columns with missing values
 df_selected = df.dropna(axis=1, how='any')
 

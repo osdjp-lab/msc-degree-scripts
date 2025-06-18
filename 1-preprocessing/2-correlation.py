@@ -7,20 +7,23 @@ import pandas as pd
 import numpy as np
 
 input_file = 'data/1-selected.csv'
-full_correlation_matrix_file = 'data/full_correlation_matrix.csv'
-half_correlation_matrix_file = 'data/half_correlation_matrix.csv'
-high_correlations_file = 'data/high_correlation_pairs.csv'
-reduced_full_correlation_matrix_file = 'data/reduced_full_correlation_matrix.csv'
+full_correlation_matrix_file = 'meta/full_correlation_matrix.csv'
+half_correlation_matrix_file = 'meta/half_correlation_matrix.csv'
+high_correlations_file = 'meta/high_correlation_pairs.csv'
+reduced_full_correlation_matrix_file = 'meta/reduced_full_correlation_matrix.csv'
 output_file = 'data/2-decorrelated.csv'
 
 # Load the CSV file
 df = pd.read_csv(input_file)
 
+# Create the output directory if it doesn't exist
+os.makedirs('meta', exist_ok=True)
+
 # Calculate the Pearson correlation matrix
 corr_matrix = df.iloc[:, 1:].corr(method='pearson')
 
 # Save the full correlation matrix to a new CSV file
-# corr_matrix.to_csv(full_correlation_matrix_file)
+corr_matrix.to_csv(full_correlation_matrix_file)
 
 # Create a lower triangular mask
 mask = np.tril(np.ones_like(corr_matrix, dtype=bool))
@@ -55,7 +58,7 @@ red_corr_matrix = df_cleaned.iloc[:, 1:].corr(method='pearson')
 red_corr_matrix.to_csv(reduced_full_correlation_matrix_file)
 
 # Create the destination directory if it doesn't exist
-dest_dir = 'data/correlations'
+dest_dir = 'meta/correlations'
 os.makedirs(dest_dir, exist_ok=True)
 
 # Loop through each column in the correlation matrix

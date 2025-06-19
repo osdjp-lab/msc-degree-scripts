@@ -2,6 +2,7 @@
 
 '''Select suitable variables from the initial dataset.'''
 
+import os
 import pandas as pd
 
 input_file = 'data/0-raw.csv'

@@ -10,8 +10,8 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-input_dir = 'data/7-time-lags/USD'
-output_dir = 'data/8-splits/USD'
+input_dir = 'data/7-time-lags/HUF'
+output_dir = 'data/8-splits/HUF'
 
 # Create the output directory if it doesn't exist
 if not os.path.exists(output_dir):

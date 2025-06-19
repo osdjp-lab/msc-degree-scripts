@@ -17,17 +17,23 @@ df = pd.read_csv(input_file, index_col='Date')
 
 # Define the groupings
 groupings = {
-    'AUD': ['KRW', 'DKK', 'PLN', 'USD', 'JPY'],
-    'CAD': ['GBP', 'USD', 'DKK', 'PLN', 'SEK'],
-    'CHF': ['JPY', 'KRW', 'DKK', 'USD', 'CAD'],
-    'DKK': ['KRW', 'AUD', 'NZD', 'USD', 'GBP'],
-    'GBP': ['CAD', 'JPY', 'DKK', 'AUD', 'USD'],
-    'JPY': ['PLN', 'NZD', 'CHF', 'GBP', 'DKK'],
-    'KRW': ['AUD', 'DKK', 'NZD', 'CHF', 'PLN'],
-    'NZD': ['JPY', 'SEK', 'USD', 'DKK', 'KRW'],
-    'PLN': ['JPY', 'AUD', 'USD', 'KRW', 'CAD'],
-    'SEK': ['NZD', 'USD', 'DKK', 'CAD', 'AUD'],
-    'USD': ['NZD', 'SEK', 'CAD', 'DKK', 'PLN']
+    'HUF': ['ZAR', 'CHF', 'NOK', 'SEK', 'SGD'],
+    'ZAR': ['HUF', 'CHF', 'NOK', 'SEK', 'GBP'],
+    'CHF': ['HUF', 'ZAR', 'SGD', 'NOK', 'GBP'],
+    'NOK': ['HUF', 'SEK', 'ZAR', 'CHF', 'SGD'],
+    'SEK': ['NOK', 'ZAR', 'HUF', 'GBP', 'CHF'],
+    'GBP': ['CZK', 'ZAR', 'CHF', 'HUF', 'KRW'],
+    'SGD': ['CHF', 'HUF', 'ZAR', 'USD', 'HKD'],
+    'CZK': ['GBP', 'ZAR', 'CHF', 'HUF', 'KRW'],
+    'HKD': ['USD', 'KRW', 'SGD', 'CZK', 'GBP'],
+    'USD': ['HKD', 'KRW', 'SGD', 'CZK', 'GBP'],
+    'NZD': ['AUD', 'CHF', 'CZK', 'SGD', 'ZAR'],
+    'KRW': ['USD', 'HKD', 'GBP', 'CZK', 'SEK'],
+    'PLN': ['HUF', 'CHF', 'NOK', 'ZAR', 'GBP'],
+    'AUD': ['NZD', 'CAD', 'CHF', 'CZK', 'SGD'],
+    'CAD': ['AUD', 'SGD', 'NZD', 'JPY', 'CHF'],
+    'JPY': ['SEK', 'NOK', 'ZAR', 'CAD', 'CZK'],
+    'DKK': ['CZK', 'PLN', 'ZAR', 'JPY', 'NOK']
 }
 
 # Process each grouping and save the CSV files

@@ -14,7 +14,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 # Process each CSV file
 for file in [f for f in os.listdir(input_dir) if f.endswith('.csv')]:
-    if file == 'USD.csv':
+    if file == 'HUF.csv':
         df = pd.read_csv(os.path.join(input_dir, file))
         base_name = os.path.splitext(file)[0]
         file_output_dir = os.path.join(output_dir, base_name)

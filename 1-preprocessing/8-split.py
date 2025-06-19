@@ -27,8 +27,13 @@ for filename in os.listdir(input_dir):
         X = data.iloc[:, :-1]  # Feature data
         y = data.iloc[:, -1]   # Target data
 
+        X_new, y_new = X, y
+
+        # Get subset of dataset
+        # X_new, _, y_new, _ = train_test_split(X, y, test_size=0.9, shuffle=False)
+
         # Split data sequentially into training, cross-validation, and testing sets
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, shuffle=False)
+        X_train, X_test, y_train, y_test = train_test_split(X_new, y_new, test_size=0.1, shuffle=False)
 
         # Combine the X and y data for each split
         train_data = pd.concat([X_train, y_train], axis=1)

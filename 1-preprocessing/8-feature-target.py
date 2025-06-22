@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
 
-'''Create 1-50 time lagged (windowed) datasets from the split datasets.'''
+'''Create 1 to nr_lags time lagged (windowed) datasets from the split datasets.'''
 
 import os
 import pandas as pd
 
 # Set the input and output directories
-input_dir = 'data/6-groupings'
-output_dir = 'data/7-time-lags'
+input_dir = 'data/7-groupings'
+output_dir = 'data/8-time-lags'
+
+nr_lags = 150
 
 # Create output directory if not exists
 os.makedirs(output_dir, exist_ok=True)
 
 # Process each CSV file
 for file in [f for f in os.listdir(input_dir) if f.endswith('.csv')]:
-    if file == 'HUF.csv':
+    if file == 'USD.csv':
         df = pd.read_csv(os.path.join(input_dir, file))
         base_name = os.path.splitext(file)[0]
         file_output_dir = os.path.join(output_dir, base_name)
@@ -25,7 +27,7 @@ for file in [f for f in os.listdir(input_dir) if f.endswith('.csv')]:
         predictors = df.columns[1:-1]
         target_col = df.columns[-1]  # Name of target column
 
-        for i in range(1, 51):
+        for i in range(1, nr_lags+1):
             # Initialize with date column DATA (not just name)
             shifted_data = df[[date_col]].copy()
             

@@ -23,7 +23,6 @@
 - Reasoning order for failure of model: Data (lack of predictive potential of data) -> Model training -> Parameter selection
 - If prediction model still has terrible accuracy (add other data: indexes, stocks - only upto 5)
 - Statistical analysis of the dataset
-- Cointegration
 - Pearson Correlation matrixes for different offsets (time lags) for different currencies
 - Create a Pearson correlation coefficient percentage of values above graph for easier choice of currency rejection value
 

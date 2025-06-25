@@ -16,33 +16,30 @@ os.makedirs(output_dir, exist_ok=True)
 
 # Process each CSV file
 for file in [f for f in os.listdir(input_dir) if f.endswith('.csv')]:
-    if file == 'USD.csv':
+    # if file == 'USD.csv':
         df = pd.read_csv(os.path.join(input_dir, file))
         base_name = os.path.splitext(file)[0]
-        file_output_dir = os.path.join(output_dir, base_name)
-        os.makedirs(file_output_dir, exist_ok=True)
 
         # Get actual column data references
         date_col = df.columns[0]  # Name of date column
         predictors = df.columns[1:-1]
         target_col = df.columns[-1]  # Name of target column
 
-        for i in range(1, nr_lags+1):
-            # Initialize with date column DATA (not just name)
-            shifted_data = df[[date_col]].copy()
-            
-            # Create shifted predictors
-            for shift in range(1, i+1):
-                shifted = df[predictors].shift(shift)
-                shifted.columns = [f'{col}_shift{shift}' for col in predictors]
-                shifted_data = pd.concat([shifted_data, shifted], axis=1)
-            
-            # Add target column DATA (not just name)
-            shifted_data[target_col] = df[target_col]
-            
-            # Clean and save
-            shifted_data.dropna().to_csv(
-                os.path.join(file_output_dir, f'{i}.csv'),
-                index=False
-            )
+        # Initialize with date column DATA (not just name)
+        shifted_data = df[[date_col]].copy()
+        
+        # Create shifted predictors
+        for shift in range(1, nr_lags+1):
+            shifted = df[predictors].shift(shift)
+            shifted.columns = [f'{col}_shift{shift}' for col in predictors]
+            shifted_data = pd.concat([shifted_data, shifted], axis=1)
+        
+        # Add target column DATA (not just name)
+        shifted_data[target_col] = df[target_col]
+        
+        # Clean and save
+        shifted_data.dropna().to_csv(
+            os.path.join(output_dir, f'{base_name}.csv'),
+            index=False
+        )
 

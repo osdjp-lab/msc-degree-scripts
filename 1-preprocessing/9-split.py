@@ -4,8 +4,8 @@
 Split each currency exchange rate time series dataset into
 two sequential subsets with a nr_lags seperation between them in order
 to prevent information leakage between the training and test sets:
-- training (90%)
-- testing (10%)
+- training (70%)
+- testing (30%)
 '''
 
 import os
@@ -37,7 +37,7 @@ for filename in os.listdir(input_dir):
         # X_new, _, y_new, _ = train_test_split(X, y, test_size=0.9, shuffle=False)
 
         # Calculate the number of rows for the train set (90% of the remaining rows)
-        train_size = int(0.9 * (len(X_new) - nr_lags))
+        train_size = int(0.7 * (len(X_new) - nr_lags))
 
         # Split data sequentially into training, cross-validation, and testing sets
         X_train, X_sep_test, y_train, y_sep_test = train_test_split(X_new, y_new, train_size=train_size, shuffle=False)

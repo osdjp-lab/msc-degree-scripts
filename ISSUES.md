@@ -2,9 +2,15 @@
 
 ## Preprocessing performance issues
 
-- Static feature-target dataset generation (time lags)
-- Static train-test split generation
-- Normalization range (-1,1) [tanh activation function] - possibility of better results for reduced range (-0.8,0.8)
+- Static feature-target dataset generation (time lags) - only generate largest time lag (and change loaded columns during training)
+- Static train-test split generation (move to training)
+
+## Preprocessing considerations
+
+- Exponential smoothing and technical indicators [prediction]
+- Normalization range (-1,1) [tanh activation function] - possibility of better results for reduced range (-0.8,0.8) [nn-vs-chaotic]
+- Information leakage between train and test sets
+- Descriptive statistics, Bera-Jarque test, Autocorrelation coefficients, Bartlett standard errors, Ljung-Box Q statistic [robust-regression]
 
 ## Forecasting methodology
 

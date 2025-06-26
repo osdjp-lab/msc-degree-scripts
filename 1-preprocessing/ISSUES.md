@@ -1,0 +1,23 @@
+# Issues
+
+## Preprocessing performance issues
+
++ Static feature-target dataset generation (time lags) - only generate largest time lag (and change loaded columns during training)
++ Static train-test split generation (move to training)
+
+## Preprocessing considerations
+
++ Log transformation
++ Information leakage between train and test sets (add separation)
+- Statistical analysis of the dataset
+- Check performance when omitting certain steps
+- Winsoring or Box-Cox transformation of the data
+- Cointegration
+- Regularization (L1, L2, dropout, early stopping)
+- Choice of better predictors: indexes, stocks, etc.
+- Pearson Correlation matrixes for different offsets (time lags) for different currencies
+- Create a Pearson correlation coefficient percentage of values above, graph for easier choice of currency rejection value
+- Exponential smoothing and technical indicators [prediction]
+- Normalization range (-1,1) [tanh activation function] - possibility of better results for reduced range (-0.8,0.8) [nn-vs-chaotic]
+- Descriptive statistics, Bera-Jarque test, Autocorrelation coefficients, Bartlett standard errors, Ljung-Box Q statistic [robust-regression]
+

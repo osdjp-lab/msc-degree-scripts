@@ -1,5 +1,38 @@
 # Issues
 
+## Preprocessing step selection
+
+1. Minimal required preprocessing steps for each model.
+2. Evaluate initial datasets using default model parameters.
+3. Apply and evaluaute different combinations of optional preprocessing steps for each model.
+
+## Necessary vs required preprocessing steps for each model
+
+### Note
+
+Feature scaling (normalization/standardization)
+
+### Required
+
+Common prior:
+- Handling of missing values
+
+Specific:
+- Neural network: Normalization
+- SVR: Standardization (mean = 0; variance = 1); Handling of outliers (removal of outliers or windsoring) 
+- Random forest: None
+
+Post:
+- Feature creation (time lags for all variables)
+- Correlation analysis (covariance, cointegration, chi-square, linear correlation)
+- Feature selection (irrelevant or redundant features should be removed) - possibly via Random Forest
+- Train/test split
+
+### Optional
+
+- Log transformation
+- Differencing
+
 ## Preprocessing performance issues
 
 + Static feature-target dataset generation (time lags) - only generate largest time lag (and change loaded columns during training)

@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.stattools import adfuller
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.feature_selection import RFECV
 
 def remove_variables_with_missing_values(input_file, output_file):
     """Remove variables with missing values.
@@ -97,12 +98,13 @@ def difference(data, critical_value=0.05):
             data[column] = data[column].diff()
     data.dropna(inplace=True)
 
-def normalize(input_file, output_file):
+def normalize(input_file, output_file, output_range=(-1,1)):
     """Normalize the data using MinMaxScaler.
 
     Args:
         input_file: Input csv file.
         output_file: Output csv file.
+        output_range (tuple, optional): The desired output range. Defaults to (-1, 1).
 
     Returns:
         None.
@@ -115,7 +117,7 @@ def normalize(input_file, output_file):
     # Normalize the differenced data, excluding the header
     header = data.columns
     data_values = data.values
-    scaler = MinMaxScaler(feature_range=(-1,1))
+    scaler = MinMaxScaler(feature_range=output_range)
     data_normalized = scaler.fit_transform(data_values)
     
     # Convert the normalized data back to a DataFrame
@@ -170,14 +172,12 @@ def create_groupings(input_file, output_dir, groupings):
 
     # Process each grouping and save the CSV files
     for currency, columns in groupings.items():
+        print(f"currency = {currency}")
         output_file = os.path.join(output_dir, f'{currency}.csv')
         output_columns = columns + [currency]
         df[output_columns].to_csv(output_file)
 
-import os
-import pandas as pd
-
-def create_time_lags(input_dir, output_dir, nr_lags):
+def create_features(input_dir, output_dir, nr_lags):
     """Create CSV files with time lags for each currency.
 
     Args:
@@ -194,24 +194,31 @@ def create_time_lags(input_dir, output_dir, nr_lags):
 
     # Process each CSV file
     for file in [f for f in os.listdir(input_dir) if f.endswith('.csv')]:
+        print(f"file = {file}")
         df = pd.read_csv(os.path.join(input_dir, file))
         base_name = os.path.splitext(file)[0]
 
         # Get actual column data references
-        date_col = df.columns[0]  # Name of date column
-        predictors = df.columns[1:-1]
-        target_col = df.columns[-1]  # Name of target column
+        date_col = df.columns[0] # Date column
+        predictor_cols = df.columns[1:-1]
+        target_col = df.columns[-1] # Target column
 
-        # Initialize with date column DATA (not just name)
+        # Initialize with date column
         shifted_data = df[[date_col]].copy()
 
-        # Create shifted predictors
+        # Create shifted predictor_cols and target
         for shift in range(1, nr_lags+1):
-            shifted = df[predictors].shift(shift)
-            shifted.columns = [f'{col}_shift{shift}' for col in predictors]
+            print(f"    shift = {shift}")
+            # Add shifted predictor_cols
+            shifted = df[predictor_cols].shift(shift)
+            shifted.columns = [f'{col}_shift{shift}' for col in predictor_cols]
+            shifted_data = pd.concat([shifted_data, shifted], axis=1)
+            # Add shifted target
+            shifted = df[target_col].shift(shift)
+            shifted.name = f'{target_col}_shift{shift}'
             shifted_data = pd.concat([shifted_data, shifted], axis=1)
 
-        # Add target column DATA (not just name)
+        # Add target column
         shifted_data[target_col] = df[target_col]
 
         # Clean and save
@@ -220,9 +227,80 @@ def create_time_lags(input_dir, output_dir, nr_lags):
             index=False
         )
 
-import os
-import pandas as pd
-from sklearn.model_selection import train_test_split
+def select_features(estimator, input_dir, output_dir):
+    """Perform feature selection using RFECV.
+
+    Args:
+        estimator (Estimator): To be used with RFECV.
+        input_dir (str): Input directory containing CSV files.
+        output_dir (str): Directory to save output files.
+
+    Returns:
+        None.
+    """
+    
+    # Create output directory if not exists
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Process each CSV file
+    for file in [f for f in os.listdir(input_dir) if f.endswith('.csv')]:
+        print(f"file = {file}")
+
+        # Load data
+        data = pd.read_csv(os.path.join(input_dir, file))
+        
+        # Get base file name
+        base_name = os.path.splitext(file)[0]
+
+        # Create output directory
+        result_dir = os.path.join(output_dir, base_name)
+        os.makedirs(result_dir, exist_ok=True)
+
+        # Get the target column name
+        target_column = data.columns[-1]
+
+        # Separate feature data and target data
+        X = data.iloc[:, 1:-1]  # Feature data
+        y = data[target_column]   # Target data
+
+        # Initialize RFECV
+        selector = RFECV(estimator=estimator,
+                         step=1,
+                         cv=5,
+                         verbose=3)
+
+        # Fit the selector to the data
+        selector.fit(X, y)
+
+        # Get the optimal number of features
+        optimal_n_features = selector.n_features_
+
+        # Get the selected features
+        selected_features = X.columns[selector.support_]
+
+        # Create a dataframe with the results
+        results_df = pd.DataFrame({
+            'feature': X.columns,
+            'importance': selector.ranking_
+        })
+
+        # Sort the dataframe by importance
+        results_df = results_df.sort_values(by='importance')
+
+        # Save the feature importance ranking to a CSV file
+        results_df.to_csv(f'{result_dir}/feature_ranking.csv', index=False)
+
+        # Save the cross-validation scores to a CSV file
+        cv_scores_df = pd.DataFrame({
+            'number_of_features': range(1, len(selector.support_) + 1),
+            'cross_validation_score': selector.cv_results_['mean_test_score']
+        })
+        cv_scores_df.to_csv(f'{result_dir}/feature_cv_scores.csv', index=False)
+
+        # Create an output dataframe with the optimal features and the target column
+        output_df = X[selected_features].copy()
+        output_df[target_column] = y
+        output_df.to_csv(f'{result_dir}/optimal_features.csv', index=False)
 
 def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
     """Split each currency exchange rate time series dataset into training and testing sets.
@@ -249,7 +327,7 @@ def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
 
             # Load data
             data = pd.read_csv(input_file)
-            X = data.iloc[:, :-1]  # Feature data
+            X = data.iloc[:, 1:-1]  # Feature data
             y = data.iloc[:, -1]   # Target data
 
             # Calculate the number of rows for the train set
@@ -277,4 +355,30 @@ def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
             test_data.to_csv(os.path.join(file_output_dir, 'test_data.csv'), index=False)
 
             print(filename)
+
+def winsoring(input_file, output_file):
+    """Winsor the values from the input file.
+    Args:
+        input_file (str): Input csv file.
+        output_file (str): Output csv file.
+
+    Returns:
+        None.
+
+    """
+
+    # Load the input CSV file
+    df = pd.read_csv(input_file)
+    
+    # Apply winsorization
+    for col in df.columns:
+        q1 = df[col].quantile(0.25)
+        q3 = df[col].quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        df[col] = np.clip(df[col], lower_bound, upper_bound)
+    
+    # Save the transformed data to an output CSV file
+    df.to_csv(output_file, index=False)
 

@@ -25,7 +25,7 @@ Specific:
 Post:
 - Feature creation (time lags for all variables)
 - Correlation analysis (covariance, cointegration, chi-square, linear correlation)
-- Feature selection (irrelevant or redundant features should be removed) - possibly via Random Forest
+- Feature selection (irrelevant or redundant features should be removed) - possibly via RFE, RFECV or Random Forest
 - Train/test split
 
 ### Optional

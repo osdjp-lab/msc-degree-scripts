@@ -295,6 +295,13 @@ def decorrelate(input_dir, output_dir):
         corr_matrix.to_csv(os.path.join(meta_dir, "all-full.csv"))
         
         # Feature target decorrelation - remove abs(corr_coef) >= 0.8
+        # corr_coefs = corr_matrix[target_column]
+        # highly_correlated_with_target = corr_matrix.columns[
+        #     (np.abs(corr_coefs) >= 0.8) &
+        #     (corr_coefs != 1.0) &
+        #     (corr_matrix.columns != target_column)
+        # ].tolist()
+
         highly_correlated_with_target = []
         for column in feature_columns:
             corr_coef = corr_matrix.loc[column, target_column]
@@ -322,6 +329,16 @@ def decorrelate(input_dir, output_dir):
         feature_columns = data.columns[1:-1]
 
         # Cross feature decorrelation - remove abs(corr_coef) >= 0.8
+        # corr_feature_dict = {
+        #     feature: [
+        #         other_feature for other_feature in feature_columns
+        #         if other_feature != feature and
+        #         abs(corr_matrix.loc[feature, other_feature]) >= 0.8 and
+        #         corr_matrix.loc[feature, other_feature] != 1.0
+        #     ]
+        #     for feature in feature_columns
+        # }
+
         corr_feature_dict = {}
         for feature_1 in feature_columns:
             corr_feature_dict[feature_1] = []
@@ -332,7 +349,7 @@ def decorrelate(input_dir, output_dir):
                     continue
                 if abs(corr_coef) >= 0.8:
                     corr_feature_dict[feature_1].append(feature_2)
-     
+
         # Pseudocode
         # Going through the dictionary once for every keys feature list
         # remove the corresponding keys from the dictionary.

@@ -98,6 +98,32 @@ def difference(data, critical_value=0.05):
             data[column] = data[column].diff()
     data.dropna(inplace=True)
 
+def winsor(input_file, output_file):
+    """Winsor the values from the input file.
+    Args:
+        input_file (str): Input csv file.
+        output_file (str): Output csv file.
+
+    Returns:
+        None.
+
+    """
+
+    # Load the input CSV file
+    df = pd.read_csv(input_file)
+    
+    # Apply winsorization
+    for col in df.columns:
+        q1 = df[col].quantile(0.25)
+        q3 = df[col].quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        df[col] = np.clip(df[col], lower_bound, upper_bound)
+    
+    # Save the transformed data to an output CSV file
+    df.to_csv(output_file, index=False)
+
 def normalize(input_file, output_file, output_range=(-1,1)):
     """Normalize the data using MinMaxScaler.
 
@@ -177,13 +203,14 @@ def create_groupings(input_file, output_dir, groupings):
         output_columns = columns + [currency]
         df[output_columns].to_csv(output_file)
 
-def create_features(input_dir, output_dir, nr_lags):
+def create_features(input_dir, output_dir, nr_lags, offset=1):
     """Create CSV files with time lags for each currency.
 
     Args:
         input_dir (str): Input directory containing CSV files.
         output_dir (str): Output directory.
         nr_lags (int): Number of time lags.
+        offset (int): Offset from start time (default: 1).
 
     Returns:
         None.
@@ -207,7 +234,7 @@ def create_features(input_dir, output_dir, nr_lags):
         shifted_data = df[[date_col]].copy()
 
         # Create shifted predictor_cols and target
-        for shift in range(1, nr_lags+1):
+        for shift in range(offset, nr_lags+1):
             print(f"    shift = {shift}")
             # Add shifted predictor_cols
             shifted = df[predictor_cols].shift(shift)
@@ -226,6 +253,118 @@ def create_features(input_dir, output_dir, nr_lags):
             os.path.join(output_dir, f'{base_name}.csv'),
             index=False
         )
+
+def decorrelate(input_dir, output_dir):
+    """Decorrelate feature and target variables.
+
+    Args:
+        input_dir (str): Input directory containing CSV files.
+        output_dir (str): Output directory.
+
+    Returns:
+        None.
+
+    """
+    # Create output directory if not exists
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Process each CSV file
+    for file in [f for f in os.listdir(input_dir) if f.endswith('.csv')]:
+        print(f"file = {file}")
+
+        # Load data
+        data = pd.read_csv(os.path.join(input_dir, file))
+        
+        # Get base file name
+        base_name = os.path.splitext(file)[0]
+
+        # Get feature column names
+        feature_columns = data.columns[1:-1]
+
+        # Get target column name
+        target_column = data.columns[-1]
+
+        # Create metadata output directory
+        meta_dir = os.path.join(output_dir, "meta", base_name)
+        os.makedirs(meta_dir, exist_ok=True)
+ 
+        # Calculate the Pearson correlation matrix
+        corr_matrix = data.iloc[:, 1:].corr(method='pearson')
+
+        # Save the full correlation matrix to a new CSV file
+        corr_matrix.to_csv(os.path.join(meta_dir, "all-full.csv"))
+        
+        # Feature target decorrelation - remove abs(corr_coef) >= 0.8
+        highly_correlated_with_target = []
+        for column in feature_columns:
+            corr_coef = corr_matrix.loc[column, target_column]
+            if corr_coef == 1.0:
+                continue
+            if abs(corr_coef) >= 0.8:
+                highly_correlated_with_target.append(column)
+
+        # Drop features highly correlated with target from data
+        data = data.drop(columns=highly_correlated_with_target)
+
+        # Save dropped feature correlation matrix
+        dropped_corr_matrix = corr_matrix.copy().filter(items=[target_column], axis=1).filter(items=highly_correlated_with_target, axis=0)
+
+        # Save the dropped feature correlation matrix to a new CSV file
+        dropped_corr_matrix.to_csv(os.path.join(meta_dir, "target-dropped-full.csv"))
+        
+        # Drop features highly correlated with target
+        # from correlation matrix
+        corr_matrix = corr_matrix.drop(columns=highly_correlated_with_target)
+        corr_matrix = corr_matrix.drop(index=highly_correlated_with_target)
+
+        # Drop features highly correlated with target
+        # from feature columns
+        feature_columns = data.columns[1:-1]
+
+        # Cross feature decorrelation - remove abs(corr_coef) >= 0.8
+        corr_feature_dict = {}
+        for feature_1 in feature_columns:
+            corr_feature_dict[feature_1] = []
+        for feature_1 in feature_columns:
+            for feature_2 in feature_columns:
+                corr_coef = corr_matrix.loc[feature_1, feature_2]
+                if corr_coef == 1.0:
+                    continue
+                if abs(corr_coef) >= 0.8:
+                    corr_feature_dict[feature_1].append(feature_2)
+     
+        # Pseudocode
+        # Going through the dictionary once for every keys feature list
+        # remove the corresponding keys from the dictionary.
+        # Finally merge all remaining key feature lists
+        # into a complete feature drop list.
+
+        # Process correlation dictionary
+        corr_features = set()
+        for feature_1 in corr_feature_dict.keys():
+            if feature_1 not in corr_features:
+                for feature_2 in corr_feature_dict[feature_1]:
+                    corr_features.add(feature_2)
+
+        # Drop features highly correlated with target from data
+        data = data.drop(columns=corr_features)
+
+        # Save dropped feature correlation matrix
+        dropped_corr_matrix = corr_matrix.copy().filter(items=corr_features, axis=1).filter(items=corr_features, axis=0)
+
+        # Save the dropped feature correlation matrix to a new CSV file
+        dropped_corr_matrix.to_csv(os.path.join(meta_dir, "corr-features-full.csv"))
+        
+        # Drop features highly correlated with target
+        # from correlation matrix
+        corr_matrix = corr_matrix.drop(columns=corr_features)
+        corr_matrix = corr_matrix.drop(index=corr_features)
+
+        # Save reduced correlation matrix
+        corr_matrix.to_csv(os.path.join(meta_dir, "reduced-full.csv"))
+
+        # Save reduced feature target set to output file
+        data.to_csv(os.path.join(output_dir, f"{base_name}.csv"), index=False)
 
 def select_features(estimator, input_dir, output_dir):
     """Perform feature selection using RFECV.
@@ -355,30 +494,4 @@ def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
             test_data.to_csv(os.path.join(file_output_dir, 'test_data.csv'), index=False)
 
             print(filename)
-
-def winsoring(input_file, output_file):
-    """Winsor the values from the input file.
-    Args:
-        input_file (str): Input csv file.
-        output_file (str): Output csv file.
-
-    Returns:
-        None.
-
-    """
-
-    # Load the input CSV file
-    df = pd.read_csv(input_file)
-    
-    # Apply winsorization
-    for col in df.columns:
-        q1 = df[col].quantile(0.25)
-        q3 = df[col].quantile(0.75)
-        iqr = q3 - q1
-        lower_bound = q1 - 1.5 * iqr
-        upper_bound = q3 + 1.5 * iqr
-        df[col] = np.clip(df[col], lower_bound, upper_bound)
-    
-    # Save the transformed data to an output CSV file
-    df.to_csv(output_file, index=False)
 

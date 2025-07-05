@@ -4,6 +4,7 @@ import pandas as pd
 from statsmodels.tsa.stattools import adfuller
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.feature_selection import RFECV
+from sklearn.model_selection import train_test_split
 
 def remove_variables_with_missing_values(input_file, output_file):
     """Remove variables with missing values.
@@ -476,39 +477,40 @@ def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # Iterate through the CSV files in the input directory
-    for filename in os.listdir(input_dir):
-        if filename.endswith('.csv'):
-            input_file = os.path.join(input_dir, filename)
+    for root, dirs, files in os.walk(input_dir):
+        for filename in files:
+            if filename.endswith('.csv') and 'optimal_features' in filename:
+                input_file = os.path.join(root, filename)
+                subfolder_name = os.path.basename(root)
+    
+                # Load data
+                data = pd.read_csv(input_file)
+                X = data.iloc[:, 1:-1]  # Feature data
+                y = data.iloc[:, -1]   # Target data
 
-            # Load data
-            data = pd.read_csv(input_file)
-            X = data.iloc[:, 1:-1]  # Feature data
-            y = data.iloc[:, -1]   # Target data
+                # Calculate the number of rows for the train set
+                train_rows = int((len(X) - nr_lags) * train_size)
+                sep_test_rows = int((len(X) - nr_lags) * (1 - train_size))
 
-            # Calculate the number of rows for the train set
-            train_rows = int((len(X) - nr_lags) * train_size)
-            sep_test_rows = int((len(X) - nr_lags) * (1 - train_size))
+                # Split data sequentially into training and testing sets
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=sep_test_rows + nr_lags, shuffle=False)
 
-            # Split data sequentially into training and testing sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=sep_test_rows + nr_lags, shuffle=False)
+                # Trim the data to remove the nr_lags rows
+                X_train = X_train.iloc[nr_lags:]
+                y_train = y_train.iloc[nr_lags:]
 
-            # Trim the data to remove the nr_lags rows
-            X_train = X_train.iloc[nr_lags:]
-            y_train = y_train.iloc[nr_lags:]
+                # Combine the X and y data for each split
+                train_data = pd.concat([X_train, y_train], axis=1)
+                test_data = pd.concat([X_test, y_test], axis=1)
 
-            # Combine the X and y data for each split
-            train_data = pd.concat([X_train, y_train], axis=1)
-            test_data = pd.concat([X_test, y_test], axis=1)
+                # Create the output directory for the current file
+                file_output_dir = os.path.join(output_dir, subfolder_name)
+                if not os.path.exists(file_output_dir):
+                    os.makedirs(file_output_dir)
 
-            # Create the output directory for the current file
-            file_output_dir = os.path.join(output_dir, os.path.splitext(filename)[0])
-            if not os.path.exists(file_output_dir):
-                os.makedirs(file_output_dir)
+                # Save the combined data to CSV files
+                train_data.to_csv(os.path.join(file_output_dir, 'train_data.csv'), index=False)
+                test_data.to_csv(os.path.join(file_output_dir, 'test_data.csv'), index=False)
 
-            # Save the combined data to CSV files
-            train_data.to_csv(os.path.join(file_output_dir, 'train_data.csv'), index=False)
-            test_data.to_csv(os.path.join(file_output_dir, 'test_data.csv'), index=False)
-
-            print(filename)
+                print(filename)
 

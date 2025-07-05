@@ -4,7 +4,7 @@
 
 import os
 import shutil
-from preprocessing import create_groupings, create_features, select_features
+from preprocessing import *
 from sklearn.svm import SVR
 
 output_dir = "data/rf/"
@@ -33,6 +33,11 @@ create_features(os.path.join(output_dir, "4-groupings/"),
                 os.path.join(output_dir, "5-features/"),
                 time_lags)
 
+print("Decorrelating variables")
+
+decorrelate(os.path.join(output_dir, "5-features/"),
+            os.path.join(output_dir, "6-decorrelated/"))
+
 print("Running feature selection")
 
 print("SVR")
@@ -41,6 +46,6 @@ estimator = SVR(kernel="linear")
 
 select_features(
        estimator,
-       os.path.join(output_dir, "5-features/"),
-       os.path.join(output_dir, "6-svr-selection"))
+       os.path.join(output_dir, "6-decorrelated/"),
+       os.path.join(output_dir, "7-svr-selection"))
 

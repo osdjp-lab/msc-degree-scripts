@@ -28,7 +28,7 @@ create_groupings(os.path.join(output_dir, "3-normalized.csv"),
                  os.path.join(output_dir, "4-groupings/"),
                  groupings)
 
-time_lags = 100
+time_lags = 500
 
 print("Creating features")
 

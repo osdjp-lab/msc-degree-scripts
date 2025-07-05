@@ -11,3 +11,7 @@
 - Too large dataset (use subset) [no effect]
 - Unsuitable exchange rate predictors
 
+## Optimization strategies
+
++ Use small subset of data for faster initial parameter selection (unapplicable - significant variation of results)
+

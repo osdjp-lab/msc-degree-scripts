@@ -455,8 +455,7 @@ def select_features(estimator, input_dir, output_dir):
         cv_scores_df.to_csv(f'{result_dir}/feature_cv_scores.csv', index=False)
 
         # Create an output dataframe with the optimal features and the target column
-        output_df = X[selected_features].copy()
-        output_df[target_column] = y
+        output_df = pd.concat([data.iloc[:, 0], X[selected_features].copy(), y], axis=1)
         output_df.to_csv(f'{result_dir}/optimal_features.csv', index=False)
 
 def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
@@ -485,7 +484,7 @@ def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
     
                 # Load data
                 data = pd.read_csv(input_file)
-                X = data.iloc[:, 1:-1]  # Feature data
+                X = data.iloc[:, 0:-1]  # Date + Feature data
                 y = data.iloc[:, -1]   # Target data
 
                 # Calculate the number of rows for the train set

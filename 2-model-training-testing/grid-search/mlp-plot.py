@@ -6,41 +6,66 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Plot
+input_dir = 'mlp-data'
 
-input_dir = 'mlp-forecasts'
+# Plot forecast
 
-for input_file in [f for f in os.listdir(input_dir) if f.endswith('.csv')]:
+data = pd.read_csv(os.path.join(input_dir, 'forecast.csv'))
 
-    scoring = os.path.splitext(input_file)[0]
+date = data['Date']
+date = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in date]
 
-    data = pd.read_csv(os.path.join(input_dir, input_file))
-    
-    date = data['Date']
-    date = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in date]
-    
-    y_test = data['y_test']
-    y_pred = data['y_pred']
-    
-    textsize = 28
-    
-    plt.figure(figsize=(10, 6))
-    
-    plt.plot(date, y_test.to_numpy(), label='Real')
-    plt.plot(date, y_pred.to_numpy(), label='Forecast')
-    
-    # Set title and labels
-    plt.title(f'Real vs {scoring} forecast', fontsize=textsize)
-    plt.xlabel('Date', fontsize=textsize)
-    plt.ylabel('USD', fontsize=textsize)
-    
-    # Add legend
-    plt.legend(fontsize=textsize)
-    
-    # Increase tick label size
-    plt.xticks(fontsize=textsize)
-    plt.yticks(fontsize=textsize)
-    
-    # Show the plot
-    plt.show()
+y_test = data['y_test']
+y_pred = data['y_pred']
+
+textsize = 28
+
+plt.figure(figsize=(10, 6))
+
+plt.plot(date, y_test.to_numpy(), label='Real')
+plt.plot(date, y_pred.to_numpy(), label='Forecast')
+
+# Set title and labels
+plt.title(f'Real vs forecast', fontsize=textsize)
+plt.xlabel('Date', fontsize=textsize)
+plt.ylabel('USD', fontsize=textsize)
+
+# Add legend
+plt.legend(fontsize=textsize)
+
+# Increase tick label size
+plt.xticks(fontsize=textsize)
+plt.yticks(fontsize=textsize)
+
+# Show the plot
+plt.show()
+
+# Plot fit results
+
+data = pd.read_csv(os.path.join(input_dir, 'fit.csv'))
+
+hidden = data['hidden']
+nmse = data['nmse']
+
+textsize = 28
+
+plt.figure(figsize=(10, 6))
+
+plt.plot(hidden.to_numpy(), nmse.to_numpy())
+
+# Set title and labels
+# plt.title(f'Number of hidden layer nodes vs NMSE', fontsize=textsize)
+plt.xlabel('Hidden Layer Sizes', fontsize=textsize)
+plt.ylabel('Negative Mean Squared Error', fontsize=textsize)
+
+# Add legend
+plt.legend(fontsize=textsize)
+
+# Increase tick label size
+plt.xticks(fontsize=textsize)
+plt.yticks(fontsize=textsize)
+
+# Show the plot
+plt.show()
+
 

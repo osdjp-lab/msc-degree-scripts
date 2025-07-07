@@ -12,9 +12,15 @@ import matplotlib.pyplot as plt
 # Set the directory containing the CSV files
 input_dir = '../../1-preprocessing/data/nn/8-split/USD'
 
+common_name = 'solver'
+
+output_dir = "data"
+
+os.makedirs(output_dir, exist_ok=True)
+
 # Define the hyperparameter grid
 param_grid = {
-    'hidden_layer_sizes': [(i) for i in range(1,200)]
+    'solver': ['adam','sgd','lbfgs']
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))
@@ -26,14 +32,11 @@ y_train = train_data.iloc[:, -1]
 X_test = test_data.iloc[:, 1:-1]
 y_test = test_data.iloc[:, -1]
 
-output_dir = "mlp-data"
-
-os.makedirs(output_dir, exist_ok=True)
-
 # Initialize the MLPRegressor model
 model = MLPRegressor(activation='tanh',
                      shuffle=False,
                      random_state=0,
+                     hidden_layer_sizes=(82),
                      max_iter=1000)
 
 # Perform grid search
@@ -81,13 +84,13 @@ print(f"Directional Symmetry (hit rate): {hit_rate:.2f}")
 
 cv_results = grid_search.cv_results_
 
-param_hidden_layer_sizes = cv_results['param_hidden_layer_sizes']
-std_test_score = cv_results['std_test_score']
+solver = [d.get('solver') for d in cv_results['params']]
+negmse = cv_results['mean_test_score']
 
-output_df = pd.concat([pd.Series(param_hidden_layer_sizes, name='hidden'),
-                       pd.Series(std_test_score, name="nmse")], axis=1)
+output_df = pd.concat([pd.Series(solver, name='solver'),
+                       pd.Series(negmse, name="negmse")], axis=1)
 
-result = os.path.join(output_dir, "fit.csv")
+result = os.path.join(output_dir, f"{common_name}_fit.csv")
 
 output_df.to_csv(result, index=False)
 
@@ -96,7 +99,7 @@ output_df.to_csv(result, index=False)
 date = test_data['Date']
 y_test.name = "y_test"
 
-result = os.path.join(output_dir, "forecast.csv")
+result = os.path.join(output_dir, f"{common_name}_forecast.csv")
 
 output_df = pd.concat([date, y_test, pd.Series(y_pred, name="y_pred")], axis=1)
 output_df.to_csv(result, index=False)

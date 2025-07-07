@@ -6,7 +6,6 @@ import numpy as np
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files

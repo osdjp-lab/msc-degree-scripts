@@ -46,19 +46,19 @@ plt.show()
 
 data = pd.read_csv(os.path.join(input_dir, f'{common_name}_fit.csv'))
 
-hidden = data['hidden']
-nmse = data['nmse']
+tol = data['tol']
+negmse = data['negmse']
 
 textsize = 28
 
 plt.figure(figsize=(10, 6))
 
-plt.plot(hidden.to_numpy(), nmse.to_numpy(), label='MSE')
+plt.plot(tol.to_numpy(), negmse.to_numpy(), label='MSE')
 
 # Set title and labels
-# plt.title(f'Number of hidden layer nodes vs NMSE', fontsize=textsize)
-plt.xlabel('Hidden Layer Sizes', fontsize=textsize)
-plt.ylabel('Mean Squared Error', fontsize=textsize)
+# plt.title(f'Number of tol layer nodes vs negmse', fontsize=textsize)
+plt.xlabel('Tolerance', fontsize=textsize)
+plt.ylabel('Negative Mean Squared Error', fontsize=textsize)
 
 # Add legend
 plt.legend(fontsize=textsize)

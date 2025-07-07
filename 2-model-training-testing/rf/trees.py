@@ -15,7 +15,7 @@ common_name = 'nr_trees'
 
 # Define the hyperparameter grid
 param_grid = {
-    'n_estimators': np.arange(1, 15, 1)
+    'n_estimators': np.arange(1, 30, 1)
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))
@@ -35,7 +35,7 @@ os.makedirs(output_dir, exist_ok=True)
 model = RandomForestRegressor(
     # oob_score=True,
     random_state=0,
-    n_jobs=-1
+    n_jobs=None
 )
 
 # Perform grid search
@@ -44,7 +44,7 @@ grid_search = GridSearchCV(
     param_grid=param_grid,
     cv=5,  # 5-fold cross-validation
     scoring='neg_mean_squared_error',
-    n_jobs=1,
+    n_jobs=-1,
     verbose=1
 )
 

@@ -9,13 +9,13 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/svr/8-split/USD'
+input_dir = '../../../1-preprocessing/data/svr/8-split/USD'
 
-common_name = 'poly-coef'
+common_name = 'rbf-coef'
 
 # Define the hyperparameter grid
 param_grid = {
-    'degree': [1, 2, 3, 4, 5],
+    'gamma': ['auto','scale']
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))
@@ -32,7 +32,7 @@ output_dir = "data"
 os.makedirs(output_dir, exist_ok=True)
 
 # Initialize the SVR model
-model = SVR(kernel='poly',gamma='auto')
+model = SVR(kernel='rbf')
 
 # Perform grid search
 grid_search = GridSearchCV(
@@ -79,7 +79,7 @@ print(f"Directional Symmetry (hit rate): {hit_rate:.2f}")
 
 cv_results = grid_search.cv_results_
 
-kernel = [d.get('degree') for d in cv_results['params']]
+kernel = [d.get('gamma') for d in cv_results['params']]
 score = cv_results['mean_test_score']
 
 output_df = pd.concat([pd.Series(kernel, name='kernel'),

@@ -261,3 +261,9 @@ create_features_alt(
             nr_lags
             )
 
+############################################
+
+splits_dir = 'data/decorrelation-tests/5-split'
+
+split_data_alt(features_dir, splits_dir)
+

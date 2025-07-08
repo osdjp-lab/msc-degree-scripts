@@ -2,10 +2,10 @@
 
 ## Base goal
 
-1. Save data for default model forecasts for training and test sets.
-2. Plot forecasts on single graph for each dataset preprocessing methodology.
-3. For each model, for each dataset preprocessing methodology for the best forecasting shift export a single file containing the best score and preprocessing path.
-4. Pick the best set of data preprocessing steps and shifts for each model.
++ Save accuracy data for default model forecasts for training and test sets.
+- Plot forecasts on single graph for each dataset preprocessing methodology.
+- For each model, for each dataset preprocessing methodology for the best forecasting shift export a single file containing the best score and preprocessing path.
+- Pick the best set of data preprocessing steps and shifts for each model.
 
 ## Optimizations
 

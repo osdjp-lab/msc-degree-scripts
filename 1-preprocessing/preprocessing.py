@@ -272,6 +272,52 @@ def create_features(input_dir, output_dir, nr_lags, offset=1):
             index=False
         )
 
+def create_features_alt(input_dir, output_dir, nr_lags, offset=1):
+    """Create seperate CSV files with time lags for each currency.
+
+    Args:
+        input_dir (str): Input directory containing CSV files.
+        output_dir (str): Output directory.
+        nr_lags (int): Number of time lags.
+        offset (int): Offset from start time (default: 1).
+
+    Returns:
+        None.
+
+    """
+    # Create output directory if not exists
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Process each CSV file
+    for file in [f for f in os.listdir(input_dir) if f.endswith('.csv')]:
+        print(f"file = {file}")
+        df = pd.read_csv(os.path.join(input_dir, file))
+        base_name = os.path.splitext(file)[0]
+
+        os.makedirs(os.path.join(output_dir, base_name), exist_ok=True)
+
+        # Get actual column data references
+        date_col = df.columns[0] # Date column
+        predictor_cols = df.columns[1:-1]
+        target_col = df.columns[-1] # Target column
+
+        # Create shifted predictor_cols and target
+        for shift in range(offset, nr_lags+1):
+            print(f"    shift = {shift}")
+
+            # Add shifted predictor_cols
+            shifted = df[predictor_cols].shift(shift)
+            shifted.columns = [f'{col}_shift{shift}' for col in predictor_cols]
+
+            data = pd.concat([df.iloc[:,0], shifted, df.iloc[:,-1]], axis=1)
+
+            # Clean and save
+            data.dropna().to_csv(
+                os.path.join(output_dir, base_name, f'{shift}.csv'),
+                index=False
+            )
+
+
 def decorrelate(input_dir, output_dir):
     """Decorrelate feature and target variables.
 

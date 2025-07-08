@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Linear decorrelation vs different preprocessing steps
+# All combinations of preprocessing steps
 
 import os
 from preprocessing import *
@@ -63,50 +63,50 @@ groupings_dir = 'data/decorrelation-tests/2-groupings'
 os.makedirs(groupings_dir, exist_ok=True)
 
 create_groupings('data/2-forward-filled.csv',
-                 'data/decorrelation-tests/groupings/raw', groupings)
+                 os.path.join(groupings_dir, 'raw'), groupings)
 
 create_groupings(os.path.join(correlated_dir, '3-log-transformed.csv'),
-                 'data/decorrelation-tests/groupings/log-transformed',
+                 os.path.join(groupings_dir, 'log-transformed'),
                  groupings)
 
 create_groupings(os.path.join(correlated_dir, '3-differenced.csv'),
-                 'data/decorrelation-tests/groupings/differenced',
+                 os.path.join(groupings_dir, 'differenced'),
                  groupings)
 
 create_groupings(os.path.join(correlated_dir, "3-normalized.csv"),
-                 'data/decorrelation-tests/groupings/normalized', groupings)
+                 os.path.join(groupings_dir, 'normalized'), groupings)
 
 create_groupings(os.path.join(correlated_dir, "3-standardized.csv"),
-                 'data/decorrelation-tests/groupings/standardized', groupings)
+                 os.path.join(groupings_dir, 'standardized'), groupings)
 
 # Combinations
 
 create_groupings(os.path.join(correlated_dir, '3-log-differenced.csv'),
-                 'data/decorrelation-tests/groupings/log-differenced',
+                 os.path.join(groupings_dir, 'log-differenced'),
                  groupings)
 
 create_groupings(os.path.join(correlated_dir, '3-log-normalized.csv'),
-                 'data/decorrelation-tests/groupings/log-normalized',
+                 os.path.join(groupings_dir, 'log-normalized'),
                  groupings)
 
 create_groupings(os.path.join(correlated_dir, '3-log-standardized.csv'),
-                 'data/decorrelation-tests/groupings/log-standardized',
+                 os.path.join(groupings_dir, 'log-standardized'),
                  groupings)
 
 create_groupings(os.path.join(correlated_dir, '3-diff-normalized.csv'),
-                 'data/decorrelation-tests/groupings/diff-normalized',
+                 os.path.join(groupings_dir, 'diff-normalized'),
                  groupings)
 
 create_groupings(os.path.join(correlated_dir, '3-diff-standardized.csv'),
-                 'data/decorrelation-tests/groupings/diff-standardized',
+                 os.path.join(groupings_dir, 'diff-standardized'),
                  groupings)
 
 create_groupings(os.path.join(correlated_dir, '3-log-diff-normalized.csv'),
-                 'data/decorrelation-tests/groupings/log-diff-normalized',
+                 os.path.join(groupings_dir, 'log-diff-normalized'),
                  groupings)
 
 create_groupings(os.path.join(correlated_dir, '3-log-diff-standardized.csv'),
-                 'data/decorrelation-tests/groupings/log-diff-standardized',
+                 os.path.join(groupings_dir, 'log-diff-standardized'),
                  groupings)
 
 ############################################
@@ -117,65 +117,65 @@ decorrelated_dir = 'data/decorrelation-tests/3-decorrelated'
 os.makedirs(decorrelated_dir, exist_ok=True)
 
 decorrelate(
-            'data/decorrelation-tests/groupings/raw',
-            'data/decorrelation-tests/decorrelated/raw'
+            os.path.join(groupings_dir, 'raw'),
+            os.path.join(decorrelated_dir, 'raw')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/log-transformed',
-            'data/decorrelation-tests/decorrelated/log-transformed'
+            os.path.join(groupings_dir, 'log-transformed'),
+            os.path.join(decorrelated_dir, 'log-transformed')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/differenced',
-            'data/decorrelation-tests/decorrelated/differenced'
+            os.path.join(groupings_dir, 'differenced'),
+            os.path.join(decorrelated_dir, 'differenced')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/normalized',
-            'data/decorrelation-tests/decorrelated/normalized'
+            os.path.join(groupings_dir, 'normalized'),
+            os.path.join(decorrelated_dir, 'normalized')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/standardized',
-            'data/decorrelation-tests/decorrelated/standardized'
+            os.path.join(groupings_dir, 'standardized'),
+            os.path.join(decorrelated_dir, 'standardized')
             )
 
 # Combinations
 
 decorrelate(
-            'data/decorrelation-tests/groupings/log-differenced',
-            'data/decorrelation-tests/decorrelated/log-differenced'
+            os.path.join(groupings_dir, 'log-differenced'),
+            os.path.join(decorrelated_dir, 'log-differenced')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/log-normalized',
-            'data/decorrelation-tests/decorrelated/log-normalized'
+            os.path.join(groupings_dir, 'log-normalized'),
+            os.path.join(decorrelated_dir, 'log-normalized')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/log-standardized',
-            'data/decorrelation-tests/decorrelated/log-standardized'
+            os.path.join(groupings_dir, 'log-standardized'),
+            os.path.join(decorrelated_dir, 'log-standardized')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/diff-normalized',
-            'data/decorrelation-tests/decorrelated/diff-normalized'
+            os.path.join(groupings_dir, 'diff-normalized'),
+            os.path.join(decorrelated_dir, 'diff-normalized')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/diff-standardized',
-            'data/decorrelation-tests/decorrelated/diff-standardized'
+            os.path.join(groupings_dir, 'diff-standardized'),
+            os.path.join(decorrelated_dir, 'diff-standardized')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/log-diff-normalized',
-            'data/decorrelation-tests/decorrelated/log-diff-normalized'
+            os.path.join(groupings_dir, 'log-diff-normalized'),
+            os.path.join(decorrelated_dir, 'log-diff-normalized')
             )
 
 decorrelate(
-            'data/decorrelation-tests/groupings/log-diff-standardized',
-            'data/decorrelation-tests/decorrelated/log-diff-standardized'
+            os.path.join(groupings_dir, 'log-diff-standardized'),
+            os.path.join(decorrelated_dir, 'log-diff-standardized')
             )
 
 ############################################
@@ -188,85 +188,76 @@ os.makedirs(features_dir, exist_ok=True)
 nr_lags = 50
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/raw',
-            'data/decorrelation-tests/features/raw',
+            os.path.join(decorrelated_dir, 'raw'),
+            os.path.join(features_dir, 'raw'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/log-transformed',
-            'data/decorrelation-tests/features/log-transformed',
+            os.path.join(decorrelated_dir, 'log-transformed'),
+            os.path.join(features_dir, 'log-transformed'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/differenced',
-            'data/decorrelation-tests/features/differenced',
+            os.path.join(decorrelated_dir, 'differenced'),
+            os.path.join(features_dir, 'differenced'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/normalized',
-            'data/decorrelation-tests/features/normalized',
+            os.path.join(decorrelated_dir, 'normalized'),
+            os.path.join(features_dir, 'normalized'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/standardized',
-            'data/decorrelation-tests/features/standardized',
+            os.path.join(decorrelated_dir, 'standardized'),
+            os.path.join(features_dir, 'standardized'),
             nr_lags
             )
 
 # Combinations
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/log-differenced',
-            'data/decorrelation-tests/features/log-differenced',
+            os.path.join(decorrelated_dir, 'log-differenced'),
+            os.path.join(features_dir, 'log-differenced'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/log-normalized',
-            'data/decorrelation-tests/features/log-normalized',
+            os.path.join(decorrelated_dir, 'log-normalized'),
+            os.path.join(features_dir, 'log-normalized'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/log-standardized',
-            'data/decorrelation-tests/features/log-standardized',
+            os.path.join(decorrelated_dir, 'log-standardized'),
+            os.path.join(features_dir, 'log-standardized'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/diff-normalized',
-            'data/decorrelation-tests/features/diff-normalized',
+            os.path.join(decorrelated_dir, 'diff-normalized'),
+            os.path.join(features_dir, 'diff-normalized'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/diff-standardized',
-            'data/decorrelation-tests/features/diff-standardized',
+            os.path.join(decorrelated_dir, 'diff-standardized'),
+            os.path.join(features_dir, 'diff-standardized'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/log-diff-normalized',
-            'data/decorrelation-tests/features/log-diff-normalized',
+            os.path.join(decorrelated_dir, 'log-diff-normalized'),
+            os.path.join(features_dir, 'log-diff-normalized'),
             nr_lags
             )
 
 create_features_alt(
-            'data/decorrelation-tests/decorrelated/log-diff-standardized',
-            'data/decorrelation-tests/features/log-diff-standardized',
+            os.path.join(decorrelated_dir, 'log-diff-standardized'),
+            os.path.join(features_dir, 'log-diff-standardized'),
             nr_lags
             )
-
-############################################
-
-# Select window
-
-window_dir = 'data/decorrelation-tests/features'
-os.makedirs(window_dir, exist_ok=True)
-
-
 

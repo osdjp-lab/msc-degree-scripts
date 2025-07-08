@@ -576,3 +576,62 @@ def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
 
                 print(filename)
 
+def split_data_alt(input_dir, output_dir, train_size=0.7, test_size=0.3):
+    """Split each currency exchange rate time series dataset into training and testing sets.
+
+    Args:
+        input_dir (str): Input directory containing CSV files.
+        output_dir (str): Output directory.
+        train_size (float, optional): Proportion of data for training. Defaults to 0.7.
+        test_size (float, optional): Proportion of data for testing. Defaults to 0.3.
+
+    Returns:
+        None.
+
+    """
+    # Create the output directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    for subdir in os.listdir(input_dir):
+        for subsubdir in os.listdir(os.path.join(input_dir, subdir)):
+            rel_path = os.path.join(subdir, subsubdir)
+
+            for file in os.listdir(os.path.join(input_dir, rel_path)):
+                basename = os.path.splitext(file)[0]
+                input_file = os.path.join(input_dir, rel_path, file)
+
+                split_output_dir = os.path.join(output_dir, rel_path, basename)
+                
+                nr_lags = int(basename)
+
+                # Load data
+                data = pd.read_csv(input_file)
+                X = data.iloc[:, 0:-1]  # Date + Feature data
+                y = data.iloc[:, -1]   # Target data
+
+                # Calculate the number of rows for the train set
+                train_rows = int((len(X) - nr_lags) * train_size)
+                sep_test_rows = int((len(X) - nr_lags) * (1 - train_size))
+
+                # Split data sequentially into training and testing sets
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=sep_test_rows + nr_lags, shuffle=False)
+
+                # Trim the data to remove the nr_lags rows
+                X_train = X_train.iloc[nr_lags:]
+                y_train = y_train.iloc[nr_lags:]
+
+                # Combine the X and y data for each split
+                train_data = pd.concat([X_train, y_train], axis=1)
+                test_data = pd.concat([X_test, y_test], axis=1)
+
+                # Create the output directory for the current file
+                if not os.path.exists(split_output_dir):
+                    os.makedirs(split_output_dir)
+
+                # Save the combined data to CSV files
+                train_data.to_csv(os.path.join(split_output_dir, 'train_data.csv'), index=False)
+                test_data.to_csv(os.path.join(split_output_dir, 'test_data.csv'), index=False)
+
+                print(input_file)
+

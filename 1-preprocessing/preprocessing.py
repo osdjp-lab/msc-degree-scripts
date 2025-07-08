@@ -20,13 +20,13 @@ def remove_variables_with_missing_values(input_file, output_file):
 
     # Read the CSV file
     df = pd.read_csv(input_file)
-    
+
     # Create the output directory if it doesn't exist
     os.makedirs('data', exist_ok=True)
-    
+
     # Drop columns with missing values
     df_selected = df.dropna(axis=1, how='any')
-    
+
     # Save the selected data to a new CSV file
     df_selected.to_csv(output_file, index=False)
 
@@ -44,18 +44,18 @@ def forward_fill(input_file, output_file):
 
     # Load the CSV file
     data = pd.read_csv(input_file, index_col='Date', parse_dates=True)
-    
+
     # Create a complete date range
     start_date = data.index.min()
     end_date = data.index.max()
     date_range = pd.date_range(start=start_date, end=end_date, freq='D')
-    
+
     # Reindex the DataFrame
     data_reindexed = data.reindex(date_range)
-    
+
     # Forward fill the values
     data_forward_filled = data_reindexed.ffill()
-    
+
     # Save the updated DataFrame to a CSV file
     data_forward_filled.to_csv(output_file, index_label='Date')
 
@@ -73,31 +73,48 @@ def log_transform(input_file, output_file):
 
     # Load the CSV file
     df = pd.read_csv(input_file, index_col='Date')
-    
-    df_log = df
-    
-    # Apply log transformation
-    df_log = df.apply(lambda x: pd.Series(np.log(x)))
-    
-    # Save the normalized DataFrame to a CSV file
-    df_log.to_csv(output_file, index=True, header=True)
 
-def difference(data, critical_value=0.05):
-    """Perform in-place first order differencing of non-stationary columns.
+    date = df.iloc[:, 0]
+    data = df.iloc[:, 1:]
+
+    # Apply log transformation
+    df_log = data.apply(lambda x: pd.Series(np.log(x)))
+
+    output_df = pd.concat([date, df_log], axis=1)
+
+    # Save the normalized DataFrame to a CSV file
+    output_df.to_csv(output_file, index=True, header=True)
+
+def difference(input_file, output_file, critical_value=0.05):
+    """Perform first order differencing of non-stationary columns.
 
     Args:
-        data (pandas.DataFrame): Dataset containing multiple columns.
+        input_file (str): Input csv file.
+        output_file (str): Output csv file.
         critical_value (float, optional): Critical value for stationarity test. Defaults to 0.05.
 
     Returns:
         None.
 
     """
+
+    # Load the input CSV file
+    df = pd.read_csv(input_file)
+
+    date = df.iloc[:, 0].copy()
+    data = df.iloc[:, 1:].copy()
+
     for column in data.columns:
         adf_result = adfuller(data[column])
         if adf_result[1] > critical_value:
             data[column] = data[column].diff()
-    data.dropna(inplace=True)
+
+    output_df = pd.concat([date, data], axis=1)
+
+    output_df.dropna(inplace=True)
+
+    # Save the normalized DataFrame to a CSV file
+    output_df.to_csv(output_file, index=False, header=True)
 
 def winsor(input_file, output_file):
     """Winsor the values from the input file.
@@ -112,7 +129,7 @@ def winsor(input_file, output_file):
 
     # Load the input CSV file
     df = pd.read_csv(input_file)
-    
+
     # Apply winsorization
     for col in df.columns:
         q1 = df[col].quantile(0.25)
@@ -121,7 +138,7 @@ def winsor(input_file, output_file):
         lower_bound = q1 - 1.5 * iqr
         upper_bound = q3 + 1.5 * iqr
         df[col] = np.clip(df[col], lower_bound, upper_bound)
-    
+
     # Save the transformed data to an output CSV file
     df.to_csv(output_file, index=False)
 
@@ -140,16 +157,16 @@ def normalize(input_file, output_file, output_range=(-1,1)):
 
     # Load the CSV file
     data = pd.read_csv(input_file, index_col='Date')
-    
+
     # Normalize the differenced data, excluding the header
     header = data.columns
     data_values = data.values
     scaler = MinMaxScaler(feature_range=output_range)
     data_normalized = scaler.fit_transform(data_values)
-    
+
     # Convert the normalized data back to a DataFrame
     data_normalized_df = pd.DataFrame(data_normalized, index=data.index, columns=header)
-    
+
     # Save the normalized DataFrame to a CSV file
     data_normalized_df.to_csv(output_file, index=True, header=True)
 
@@ -166,16 +183,16 @@ def standardize(input_file, output_file, method='std'):
 
     # Load the CSV file
     data = pd.read_csv(input_file, index_col='Date')
-    
+
     # Standardize the differenced data, excluding the header
     header = data.columns
     data_values = data.values
     scaler = StandardScaler()
     data_standardized = scaler.fit_transform(data_values)
-    
+
     # Convert the standardized data back to a DataFrame
     data_standardized_df = pd.DataFrame(data_standardized, index=data.index, columns=header)
-    
+
     # Save the standardized DataFrame to a CSV file
     data_standardized_df.to_csv(output_file, index=True, header=True)
 
@@ -275,7 +292,7 @@ def decorrelate(input_dir, output_dir):
 
         # Load data
         data = pd.read_csv(os.path.join(input_dir, file))
-        
+
         # Get base file name
         base_name = os.path.splitext(file)[0]
 
@@ -288,13 +305,13 @@ def decorrelate(input_dir, output_dir):
         # Create metadata output directory
         meta_dir = os.path.join(output_dir, "meta", base_name)
         os.makedirs(meta_dir, exist_ok=True)
- 
+
         # Calculate the Pearson correlation matrix
         corr_matrix = data.iloc[:, 1:].corr(method='pearson')
 
         # Save the full correlation matrix to a new CSV file
         corr_matrix.to_csv(os.path.join(meta_dir, "all-full.csv"))
-        
+
         # Feature target decorrelation - remove abs(corr_coef) >= 0.8
         # corr_coefs = corr_matrix[target_column]
         # highly_correlated_with_target = corr_matrix.columns[
@@ -319,7 +336,7 @@ def decorrelate(input_dir, output_dir):
 
         # Save the dropped feature correlation matrix to a new CSV file
         dropped_corr_matrix.to_csv(os.path.join(meta_dir, "target-dropped-full.csv"))
-        
+
         # Drop features highly correlated with target
         # from correlation matrix
         corr_matrix = corr_matrix.drop(columns=highly_correlated_with_target)
@@ -372,7 +389,7 @@ def decorrelate(input_dir, output_dir):
 
         # Save the dropped feature correlation matrix to a new CSV file
         dropped_corr_matrix.to_csv(os.path.join(meta_dir, "corr-features-full.csv"))
-        
+
         # Drop features highly correlated with target
         # from correlation matrix
         corr_matrix = corr_matrix.drop(columns=corr_features)
@@ -395,7 +412,7 @@ def select_features(estimator, input_dir, output_dir):
     Returns:
         None.
     """
-    
+
     # Create output directory if not exists
     os.makedirs(output_dir, exist_ok=True)
 
@@ -405,7 +422,7 @@ def select_features(estimator, input_dir, output_dir):
 
         # Load data
         data = pd.read_csv(os.path.join(input_dir, file))
-        
+
         # Get base file name
         base_name = os.path.splitext(file)[0]
 
@@ -481,7 +498,7 @@ def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
             if filename.endswith('.csv') and 'optimal_features' in filename:
                 input_file = os.path.join(root, filename)
                 subfolder_name = os.path.basename(root)
-    
+
                 # Load data
                 data = pd.read_csv(input_file)
                 X = data.iloc[:, 0:-1]  # Date + Feature data

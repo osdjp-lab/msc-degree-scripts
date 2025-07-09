@@ -46,9 +46,9 @@ for subdir in os.listdir(input_dir):
             test_mse_results.loc[len(test_mse_results)] = {'method': f"{subdir}-{min_test_offset}", 'mse': min_test_value}
             min_avg_mse_results.loc[len(min_avg_mse_results)] = {'method': f"{subdir}-{min_avg_offset}", 'mse': min_avg}
 
-train_mse_results.to_csv(os.path.join(output_dir, 'train_mse_results.csv'), index=False)
-test_mse_results.to_csv(os.path.join(output_dir, 'test_mse_results.csv'), index=False)
-min_avg_mse_results.to_csv(os.path.join(output_dir, 'min_avg_mse_results.csv'), index=False)
+train_mse_results.sort_values(by='mse').to_csv(os.path.join(output_dir, 'train_mse_results.csv'), index=False)
+test_mse_results.sort_values(by='mse').to_csv(os.path.join(output_dir, 'test_mse_results.csv'), index=False)
+min_avg_mse_results.sort_values(by='mse').to_csv(os.path.join(output_dir, 'min_avg_mse_results.csv'), index=False)
 
 # Hitrate
 
@@ -80,14 +80,15 @@ for subdir in os.listdir(input_dir):
             max_test_value = test_data.loc[max_test_idx, metric] 
 
             combined_avg = (train_data[metric] + test_data[metric]) / 2
+            max_avg_offset = train_data.loc[min_train_idx, 'offset'] 
             max_avg = combined_avg.max()
             
             # Add the results to the DataFrames
-            train_hitrate_results.loc[len(train_hitrate_results)] = {'method': subdir, 'hitrate': max_train_value}
-            test_hitrate_results.loc[len(test_hitrate_results)] = {'method': subdir, 'hitrate': max_test_value}
-            max_avg_hitrate_results.loc[len(max_avg_hitrate_results)] = {'method': subdir, 'hitrate': max_avg}
-
-train_hitrate_results.to_csv(os.path.join(output_dir, 'train_hitrate_results.csv'), index=False)
-test_hitrate_results.to_csv(os.path.join(output_dir, 'test_hitrate_results.csv'), index=False)
-max_avg_hitrate_results.to_csv(os.path.join(output_dir, 'max_avg_hitrate_results.csv'), index=False)
+            train_hitrate_results.loc[len(train_hitrate_results)] = {'method': f"{subdir}-{max_train_offset}", 'hitrate': min_train_value}
+            test_hitrate_results.loc[len(test_hitrate_results)] = {'method': f"{subdir}-{max_test_offset}", 'hitrate': min_test_value}
+            max_avg_hitrate_results.loc[len(max_avg_hitrate_results)] = {'method': f"{subdir}-{max_avg_offset}", 'hitrate': min_avg}
+            
+train_hitrate_results.sort_values(ascending=False, by='hitrate').to_csv(os.path.join(output_dir, 'train_hitrate_results.csv'), index=False)
+test_hitrate_results.sort_values(ascending=False, by='hitrate').to_csv(os.path.join(output_dir, 'test_hitrate_results.csv'), index=False)
+max_avg_hitrate_results.sort_values(ascending=False, by='hitrate').to_csv(os.path.join(output_dir, 'max_avg_hitrate_results.csv'), index=False)
 

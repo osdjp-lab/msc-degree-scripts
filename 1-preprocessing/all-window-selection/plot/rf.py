@@ -28,7 +28,7 @@ for subdir in os.listdir(input_dir):
         plt.plot(test_data['offset'].to_numpy(), test_data[metric].to_numpy(), label='Test')
         
         # Set title and labels
-        plt.title(f'{subdir} RF offset window {metric.upper()}', fontsize=textsize)
+        # plt.title(f'{subdir} RF offset window {metric.upper()}', fontsize=textsize)
         plt.xlabel('Offset', fontsize=textsize)
         plt.ylabel(f'{metric.upper()}', fontsize=textsize)
         

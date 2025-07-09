@@ -17,7 +17,7 @@ test_mse_results = pd.DataFrame(columns=['method', 'mse'])
 min_avg_mse_results = pd.DataFrame(columns=['method', 'mse'])
 
 for subdir in os.listdir(input_dir):
-    if 'normalized' in subdir:
+    if 'n' in subdir:
         for target in os.listdir(os.path.join(input_dir, subdir)):
             rel_path = os.path.join(subdir, target)
             
@@ -37,12 +37,14 @@ for subdir in os.listdir(input_dir):
             min_test_value = test_data.loc[min_test_idx, metric] 
 
             combined_avg = (train_data[metric] + test_data[metric]) / 2
+            min_avg_idx = combined_avg.idxmin()
+            min_avg_offset = train_data.loc[min_train_idx, 'offset'] 
             min_avg = combined_avg.min()
             
             # Add the results to the DataFrames
-            train_mse_results.loc[len(train_mse_results)] = {'method': subdir, 'mse': min_train_value}
-            test_mse_results.loc[len(test_mse_results)] = {'method': subdir, 'mse': min_test_value}
-            min_avg_mse_results.loc[len(min_avg_mse_results)] = {'method': subdir, 'mse': min_avg}
+            train_mse_results.loc[len(train_mse_results)] = {'method': f"{subdir}-{min_train_offset}", 'mse': min_train_value}
+            test_mse_results.loc[len(test_mse_results)] = {'method': f"{subdir}-{min_test_offset}", 'mse': min_test_value}
+            min_avg_mse_results.loc[len(min_avg_mse_results)] = {'method': f"{subdir}-{min_avg_offset}", 'mse': min_avg}
 
 train_mse_results.to_csv(os.path.join(output_dir, 'train_mse_results.csv'), index=False)
 test_mse_results.to_csv(os.path.join(output_dir, 'test_mse_results.csv'), index=False)
@@ -58,7 +60,7 @@ test_hitrate_results = pd.DataFrame(columns=['method', 'hitrate'])
 max_avg_hitrate_results = pd.DataFrame(columns=['method', 'hitrate'])
 
 for subdir in os.listdir(input_dir):
-    if 'normalized' in subdir:
+    if 'n' in subdir:
         for target in os.listdir(os.path.join(input_dir, subdir)):
             rel_path = os.path.join(subdir, target)
             

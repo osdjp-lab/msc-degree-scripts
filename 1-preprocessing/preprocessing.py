@@ -72,17 +72,12 @@ def log_transform(input_file, output_file):
     """
 
     # Load the CSV file
-    df = pd.read_csv(input_file, index_col='Date')
-
-    date = df.iloc[:, 0]
-    data = df.iloc[:, 1:]
+    data = pd.read_csv(input_file, index_col='Date')
 
     # Apply log transformation
-    df_log = data.apply(lambda x: pd.Series(np.log(x)))
+    output_df = np.log(data)
 
-    output_df = pd.concat([date, df_log], axis=1)
-
-    # Save the normalized DataFrame to a CSV file
+    # Save the transformed DataFrame to a CSV file
     output_df.to_csv(output_file, index=True, header=True)
 
 def difference(input_file, output_file, critical_value=0.05):
@@ -158,9 +153,10 @@ def normalize(input_file, output_file, output_range=(-1,1)):
     # Load the CSV file
     data = pd.read_csv(input_file, index_col='Date')
 
-    # Normalize the differenced data, excluding the header
     header = data.columns
     data_values = data.values
+
+    # Normalize the data
     scaler = MinMaxScaler(feature_range=output_range)
     data_normalized = scaler.fit_transform(data_values)
 
@@ -602,7 +598,7 @@ def split_data_alt(input_dir, output_dir, train_size=0.7, test_size=0.3):
                 input_file = os.path.join(input_dir, rel_path, file)
 
                 split_output_dir = os.path.join(output_dir, rel_path, basename)
-                
+
                 nr_lags = int(basename)
 
                 # Load data

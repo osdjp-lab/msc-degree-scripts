@@ -21,8 +21,8 @@ plt.figure(figsize=(10, 6))
 plt.bar(train_mse['method'].to_numpy(), train_mse['mse'].to_numpy(), label='Train')
 
 # Set title and labels
-# plt.title('MLP train set MSE per preprocessing methodology', fontsize=textsize)
-plt.xlabel('Preprocessing steps and window size', fontsize=textsize)
+# plt.title('MLP train set MSE preprocessing methodology and offset', fontsize=textsize)
+plt.xlabel('Preprocessing steps and offset', fontsize=textsize)
 plt.ylabel('MSE', fontsize=textsize)
 
 # Add legend
@@ -51,8 +51,8 @@ plt.figure(figsize=(10, 6))
 plt.bar(test_mse['method'].to_numpy(), test_mse['mse'].to_numpy(), label='Test')
 
 # Set title and labels
-# plt.title('MLP test set MSE per preprocessing methodology', fontsize=textsize)
-plt.xlabel('Preprocessing steps and window size', fontsize=textsize)
+# plt.title('MLP test set MSE preprocessing methodology and offset', fontsize=textsize)
+plt.xlabel('Preprocessing steps and offset', fontsize=textsize)
 plt.ylabel('MSE', fontsize=textsize)
 
 # Add legend
@@ -81,8 +81,8 @@ plt.figure(figsize=(10, 6))
 plt.bar(min_avg_mse['method'].to_numpy(), min_avg_mse['mse'].to_numpy(), label='Min-Avg')
 
 # Set title and labels
-# plt.title('MLP average MSE per preprocessing methodology', fontsize=textsize)
-plt.xlabel('Preprocessing steps and window size', fontsize=textsize)
+# plt.title('MLP minimum average MSE preprocessing methodology and offset', fontsize=textsize)
+plt.xlabel('Preprocessing steps and offset', fontsize=textsize)
 plt.ylabel('MSE', fontsize=textsize)
 
 # Add legend

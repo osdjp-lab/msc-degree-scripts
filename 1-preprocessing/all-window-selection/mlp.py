@@ -11,7 +11,7 @@ output_dir = 'data/mlp'
 os.makedirs(output_dir, exist_ok=True)
 
 for subdir in os.listdir(input_dir):
-    if 'n' in subdir:
+    if 'normalized' in subdir:
         for target in os.listdir(os.path.join(input_dir, subdir)):
             rel_path = os.path.join(subdir, target)
             

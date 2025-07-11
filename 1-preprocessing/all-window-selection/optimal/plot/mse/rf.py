@@ -35,6 +35,7 @@ plt.ticklabel_format(axis='y',
                      scilimits=(0,0))
 
 ax = plt.gca()
+ax.set_yscale('log')
 ax.yaxis.offsetText.set_fontsize(textsize)
 
 # Increase tick label size
@@ -65,6 +66,7 @@ plt.ticklabel_format(axis='y',
                      scilimits=(0,0))
 
 ax = plt.gca()
+ax.set_yscale('log')
 ax.yaxis.offsetText.set_fontsize(textsize)
 
 # Increase tick label size
@@ -95,6 +97,7 @@ plt.ticklabel_format(axis='y',
                      scilimits=(0,0))
 
 ax = plt.gca()
+ax.set_yscale('log')
 ax.yaxis.offsetText.set_fontsize(textsize)
 
 # Increase tick label size

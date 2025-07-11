@@ -23,7 +23,7 @@ for subdir in os.listdir(input_dir):
         
         plt.figure(figsize=(10, 6))
         
-        plt.plot(data['offset'].to_numpy(), data['oob_error'].to_numpy(), label='Test')
+        plt.plot(data['offset'].to_numpy(), data['oob_error'].to_numpy(), label='OOB Error')
         
         # Set title and labels
         # plt.title('RF OOB error offset window', fontsize=textsize)

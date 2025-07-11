@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = 'data/svr/mse'
+input_dir = '../../data/rf/mse'
 
 train_mse = pd.read_csv(os.path.join(input_dir, "train_mse_results.csv")).sort_values(by='mse')
 test_mse = pd.read_csv(os.path.join(input_dir, "test_mse_results.csv")).sort_values(by='mse')
@@ -21,7 +21,7 @@ plt.figure(figsize=(10, 6))
 plt.bar(train_mse['method'].to_numpy(), train_mse['mse'].to_numpy(), label='Train')
 
 # Set title and labels
-# plt.title('SVR train set MSE preprocessing methodology and offset', fontsize=textsize)
+# plt.title('RF train set MSE preprocessing methodology and offset', fontsize=textsize)
 plt.xlabel('Preprocessing methodology and offset', fontsize=textsize)
 plt.ylabel('MSE', fontsize=textsize)
 
@@ -51,7 +51,7 @@ plt.figure(figsize=(10, 6))
 plt.bar(test_mse['method'].to_numpy(), test_mse['mse'].to_numpy(), label='Test')
 
 # Set title and labels
-# plt.title('SVR test set MSE preprocessing methodology and offset', fontsize=textsize)
+# plt.title('RF test set MSE preprocessing methodology and offset', fontsize=textsize)
 plt.xlabel('Preprocessing methodology and offset', fontsize=textsize)
 plt.ylabel('MSE', fontsize=textsize)
 
@@ -81,7 +81,7 @@ plt.figure(figsize=(10, 6))
 plt.bar(min_avg_mse['method'].to_numpy(), min_avg_mse['mse'].to_numpy(), label='Min-Avg')
 
 # Set title and labels
-# plt.title('SVR minimum average MSE preprocessing methodology and offset', fontsize=textsize)
+# plt.title('RF minimum average MSE preprocessing methodology and offset', fontsize=textsize)
 plt.xlabel('Preprocessing methodology and offset', fontsize=textsize)
 plt.ylabel('MSE', fontsize=textsize)
 

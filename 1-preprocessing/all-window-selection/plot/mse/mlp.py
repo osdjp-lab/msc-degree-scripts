@@ -6,11 +6,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../data/mlp'
+input_dir = '../../data/mlp'
 metric = 'mse'
-# metric = 'mae'
-# metric = 'r2'
-# metric = 'hitrate'
 
 for subdir in os.listdir(input_dir):
     if 'n' in subdir:
@@ -31,7 +28,7 @@ for subdir in os.listdir(input_dir):
             # Set title and labels
             # plt.title(f'{subdir} MLP offset window {metric.upper()}', fontsize=textsize)
             plt.xlabel('Offset', fontsize=textsize)
-            plt.ylabel(f'{metric.upper()}', fontsize=textsize)
+            plt.ylabel(f'MSE', fontsize=textsize)
             
             # Add legend
             plt.legend(fontsize=textsize)

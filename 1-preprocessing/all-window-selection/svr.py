@@ -27,6 +27,7 @@ for subdir in os.listdir(input_dir):
        
         result_dir = os.path.join(output_dir, rel_path)
         os.makedirs(result_dir, exist_ok=True)
+        os.makedirs(os.path.join(result_dir, 'forecasts'), exist_ok=True)
         
         print(result_dir)
 
@@ -61,7 +62,7 @@ for subdir in os.listdir(input_dir):
             train_mse = mean_squared_error(y_train, y_train_pred)
             train_mae = mean_absolute_error(y_train, y_train_pred)
             train_r2 = r2_score(y_train, y_train_pred)
-            train_hitrate = (np.sign(y_train_pred) == np.sign(y_train)).mean()
+            train_hitrate = (np.sign(pd.Series(y_train_pred, name='y_train_pred').diff()) == np.sign(y_train.diff())).mean()
         
             # Add the results to the DataFrames
             train_mse_results = pd.concat([train_mse_results, pd.DataFrame({'offset': [offset], 'mse': [train_mse]})])
@@ -78,13 +79,19 @@ for subdir in os.listdir(input_dir):
             test_mse = mean_squared_error(y_test, y_test_pred)
             test_mae = mean_absolute_error(y_test, y_test_pred)
             test_r2 = r2_score(y_test, y_test_pred)
-            test_hitrate = (np.sign(y_test_pred) == np.sign(y_test)).mean()
+            test_hitrate = (np.sign(pd.Series(y_test_pred, name='y_test_pred').diff()) == np.sign(y_test.diff())).mean()
         
             # Add the results to the DataFrames
             test_mse_results = pd.concat([test_mse_results, pd.DataFrame({'offset': [offset], 'mse': [test_mse]})])
             test_mae_results = pd.concat([test_mae_results, pd.DataFrame({'offset': [offset], 'mae': [test_mae]})])
             test_r2_results = pd.concat([test_r2_results, pd.DataFrame({'offset': [offset], 'r2': [test_r2]})])
             test_hitrate_results = pd.concat([test_hitrate_results, pd.DataFrame({'offset': [offset], 'hitrate': [test_hitrate]})])
+
+            # Save forecasts
+            output_df = pd.concat([train_date, pd.Series(y_train, name='y_train'), pd.Series(y_train_pred, name="y_train_pred")], axis=1)
+            output_df.to_csv(os.path.join(result_dir, 'forecasts', f'{offset}_train_pred.csv'), index=False)
+            output_df = pd.concat([test_date, pd.Series(y_test, name='y_test'), pd.Series(y_test_pred, name="y_test_pred")], axis=1)
+            output_df.to_csv(os.path.join(result_dir, 'forecasts', f'{offset}_test_pred.csv'), index=False)
 
         train_mse_results.to_csv(os.path.join(result_dir, 'train_mse_results.csv'), index=False)
         train_mae_results.to_csv(os.path.join(result_dir, 'train_mae_results.csv'), index=False)

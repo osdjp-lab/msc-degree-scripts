@@ -6,11 +6,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../data/rf'
-metric = 'mse'
-# metric = 'mae'
-# metric = 'r2'
-# metric = 'hitrate'
+input_dir = '../../data/svr'
+metric = 'hitrate'
 
 for subdir in os.listdir(input_dir):
     for target in os.listdir(os.path.join(input_dir, subdir)):
@@ -28,9 +25,9 @@ for subdir in os.listdir(input_dir):
         plt.plot(test_data['offset'].to_numpy(), test_data[metric].to_numpy(), label='Test')
         
         # Set title and labels
-        # plt.title(f'{subdir} RF offset window {metric.upper()}', fontsize=textsize)
+        # plt.title(f'{subdir} SVR offset window {metric.upper()}', fontsize=textsize)
         plt.xlabel('Offset', fontsize=textsize)
-        plt.ylabel(f'{metric.upper()}', fontsize=textsize)
+        plt.ylabel(f'Hitrate', fontsize=textsize)
         
         # Add legend
         plt.legend(fontsize=textsize)
@@ -40,14 +37,14 @@ for subdir in os.listdir(input_dir):
                              style='scientific',
                              # useMathText=True,
                              scilimits=(0,0))
-        
+ 
         ax = plt.gca()
         ax.yaxis.offsetText.set_fontsize(textsize)
 
         # Increase tick label size
         plt.xticks(fontsize=textsize)
         plt.yticks(fontsize=textsize)
-
+        
         # Show the plot
         plt.show()
 

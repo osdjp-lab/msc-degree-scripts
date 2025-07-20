@@ -548,14 +548,16 @@ def split_data(input_dir, output_dir, nr_lags, train_size=0.7, test_size=0.3):
 
                 # Calculate the number of rows for the train set
                 train_rows = int((len(X) - nr_lags) * train_size)
-                sep_test_rows = int((len(X) - nr_lags) * (1 - train_size))
 
-                # Split data sequentially into training and testing sets
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=sep_test_rows + nr_lags, shuffle=False)
+                # Calculate the number of rows for the sep and test set
+                sep_test_rows = int((len(X) - nr_lags) * test_size)
+
+                # Split data sequentially into training and sep_test sets
+                X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_rows, shuffle=False)
 
                 # Trim the data to remove the nr_lags rows
-                X_train = X_train.iloc[nr_lags:]
-                y_train = y_train.iloc[nr_lags:]
+                X_test = X_test.iloc[nr_lags:]
+                y_test = y_test.iloc[nr_lags:]
 
                 # Combine the X and y data for each split
                 train_data = pd.concat([X_train, y_train], axis=1)
@@ -608,14 +610,16 @@ def split_data_alt(input_dir, output_dir, train_size=0.7, test_size=0.3):
 
                 # Calculate the number of rows for the train set
                 train_rows = int((len(X) - nr_lags) * train_size)
-                sep_test_rows = int((len(X) - nr_lags) * (1 - train_size))
 
-                # Split data sequentially into training and testing sets
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=sep_test_rows + nr_lags, shuffle=False)
+                # Calculate the number of rows for the sep and test set
+                sep_test_rows = int((len(X) - nr_lags) * test_size)
+
+                # Split data sequentially into training and sep_test sets
+                X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_rows, shuffle=False)
 
                 # Trim the data to remove the nr_lags rows
-                X_train = X_train.iloc[nr_lags:]
-                y_train = y_train.iloc[nr_lags:]
+                X_test = X_test.iloc[nr_lags:]
+                y_test = y_test.iloc[nr_lags:]
 
                 # Combine the X and y data for each split
                 train_data = pd.concat([X_train, y_train], axis=1)

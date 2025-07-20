@@ -12,7 +12,7 @@ common_name = 'alpha'
 
 # Plot forecast
 
-data = pd.read_csv(os.path.join(input_dir, f'{common_name}_forecast.csv'))
+data = pd.read_csv(os.path.join(input_dir, f'{common_name}_forecast_reverse.csv'))
 
 date = data['Date']
 date = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in date]

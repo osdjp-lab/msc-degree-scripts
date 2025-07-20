@@ -9,13 +9,13 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/rf/8-split/USD'
+input_dir = '../../1-preprocessing/data/decorrelation-tests/5-split/log-differenced/USD/7'
 
 common_name = 'features'
 
 # Define the hyperparameter grid
 param_grid = {
-    'max_features': [1.0, 'sqrt', 'log2', 0.3],
+    'max_features': ['sqrt', 'log2', 0.3, 1.0],
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))
@@ -47,7 +47,7 @@ grid_search = GridSearchCV(
     cv=5,  # 5-fold cross-validation
     scoring='neg_mean_squared_error',
     n_jobs=1,
-    verbose=1
+    verbose=3
 )
 
 # Fit the model

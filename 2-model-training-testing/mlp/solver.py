@@ -6,10 +6,9 @@ import numpy as np
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/nn/8-split/USD'
+input_dir = '../../1-preprocessing/data/decorrelation-tests/5-split/diff-normalized/USD/7'
 
 common_name = 'solver'
 
@@ -35,7 +34,6 @@ y_test = test_data.iloc[:, -1]
 model = MLPRegressor(activation='tanh',
                      shuffle=False,
                      random_state=0,
-                     hidden_layer_sizes=(82),
                      max_iter=1000)
 
 # Perform grid search

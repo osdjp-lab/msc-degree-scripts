@@ -9,13 +9,13 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/rf/8-split/USD'
+input_dir = '../../1-preprocessing/data/decorrelation-tests/5-split/log-differenced/USD/7'
 
 common_name = 'depth'
 
 # Define the hyperparameter grid
 param_grid = {
-    'max_depth': [3, 5, 8, 10, 20, 30, 40, 50]
+    'max_depth': [1, 2, 3, 5, 8, 10, 20, 30, 40, 50]
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))
@@ -34,7 +34,6 @@ os.makedirs(output_dir, exist_ok=True)
 # Initialize the RandomForestRegressor model
 model = RandomForestRegressor(
     # oob_score=True,
-    n_estimators=4,
     random_state=0,
     n_jobs=-1
 )
@@ -46,7 +45,7 @@ grid_search = GridSearchCV(
     cv=5,  # 5-fold cross-validation
     scoring='neg_mean_squared_error',
     n_jobs=1,
-    verbose=1
+    verbose=3
 )
 
 # Fit the model

@@ -62,6 +62,14 @@ plt.ylabel('Negative Mean Squared Error', fontsize=textsize)
 
 # Add legend
 plt.legend(fontsize=textsize)
+# Enable scientific notation for y-axis
+plt.ticklabel_format(axis='y',
+                     style='scientific',
+                     # useMathText=True,
+                     scilimits=(0,0))
+
+ax = plt.gca()
+ax.yaxis.offsetText.set_fontsize(textsize)
 
 # Increase tick label size
 plt.xticks(fontsize=textsize)

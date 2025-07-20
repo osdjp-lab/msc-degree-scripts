@@ -6,10 +6,9 @@ import numpy as np
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/nn/8-split/USD'
+input_dir = '../../1-preprocessing/data/decorrelation-tests/5-split/diff-normalized/USD/7'
 
 common_name = 'all'
 
@@ -19,7 +18,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 # Define the hyperparameter grid
 param_grid = {
-    'hidden_layer_sizes': np.arange(40, 101, 20),
+    'hidden_layer_sizes': np.arange(1, 102, 20),
     'solver': ['adam','sgd','lbfgs'],
     'alpha': np.arange(0.1, 0.31, 0.1),
     'tol': np.arange(0.0001, 0.001, 0.0001)

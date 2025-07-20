@@ -12,7 +12,7 @@ common_name = 'tol'
 
 # Plot forecast
 
-data = pd.read_csv(os.path.join(input_dir, f'{common_name}_forecast.csv'))
+data = pd.read_csv(os.path.join(input_dir, f'{common_name}_forecast_reverse.csv'))
 
 date = data['Date']
 date = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in date]
@@ -62,6 +62,24 @@ plt.ylabel('Negative Mean Squared Error', fontsize=textsize)
 
 # Add legend
 plt.legend(fontsize=textsize)
+
+# Enable scientific notation for y-axis
+plt.ticklabel_format(axis='x',
+                     style='scientific',
+                     # useMathText=True,
+                     scilimits=(0,0))
+
+ax = plt.gca()
+ax.xaxis.offsetText.set_fontsize(textsize)
+
+# Enable scientific notation for y-axis
+plt.ticklabel_format(axis='y',
+                     style='scientific',
+                     # useMathText=True,
+                     scilimits=(0,0))
+
+ax = plt.gca()
+ax.yaxis.offsetText.set_fontsize(textsize)
 
 # Increase tick label size
 plt.xticks(fontsize=textsize)

@@ -9,13 +9,13 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/svr/8-split/USD'
+input_dir = '../../1-preprocessing/data/decorrelation-tests/5-split/log-differenced/USD/5'
 
 common_name = 'C'
 
 # Define the hyperparameter grid
 param_grid = {
-    'C': np.arange(1, 100, 1)
+    'C': np.logspace(-100.0, 10.0, 100)
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))
@@ -32,7 +32,7 @@ output_dir = "data"
 os.makedirs(output_dir, exist_ok=True)
 
 # Initialize the SVR model
-model = SVR(kernel='linear', tol=0.73)
+model = SVR()
 
 # Perform grid search
 grid_search = GridSearchCV(

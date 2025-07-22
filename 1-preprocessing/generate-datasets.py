@@ -16,52 +16,52 @@ forward_fill(
 
 # All combinations of preprocessing steps
 
-correlated_dir = 'data/decorrelation-tests/1-correlated'
+correlated_dir = 'data/3-correlated'
 os.makedirs(correlated_dir, exist_ok=True)
 
 # Raw
 
 log_transform('data/2-forward-filled.csv',
-              os.path.join(correlated_dir, '3-log-transformed.csv'))
+              os.path.join(correlated_dir, 'log-transformed.csv'))
 
 difference('data/2-forward-filled.csv',
-           os.path.join(correlated_dir, '3-differenced.csv'))
+           os.path.join(correlated_dir, 'differenced.csv'))
 
 normalize("data/2-forward-filled.csv",
-          os.path.join(correlated_dir, "3-normalized.csv"),
+          os.path.join(correlated_dir, "normalized.csv"),
           (-1,1))
 
 standardize("data/2-forward-filled.csv",
-            os.path.join(correlated_dir, "3-standardized.csv"))
+            os.path.join(correlated_dir, "standardized.csv"))
 
 # 1st degree combinations
 
 # Logs
 
-difference(os.path.join(correlated_dir, '3-log-transformed.csv'),
-           os.path.join(correlated_dir, '3-log-differenced.csv'))
+difference(os.path.join(correlated_dir, 'log-transformed.csv'),
+           os.path.join(correlated_dir, 'log-differenced.csv'))
 
-normalize(os.path.join(correlated_dir, '3-log-transformed.csv'),
-          os.path.join(correlated_dir, '3-log-normalized.csv'))
+normalize(os.path.join(correlated_dir, 'log-transformed.csv'),
+          os.path.join(correlated_dir, 'log-normalized.csv'))
 
-standardize(os.path.join(correlated_dir, '3-log-transformed.csv'),
-            os.path.join(correlated_dir, '3-log-standardized.csv'))
+standardize(os.path.join(correlated_dir, 'log-transformed.csv'),
+            os.path.join(correlated_dir, 'log-standardized.csv'))
 
 # Diffs
 
-normalize(os.path.join(correlated_dir, '3-differenced.csv'),
-          os.path.join(correlated_dir, '3-diff-normalized.csv'))
+normalize(os.path.join(correlated_dir, 'differenced.csv'),
+          os.path.join(correlated_dir, 'diff-normalized.csv'))
 
-standardize(os.path.join(correlated_dir, '3-differenced.csv'),
-            os.path.join(correlated_dir, '3-diff-standardized.csv'))
+standardize(os.path.join(correlated_dir, 'differenced.csv'),
+            os.path.join(correlated_dir, 'diff-standardized.csv'))
 
 # 2nd degree combinations
 
-normalize(os.path.join(correlated_dir, '3-log-differenced.csv'),
-          os.path.join(correlated_dir, '3-log-diff-normalized.csv'))
+normalize(os.path.join(correlated_dir, 'log-differenced.csv'),
+          os.path.join(correlated_dir, 'log-diff-normalized.csv'))
 
-standardize(os.path.join(correlated_dir, '3-log-differenced.csv'),
-            os.path.join(correlated_dir, '3-log-diff-standardized.csv'))
+standardize(os.path.join(correlated_dir, 'log-differenced.csv'),
+            os.path.join(correlated_dir, 'log-diff-standardized.csv'))
 
 ############################################
 
@@ -69,53 +69,53 @@ print("Creating groupings")
 
 groupings = {"USD": ["JPY","CZK","DKK","GBP","HUF","PLN","SEK","CHF","NOK","AUD","CAD","HKD","KRW","NZD","SGD","ZAR"]}
 
-groupings_dir = 'data/decorrelation-tests/2-groupings'
+groupings_dir = 'data/4-groupings'
 os.makedirs(groupings_dir, exist_ok=True)
 
 create_groupings('data/2-forward-filled.csv',
                  os.path.join(groupings_dir, 'raw'), groupings)
 
-create_groupings(os.path.join(correlated_dir, '3-log-transformed.csv'),
+create_groupings(os.path.join(correlated_dir, 'log-transformed.csv'),
                  os.path.join(groupings_dir, 'log-transformed'),
                  groupings)
 
-create_groupings(os.path.join(correlated_dir, '3-differenced.csv'),
+create_groupings(os.path.join(correlated_dir, 'differenced.csv'),
                  os.path.join(groupings_dir, 'differenced'),
                  groupings)
 
-create_groupings(os.path.join(correlated_dir, "3-normalized.csv"),
+create_groupings(os.path.join(correlated_dir, "normalized.csv"),
                  os.path.join(groupings_dir, 'normalized'), groupings)
 
-create_groupings(os.path.join(correlated_dir, "3-standardized.csv"),
+create_groupings(os.path.join(correlated_dir, "standardized.csv"),
                  os.path.join(groupings_dir, 'standardized'), groupings)
 
 # Combinations
 
-create_groupings(os.path.join(correlated_dir, '3-log-differenced.csv'),
+create_groupings(os.path.join(correlated_dir, 'log-differenced.csv'),
                  os.path.join(groupings_dir, 'log-differenced'),
                  groupings)
 
-create_groupings(os.path.join(correlated_dir, '3-log-normalized.csv'),
+create_groupings(os.path.join(correlated_dir, 'log-normalized.csv'),
                  os.path.join(groupings_dir, 'log-normalized'),
                  groupings)
 
-create_groupings(os.path.join(correlated_dir, '3-log-standardized.csv'),
+create_groupings(os.path.join(correlated_dir, 'log-standardized.csv'),
                  os.path.join(groupings_dir, 'log-standardized'),
                  groupings)
 
-create_groupings(os.path.join(correlated_dir, '3-diff-normalized.csv'),
+create_groupings(os.path.join(correlated_dir, 'diff-normalized.csv'),
                  os.path.join(groupings_dir, 'diff-normalized'),
                  groupings)
 
-create_groupings(os.path.join(correlated_dir, '3-diff-standardized.csv'),
+create_groupings(os.path.join(correlated_dir, 'diff-standardized.csv'),
                  os.path.join(groupings_dir, 'diff-standardized'),
                  groupings)
 
-create_groupings(os.path.join(correlated_dir, '3-log-diff-normalized.csv'),
+create_groupings(os.path.join(correlated_dir, 'log-diff-normalized.csv'),
                  os.path.join(groupings_dir, 'log-diff-normalized'),
                  groupings)
 
-create_groupings(os.path.join(correlated_dir, '3-log-diff-standardized.csv'),
+create_groupings(os.path.join(correlated_dir, 'log-diff-standardized.csv'),
                  os.path.join(groupings_dir, 'log-diff-standardized'),
                  groupings)
 
@@ -123,7 +123,7 @@ create_groupings(os.path.join(correlated_dir, '3-log-diff-standardized.csv'),
 
 print("Decorrelating variables")
 
-decorrelated_dir = 'data/decorrelation-tests/3-decorrelated'
+decorrelated_dir = 'data/5-decorrelated'
 os.makedirs(decorrelated_dir, exist_ok=True)
 
 decorrelate(
@@ -192,7 +192,7 @@ decorrelate(
 
 # Get time lags
 
-features_dir = 'data/decorrelation-tests/4-features'
+features_dir = 'data/6-features'
 os.makedirs(features_dir, exist_ok=True)
 
 nr_lags = 50
@@ -273,7 +273,7 @@ create_features_alt(
 
 ############################################
 
-splits_dir = 'data/decorrelation-tests/5-split'
+splits_dir = 'data/7-split'
 
 split_data_alt(features_dir, splits_dir)
 

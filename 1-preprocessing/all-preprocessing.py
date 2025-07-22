@@ -1,10 +1,20 @@
 #!/usr/bin/env python3
 
-# All combinations of preprocessing steps
-
 import os
 from preprocessing import *
 from sklearn.svm import SVR
+
+# Common handling of missing values
+
+remove_variables_with_missing_values(
+        "data/0-raw.csv",
+        "data/1-removed-nan-variables.csv")
+
+forward_fill(
+        "data/1-removed-nan-variables.csv",
+        "data/2-forward-filled.csv")
+
+# All combinations of preprocessing steps
 
 correlated_dir = 'data/decorrelation-tests/1-correlated'
 os.makedirs(correlated_dir, exist_ok=True)

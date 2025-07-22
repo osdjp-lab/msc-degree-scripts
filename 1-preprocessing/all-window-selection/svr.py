@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-input_dir = '../data/decorrelation-tests/5-split'
+input_dir = '../data/7-split'
 output_dir = 'data/svr'
 os.makedirs(output_dir, exist_ok=True)
 
@@ -111,4 +111,4 @@ for subdir in os.listdir(input_dir):
         print('Set complete')
 
 print('Calculations complete')
-        
+

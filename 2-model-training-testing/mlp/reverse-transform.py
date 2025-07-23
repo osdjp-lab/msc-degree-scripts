@@ -9,9 +9,9 @@ import datetime
 from sklearn.preprocessing import MinMaxScaler
 
 # Load data
-raw = pd.read_csv('../../1-preprocessing/data/decorrelation-tests/4-features/raw/USD/7.csv')
-diff_org = pd.read_csv('../../1-preprocessing/data/decorrelation-tests/1-correlated/3-differenced.csv')
-test_set = pd.read_csv('../../1-preprocessing/data/decorrelation-tests/5-split/diff-normalized/USD/7/test_data.csv')
+raw = pd.read_csv('../../1-preprocessing/data/6-features/raw/USD/7.csv')
+diff_org = pd.read_csv('../../1-preprocessing/data/3-correlated/differenced.csv')
+test_set = pd.read_csv('../../1-preprocessing/data/7-split/diff-normalized/USD/7/test_data.csv')
 
 raw['Date'] = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in raw['Date']]
 test_set['Date'] = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in test_set['Date']]

@@ -8,7 +8,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/decorrelation-tests/5-split/diff-normalized/USD/7'
+input_dir = '../../1-preprocessing/data/7-split/diff-normalized/USD/7'
 
 common_name = 'solver'
 

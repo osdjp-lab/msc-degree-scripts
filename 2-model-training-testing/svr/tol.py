@@ -9,7 +9,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/7-split/log-differenced/USD/5'
+input_dir = '../../1-preprocessing/data/7-split/log-differenced/USD/9'
 
 common_name = 'tol'
 

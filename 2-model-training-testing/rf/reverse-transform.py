@@ -9,7 +9,7 @@ import datetime
 
 # Load data
 log_org = pd.read_csv('../../1-preprocessing/data/3-correlated/log-transformed.csv')
-test_set = pd.read_csv('../../1-preprocessing/data/7-split/log-differenced/USD/7/test_data.csv')
+test_set = pd.read_csv('../../1-preprocessing/data/7-split/log-differenced/USD/21/test_data.csv')
 
 log_org['Date'] = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in log_org['Date']]
 test_set['Date'] = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in test_set['Date']]

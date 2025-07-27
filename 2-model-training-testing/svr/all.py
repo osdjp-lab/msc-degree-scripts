@@ -16,9 +16,9 @@ common_name = 'all'
 # Define the hyperparameter grid
 param_grid = {
     'kernel': ['linear','poly','rbf'],
-    'tol': np.arange(0.6, 1.01, 0.05),
-    'C': np.arange(70, 90, 2),
-    'epsilon': np.arange(0.4, 0.61, 0.05)
+    'tol': np.linspace(0.00001, 1, 10),
+    'C': np.logspace(-100.0, 10.0, 10),
+    'epsilon': np.linspace(0, 1, 10)
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

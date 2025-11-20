@@ -5,7 +5,6 @@ Scripts for FOREX (FOReign EXchange) rate data preprocessing, model training and
 ## Requirements
 
 - python 3
-- jupyter
 - numpy
 - pandas
 - scikit-learn

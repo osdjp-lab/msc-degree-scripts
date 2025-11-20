@@ -6,46 +6,40 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../../data/rf'
+input_dir = '../../data/rf/oob'
 
-metric = 'oob'
+min_oob = pd.read_csv(os.path.join(input_dir, "min_oob_results.csv")).sort_values(by='oob_error')
 
-# OOB error
+textsize = 28
 
-for subdir in os.listdir(input_dir):
-    for target in os.listdir(os.path.join(input_dir, subdir)):
-        rel_path = os.path.join(subdir, target)
-        print(rel_path)
+print("min_oob")
 
-        data = pd.read_csv(os.path.join(input_dir, rel_path,f"oob_error.csv")).sort_values(by='offset')
-        
-        textsize = 28
-        
-        plt.figure(figsize=(10, 6))
-        
-        plt.plot(data['offset'].to_numpy(), data['oob_error'].to_numpy(), label='OOB Error')
-        
-        # Set title and labels
-        # plt.title('RF OOB error offset window', fontsize=textsize)
-        plt.xlabel('Offset', fontsize=textsize)
-        plt.ylabel('OOB Error', fontsize=textsize)
-        
-        # Add legend
-        plt.legend(fontsize=textsize)
-        
-        # Enable scientific notation for y-axis
-        plt.ticklabel_format(axis='y',
-                             style='scientific',
-                             # useMathText=True,
-                             scilimits=(0,0))
-        
-        ax = plt.gca()
-        ax.yaxis.offsetText.set_fontsize(textsize)
+plt.figure(figsize=(10, 6))
 
-        # Increase tick label size
-        plt.xticks(fontsize=textsize)
-        plt.yticks(fontsize=textsize)
+plt.bar(min_oob['method'].to_numpy(), min_oob['oob_error'].to_numpy(), label='Min-OOB')
 
-        # Show the plot
-        plt.show()
+# Set title and labels
+# plt.title('RF minimum average MSE preprocessing methodology and offset', fontsize=textsize)
+plt.xlabel('Preprocessing methodology and offset', fontsize=textsize)
+plt.ylabel('OOB Error', fontsize=textsize)
+
+# Add legend
+plt.legend(fontsize=textsize)
+
+# Enable scientific notation for y-axis
+plt.ticklabel_format(axis='y',
+                     style='scientific',
+                     # useMathText=True,
+                     scilimits=(0,0))
+
+ax = plt.gca()
+ax.set_yscale('log')
+ax.yaxis.offsetText.set_fontsize(textsize)
+
+# Increase tick label size
+plt.xticks(fontsize=textsize)
+plt.yticks(fontsize=textsize)
+
+# Show the plot
+plt.show()
 

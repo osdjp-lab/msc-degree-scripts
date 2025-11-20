@@ -1,4 +1,4 @@
 # Summary
 
-For each dataset variation plot the selected error metric values for the train and test sets on the same graph.
+Create bar graphs of the minimal error values for each dataset variation and offset for each model.
 

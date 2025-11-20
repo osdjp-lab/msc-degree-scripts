@@ -3,18 +3,20 @@
 import os
 import pandas as pd
 import numpy as np
-from sklearn.neural_network import MLPRegressor
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-input_dir = '../data/7-split'
-output_dir = 'data/mlp'
+input_dir = '../../data/1-preprocessing/7-split'
+output_dir = '../../data/2-window-selection/rf'
 os.makedirs(output_dir, exist_ok=True)
 
 for subdir in os.listdir(input_dir):
-    if 'normalized' in subdir:
+    # if 'raw' in subdir:
         for target in os.listdir(os.path.join(input_dir, subdir)):
             rel_path = os.path.join(subdir, target)
-            
+
+            oob_results = pd.DataFrame(columns=['offset', 'oob_error'])
+
             train_mse_results = pd.DataFrame(columns=['offset', 'mse'])
             train_mae_results = pd.DataFrame(columns=['offset', 'mae'])
             train_r2_results = pd.DataFrame(columns=['offset', 'r2'])
@@ -25,18 +27,17 @@ for subdir in os.listdir(input_dir):
             test_r2_results = pd.DataFrame(columns=['offset', 'r2'])
             test_hitrate_results = pd.DataFrame(columns=['offset', 'hitrate'])
 
-           
             result_dir = os.path.join(output_dir, rel_path)
             os.makedirs(result_dir, exist_ok=True)
             os.makedirs(os.path.join(result_dir, 'forecasts'), exist_ok=True)
-            
+
             print(result_dir)
 
             for offset in os.listdir(os.path.join(input_dir, rel_path)):
                 split_input_dir = os.path.join(input_dir, rel_path, offset)
 
                 print(split_input_dir)
-                
+
                 train_data = pd.read_csv(os.path.join(split_input_dir, "train_data.csv"))
                 test_data = pd.read_csv(os.path.join(split_input_dir, "test_data.csv"))
 
@@ -49,13 +50,16 @@ for subdir in os.listdir(input_dir):
                 X_test = test_data.iloc[:, 1:-1]
                 y_test = test_data.iloc[:, -1]
                 
-                # Fit the MLPRegressor model
-                model = MLPRegressor(activation="tanh",
-                                     shuffle=False,
-                                     random_state=0,
-                                     max_iter=1000)
-                
+                # Fit the RandomForestRegressor model
+                model = RandomForestRegressor(random_state=0,
+                                              oob_score=True,
+                                              n_jobs=-1)
+
                 model.fit(X_train, y_train)
+        
+                # Calculate the OOB error
+                oob_error = 1 - model.oob_score_
+                oob_results = pd.concat([oob_results, pd.DataFrame({'offset': [offset], 'oob_error': [oob_error]})])
                 
                 # Training set prediction evaluation
             
@@ -96,12 +100,14 @@ for subdir in os.listdir(input_dir):
                 test_mae_results = pd.concat([test_mae_results, pd.DataFrame({'offset': [offset], 'mae': [test_mae]})])
                 test_r2_results = pd.concat([test_r2_results, pd.DataFrame({'offset': [offset], 'r2': [test_r2]})])
                 test_hitrate_results = pd.concat([test_hitrate_results, pd.DataFrame({'offset': [offset], 'hitrate': [test_hitrate]})])
-
+           
                 # Save forecasts
                 output_df = pd.concat([train_date, pd.Series(y_train, name='y_train'), pd.Series(y_train_pred, name="y_train_pred")], axis=1)
                 output_df.to_csv(os.path.join(result_dir, 'forecasts', f'{offset}_train_pred.csv'), index=False)
                 output_df = pd.concat([test_date, pd.Series(y_test, name='y_test'), pd.Series(y_test_pred, name="y_test_pred")], axis=1)
                 output_df.to_csv(os.path.join(result_dir, 'forecasts', f'{offset}_test_pred.csv'), index=False)
+
+            oob_results.to_csv(os.path.join(result_dir, 'oob_error.csv'), index=False)
 
             train_mse_results.to_csv(os.path.join(result_dir, 'train_mse_results.csv'), index=False)
             train_mae_results.to_csv(os.path.join(result_dir, 'train_mae_results.csv'), index=False)
@@ -112,7 +118,7 @@ for subdir in os.listdir(input_dir):
             test_mae_results.to_csv(os.path.join(result_dir, 'test_mae_results.csv'), index=False)
             test_r2_results.to_csv(os.path.join(result_dir, 'test_r2_results.csv'), index=False)
             test_hitrate_results.to_csv(os.path.join(result_dir, 'test_hitrate_results.csv'), index=False)
-                
+
             print('Set complete')
 
 print('Calculations complete')

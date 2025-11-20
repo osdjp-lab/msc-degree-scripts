@@ -6,8 +6,8 @@ import numpy as np
 from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-input_dir = '../data/7-split'
-output_dir = 'data/svr'
+input_dir = '../../data/1-preprocessing/7-split'
+output_dir = '../../data/2-window-selection/svr'
 os.makedirs(output_dir, exist_ok=True)
 
 for subdir in os.listdir(input_dir):

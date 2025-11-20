@@ -7,32 +7,32 @@ from sklearn.svm import SVR
 # Common handling of missing values
 
 remove_variables_with_missing_values(
-        "data/0-raw.csv",
-        "data/1-removed-nan-variables.csv")
+        '../data/0-raw.csv',
+        '../data/1-removed-nan-variables.csv')
 
 forward_fill(
-        "data/1-removed-nan-variables.csv",
-        "data/2-forward-filled.csv")
+        '../data/1-removed-nan-variables.csv',
+        '../data/2-forward-filled.csv')
 
 # All combinations of preprocessing steps
 
-correlated_dir = 'data/3-correlated'
+correlated_dir = '../data/3-correlated'
 os.makedirs(correlated_dir, exist_ok=True)
 
 # Raw
 
-log_transform('data/2-forward-filled.csv',
+log_transform('../data/2-forward-filled.csv',
               os.path.join(correlated_dir, 'log-transformed.csv'))
 
-difference('data/2-forward-filled.csv',
+difference('../data/2-forward-filled.csv',
            os.path.join(correlated_dir, 'differenced.csv'))
 
-normalize("data/2-forward-filled.csv",
-          os.path.join(correlated_dir, "normalized.csv"),
+normalize('../data/2-forward-filled.csv',
+          os.path.join(correlated_dir, 'normalized.csv'),
           (-1,1))
 
-standardize("data/2-forward-filled.csv",
-            os.path.join(correlated_dir, "standardized.csv"))
+standardize('../data/2-forward-filled.csv',
+            os.path.join(correlated_dir, 'standardized.csv'))
 
 # 1st degree combinations
 
@@ -65,14 +65,14 @@ standardize(os.path.join(correlated_dir, 'log-differenced.csv'),
 
 ############################################
 
-print("Creating groupings")
+print('Creating groupings')
 
-groupings = {"USD": ["JPY","CZK","DKK","GBP","HUF","PLN","SEK","CHF","NOK","AUD","CAD","HKD","KRW","NZD","SGD","ZAR"]}
+groupings = {'USD': ['JPY','CZK','DKK','GBP','HUF','PLN','SEK','CHF','NOK','AUD','CAD','HKD','KRW','NZD','SGD','ZAR']}
 
-groupings_dir = 'data/4-groupings'
+groupings_dir = '../data/4-groupings'
 os.makedirs(groupings_dir, exist_ok=True)
 
-create_groupings('data/2-forward-filled.csv',
+create_groupings('../data/2-forward-filled.csv',
                  os.path.join(groupings_dir, 'raw'), groupings)
 
 create_groupings(os.path.join(correlated_dir, 'log-transformed.csv'),
@@ -83,10 +83,10 @@ create_groupings(os.path.join(correlated_dir, 'differenced.csv'),
                  os.path.join(groupings_dir, 'differenced'),
                  groupings)
 
-create_groupings(os.path.join(correlated_dir, "normalized.csv"),
+create_groupings(os.path.join(correlated_dir, 'normalized.csv'),
                  os.path.join(groupings_dir, 'normalized'), groupings)
 
-create_groupings(os.path.join(correlated_dir, "standardized.csv"),
+create_groupings(os.path.join(correlated_dir, 'standardized.csv'),
                  os.path.join(groupings_dir, 'standardized'), groupings)
 
 # Combinations
@@ -121,9 +121,9 @@ create_groupings(os.path.join(correlated_dir, 'log-diff-standardized.csv'),
 
 ############################################
 
-print("Decorrelating variables")
+print('Decorrelating variables')
 
-decorrelated_dir = 'data/5-decorrelated'
+decorrelated_dir = '../data/5-decorrelated'
 os.makedirs(decorrelated_dir, exist_ok=True)
 
 decorrelate(
@@ -192,7 +192,7 @@ decorrelate(
 
 # Get time lags
 
-features_dir = 'data/6-features'
+features_dir = '../data/6-features'
 os.makedirs(features_dir, exist_ok=True)
 
 nr_lags = 50
@@ -273,7 +273,7 @@ create_features_alt(
 
 ############################################
 
-splits_dir = 'data/7-split'
+splits_dir = '../data/7-split'
 
 split_data_alt(features_dir, splits_dir)
 

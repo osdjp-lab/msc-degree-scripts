@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../../data/rf'
+input_dir = '../../../data/2-window-selection/1-fit-results/rf'
 
 metric = 'oob'
 

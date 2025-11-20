@@ -6,11 +6,13 @@ import numpy as np
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-input_dir = '../data/mlp'
-output_dir = 'data/mlp/mse'
-os.makedirs(output_dir, exist_ok=True)
+input_dir = '../../data/2-window-selection/1-fit-results/mlp'
+output_dir = '../../data/2-window-selection/2-optimal/mlp'
 
 # MSE
+
+target_dir = os.path.join(output_dir, 'mse')
+os.makedirs(target_dir, exist_ok=True)
 
 train_mse_results = pd.DataFrame(columns=['method', 'mse'])
 test_mse_results = pd.DataFrame(columns=['method', 'mse'])
@@ -46,14 +48,14 @@ for subdir in os.listdir(input_dir):
             test_mse_results.loc[len(test_mse_results)] = {'method': f"{subdir}-{min_test_offset}", 'mse': min_test_value}
             min_avg_mse_results.loc[len(min_avg_mse_results)] = {'method': f"{subdir}-{min_avg_offset}", 'mse': min_avg}
 
-train_mse_results.sort_values(by='mse').to_csv(os.path.join(output_dir, 'train_mse_results.csv'), index=False)
-test_mse_results.sort_values(by='mse').to_csv(os.path.join(output_dir, 'test_mse_results.csv'), index=False)
-min_avg_mse_results.sort_values(by='mse').to_csv(os.path.join(output_dir, 'min_avg_mse_results.csv'), index=False)
+train_mse_results.sort_values(by='mse').to_csv(os.path.join(target_dir, 'train_mse_results.csv'), index=False)
+test_mse_results.sort_values(by='mse').to_csv(os.path.join(target_dir, 'test_mse_results.csv'), index=False)
+min_avg_mse_results.sort_values(by='mse').to_csv(os.path.join(target_dir, 'min_avg_mse_results.csv'), index=False)
 
 # MAE
 
-output_dir = 'data/mlp/mae'
-os.makedirs(output_dir, exist_ok=True)
+target_dir = os.path.join(output_dir, 'mae')
+os.makedirs(target_dir, exist_ok=True)
 
 train_mae_results = pd.DataFrame(columns=['method', 'mae'])
 test_mae_results = pd.DataFrame(columns=['method', 'mae'])
@@ -89,14 +91,14 @@ for subdir in os.listdir(input_dir):
             test_mae_results.loc[len(test_mae_results)] = {'method': f"{subdir}-{min_test_offset}", 'mae': min_test_value}
             min_avg_mae_results.loc[len(min_avg_mae_results)] = {'method': f"{subdir}-{min_avg_offset}", 'mae': min_avg}
 
-train_mae_results.sort_values(by='mae').to_csv(os.path.join(output_dir, 'train_mae_results.csv'), index=False)
-test_mae_results.sort_values(by='mae').to_csv(os.path.join(output_dir, 'test_mae_results.csv'), index=False)
-min_avg_mae_results.sort_values(by='mae').to_csv(os.path.join(output_dir, 'min_avg_mae_results.csv'), index=False)
+train_mae_results.sort_values(by='mae').to_csv(os.path.join(target_dir, 'train_mae_results.csv'), index=False)
+test_mae_results.sort_values(by='mae').to_csv(os.path.join(target_dir, 'test_mae_results.csv'), index=False)
+min_avg_mae_results.sort_values(by='mae').to_csv(os.path.join(target_dir, 'min_avg_mae_results.csv'), index=False)
 
 # Hitrate
 
-output_dir = 'data/mlp/hitrate'
-os.makedirs(output_dir, exist_ok=True)
+target_dir = os.path.join(output_dir, 'hitrate')
+os.makedirs(target_dir, exist_ok=True)
 
 train_hitrate_results = pd.DataFrame(columns=['method', 'hitrate'])
 test_hitrate_results = pd.DataFrame(columns=['method', 'hitrate'])
@@ -131,7 +133,7 @@ for subdir in os.listdir(input_dir):
             test_hitrate_results.loc[len(test_hitrate_results)] = {'method': f"{subdir}-{max_test_offset}", 'hitrate': max_test_value}
             max_avg_hitrate_results.loc[len(max_avg_hitrate_results)] = {'method': f"{subdir}-{max_avg_offset}", 'hitrate': max_avg}
 
-train_hitrate_results.sort_values(ascending=False, by='hitrate').to_csv(os.path.join(output_dir, 'train_hitrate_results.csv'), index=False)
-test_hitrate_results.sort_values(ascending=False, by='hitrate').to_csv(os.path.join(output_dir, 'test_hitrate_results.csv'), index=False)
-max_avg_hitrate_results.sort_values(ascending=False, by='hitrate').to_csv(os.path.join(output_dir, 'max_avg_hitrate_results.csv'), index=False)
+train_hitrate_results.sort_values(ascending=False, by='hitrate').to_csv(os.path.join(target_dir, 'train_hitrate_results.csv'), index=False)
+test_hitrate_results.sort_values(ascending=False, by='hitrate').to_csv(os.path.join(target_dir, 'test_hitrate_results.csv'), index=False)
+max_avg_hitrate_results.sort_values(ascending=False, by='hitrate').to_csv(os.path.join(target_dir, 'max_avg_hitrate_results.csv'), index=False)
 

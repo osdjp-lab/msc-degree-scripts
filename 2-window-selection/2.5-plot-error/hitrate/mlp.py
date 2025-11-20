@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../../data/mlp'
+input_dir = '../../../data/2-window-selection/1-fit-results/mlp'
 metric = 'hitrate'
 
 for subdir in os.listdir(input_dir):

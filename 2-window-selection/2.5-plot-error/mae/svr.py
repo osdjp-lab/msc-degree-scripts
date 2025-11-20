@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../../data/svr'
+input_dir = '../../../data/2-window-selection/1-fit-results/svr'
 metric = 'mae'
 
 for subdir in os.listdir(input_dir):

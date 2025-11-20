@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../../data/svr/mae'
+input_dir = '../../../data/2-window-selection/2-optimal/svr/mae'
 
 train_mae = pd.read_csv(os.path.join(input_dir, "train_mae_results.csv")).sort_values(by='mae')
 test_mae = pd.read_csv(os.path.join(input_dir, "test_mae_results.csv")).sort_values(by='mae')

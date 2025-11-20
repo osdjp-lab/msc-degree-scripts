@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../../data/mlp/mse'
+input_dir = '../../../data/2-window-selection/2-optimal/mlp/mse'
 
 train_mse = pd.read_csv(os.path.join(input_dir, "train_mse_results.csv")).sort_values(by='mse')
 test_mse = pd.read_csv(os.path.join(input_dir, "test_mse_results.csv")).sort_values(by='mse')

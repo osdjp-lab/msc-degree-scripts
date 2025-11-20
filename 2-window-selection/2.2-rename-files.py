@@ -18,7 +18,7 @@ mapping = {'differenced' : 'd',
            'raw' : 'r',
            'standardized' : 's'}
 
-data_dir = '../data/2-window-selection'
+data_dir = '../data/2-window-selection/1-fit-results'
 
 for subdir in os.listdir(data_dir):
     for target in os.listdir(os.path.join(data_dir, subdir)):

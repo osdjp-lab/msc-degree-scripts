@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../../data/mlp/hitrate'
+input_dir = '../../../data/2-window-selection/2-optimal/mlp/hitrate'
 
 train_hitrate = pd.read_csv(os.path.join(input_dir, "train_hitrate_results.csv")).sort_values(by='hitrate')
 test_hitrate = pd.read_csv(os.path.join(input_dir, "test_hitrate_results.csv")).sort_values(by='hitrate')

@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = '../../data/rf/oob'
+input_dir = '../../../data/2-window-selection/2-optimal/rf/oob'
 
 min_oob = pd.read_csv(os.path.join(input_dir, "min_oob_results.csv")).sort_values(by='oob_error')
 

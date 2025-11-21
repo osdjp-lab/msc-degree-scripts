@@ -8,8 +8,8 @@ import numpy as np
 import datetime
 
 # Load data
-log_org = pd.read_csv('../../1-preprocessing/data/3-correlated/log-transformed.csv')
-test_set = pd.read_csv('../../1-preprocessing/data/7-split/log-differenced/USD/9/test_data.csv')
+log_org = pd.read_csv('../../data/1-preprocessing/3-correlated/log-transformed.csv')
+test_set = pd.read_csv('../../data/1-preprocessing/7-split/log-differenced/USD/9/test_data.csv')
 
 log_org['Date'] = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in log_org['Date']]
 test_set['Date'] = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in test_set['Date']]
@@ -17,7 +17,7 @@ test_set['Date'] = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in tes
 first_day = test_set['Date'].iloc[0]
 prev_day = first_day - pd.Timedelta(days=1)
 
-input_dir = 'data'
+input_dir = '../../data/3-training-testing/svr'
 
 for file in os.listdir(input_dir):
     if 'forecast.csv' in file:

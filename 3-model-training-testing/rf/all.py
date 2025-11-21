@@ -9,7 +9,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/7-split/log-differenced/USD/21'
+input_dir = '../../data/1-preprocessing/7-split/log-differenced/USD/21'
 
 common_name = 'all'
 
@@ -29,7 +29,7 @@ y_train = train_data.iloc[:, -1]
 X_test = test_data.iloc[:, 1:-1]
 y_test = test_data.iloc[:, -1]
 
-output_dir = "data"
+output_dir = "../../data/3-training-testing/rf"
 
 os.makedirs(output_dir, exist_ok=True)
 

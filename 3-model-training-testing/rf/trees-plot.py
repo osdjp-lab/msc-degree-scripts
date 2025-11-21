@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-input_dir = 'data'
+input_dir = '../../data/3-training-testing/rf'
 
 common_name = 'nr_trees'
 

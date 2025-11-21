@@ -8,11 +8,11 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 # Set the directory containing the CSV files
-input_dir = '../../1-preprocessing/data/7-split/diff-normalized/USD/11'
+input_dir = '../../data/1-preprocessing/7-split/diff-normalized/USD/11'
 
 common_name = 'hidden'
 
-output_dir = "data"
+output_dir = "../../data/3-training-testing/mlp"
 
 os.makedirs(output_dir, exist_ok=True)
 

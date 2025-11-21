@@ -9,9 +9,9 @@ import datetime
 from sklearn.preprocessing import MinMaxScaler
 
 # Load data
-raw = pd.read_csv('../../1-preprocessing/data/6-features/raw/USD/11.csv')
-diff_org = pd.read_csv('../../1-preprocessing/data/3-correlated/differenced.csv')
-test_set = pd.read_csv('../../1-preprocessing/data/7-split/diff-normalized/USD/11/test_data.csv')
+raw = pd.read_csv('../../data/1-preprocessing/6-features/raw/USD/11.csv')
+diff_org = pd.read_csv('../../data/1-preprocessing/3-correlated/differenced.csv')
+test_set = pd.read_csv('../../data/1-preprocessing/7-split/diff-normalized/USD/11/test_data.csv')
 
 raw['Date'] = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in raw['Date']]
 test_set['Date'] = [datetime.datetime.strptime(elem, '%Y-%m-%d') for elem in test_set['Date']]
@@ -22,7 +22,7 @@ prev_day = first_day - pd.Timedelta(days=1)
 scaler = MinMaxScaler(feature_range=(-1, 1))
 scaler.fit(diff_org[['USD']])
 
-input_dir = 'data'
+input_dir = '../../data/3-training-testing/mlp'
 
 for file in os.listdir(input_dir):
     if 'forecast.csv' in file:

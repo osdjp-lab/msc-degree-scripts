@@ -3,7 +3,7 @@
 import os
 from preprocessing import *
 
-input_dir = '../data/0-raw'
+input_dir = '../data/eurofxref.csv'
 output_dir = '../data/1-preprocessing'
 os.makedirs(output_dir, exist_ok=True)
 

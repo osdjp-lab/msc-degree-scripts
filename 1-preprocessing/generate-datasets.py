@@ -3,14 +3,14 @@
 import os
 from preprocessing import *
 
-input_dir = '../data/eurofxref.csv'
+input_dir = '../data/0-raw'
 output_dir = '../data/1-preprocessing'
 os.makedirs(output_dir, exist_ok=True)
 
 # Common handling of missing values
 
 remove_variables_with_missing_values(
-        os.path.join(input_dir, '0-raw.csv'),
+        os.path.join(input_dir, 'eurofxref.csv'),
         os.path.join(output_dir, '1-removed-nan-variables.csv'))
 
 interpolate(

@@ -14,7 +14,7 @@
 ## Potential
 
 - Make scripts location independant (no hardcoded paths) - maybe split preprocessing library into individual scripts
-- Split each dataset into virtual interpolated subdatasets based on different sampling frequency subdatasets (Taylor series expansion)
+- Split each dataset into virtual interpolated subdatasets based on different sampling frequency subdatasets (Taylor series expansion) in order to extract different frequency components from dataset
 
 ## Dropped
 

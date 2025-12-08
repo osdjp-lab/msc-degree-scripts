@@ -59,6 +59,35 @@ def forward_fill(input_file, output_file):
     # Save the updated DataFrame to a CSV file
     data_forward_filled.to_csv(output_file, index_label='Date')
 
+def interpolate(input_file, output_file):
+    """Interpolate missing dates and values.
+
+    Args:
+        input_file: Input csv file.
+        output_file: Output csv file.
+
+    Returns:
+        None.
+
+    """
+
+    # Load the CSV file
+    data = pd.read_csv(input_file, index_col='Date', parse_dates=True)
+
+    # Create a complete date range
+    start_date = data.index.min()
+    end_date = data.index.max()
+    date_range = pd.date_range(start=start_date, end=end_date, freq='D')
+
+    # Reindex the DataFrame
+    data_reindexed = data.reindex(date_range)
+
+    # Interpolate the values
+    data_interpolated = data_reindexed.interpolate(method='linear')
+
+    # Save the updated DataFrame to a CSV file
+    data_interpolated.to_csv(output_file, index_label='Date')
+
 def log_transform(input_file, output_file):
     """Log transform the data values.
 

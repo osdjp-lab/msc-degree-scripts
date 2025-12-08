@@ -13,9 +13,9 @@ remove_variables_with_missing_values(
         os.path.join(input_dir, '0-raw.csv'),
         os.path.join(output_dir, '1-removed-nan-variables.csv'))
 
-forward_fill(
+interpolate(
         os.path.join(output_dir, '1-removed-nan-variables.csv'),
-        os.path.join(output_dir, '2-forward-filled.csv'))
+        os.path.join(output_dir, '2-interpolated.csv'))
 
 # All combinations of preprocessing steps
 
@@ -24,17 +24,17 @@ os.makedirs(correlated_dir, exist_ok=True)
 
 # Raw
 
-log_transform(os.path.join(output_dir, '2-forward-filled.csv'),
+log_transform(os.path.join(output_dir, '2-interpolated.csv'),
               os.path.join(correlated_dir, 'log-transformed.csv'))
 
-difference(os.path.join(output_dir, '2-forward-filled.csv'),
+difference(os.path.join(output_dir, '2-interpolated.csv'),
            os.path.join(correlated_dir, 'differenced.csv'))
 
-normalize(os.path.join(output_dir, '2-forward-filled.csv'),
+normalize(os.path.join(output_dir, '2-interpolated.csv'),
           os.path.join(correlated_dir, 'normalized.csv'),
           (-1,1))
 
-standardize(os.path.join(output_dir, '2-forward-filled.csv'),
+standardize(os.path.join(output_dir, '2-interpolated.csv'),
             os.path.join(correlated_dir, 'standardized.csv'))
 
 # 1st degree combinations
@@ -75,7 +75,7 @@ groupings = {'USD': ['JPY','CZK','DKK','GBP','HUF','PLN','SEK','CHF','NOK','AUD'
 groupings_dir = os.path.join(output_dir, '4-groupings')
 os.makedirs(groupings_dir, exist_ok=True)
 
-create_groupings(os.path.join(output_dir, '2-forward-filled.csv'),
+create_groupings(os.path.join(output_dir, '2-interpolated.csv'),
                  os.path.join(groupings_dir, 'raw'), groupings)
 
 create_groupings(os.path.join(correlated_dir, 'log-transformed.csv'),

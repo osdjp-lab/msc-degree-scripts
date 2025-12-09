@@ -9,32 +9,59 @@ os.makedirs(output_dir, exist_ok=True)
 
 # Common handling of missing values
 
+missing_dir = os.path.join(output_dir, '0-missing-values')
+os.makedirs(missing_dir, exist_ok=True)
+
 remove_variables_with_missing_values(
         os.path.join(input_dir, 'eurofxref.csv'),
-        os.path.join(output_dir, '1-removed-nan-variables.csv'))
+        os.path.join(missing_dir, 'eurofxref-no-nan.csv'))
 
 interpolate(
-        os.path.join(output_dir, '1-removed-nan-variables.csv'),
-        os.path.join(output_dir, '2-interpolated.csv'))
+        os.path.join(missing_dir, 'eurofxref-no-nan.csv'),
+        os.path.join(missing_dir, 'eurofxref-interpolated.csv'))
+
+remove_variables_with_missing_values(
+        os.path.join(input_dir, 'real-cpi-deflated-eer-abbr.csv'),
+        os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-no-nan.csv'))
+
+interpolate(
+        os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-no-nan.csv'),
+        os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-interpolated.csv'))
+
+# Common creation of merged dataset
+
+merged_dir = os.path.join(output_dir, '1-merged')
+os.makedirs(merged_dir, exist_ok=True)
+
+merge_datasets(
+        os.path.join(merged_dir, 'merged_dataset.csv'),
+        os.path.join(missing_dir, 'eurofxref-interpolated.csv'),
+        os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-interpolated.csv'))
+
+restrict_range(
+        os.path.join(merged_dir, 'merged_dataset.csv'),
+        os.path.join(merged_dir, 'restricted_range.csv'))
 
 # All combinations of preprocessing steps
 
-correlated_dir = os.path.join(output_dir, '3-correlated')
+base_file = os.path.join(merged_dir, 'restrict_range.csv')
+
+correlated_dir = os.path.join(output_dir, '2-correlated')
 os.makedirs(correlated_dir, exist_ok=True)
 
 # Raw
 
-log_transform(os.path.join(output_dir, '2-interpolated.csv'),
+log_transform(base_file,
               os.path.join(correlated_dir, 'log-transformed.csv'))
 
-difference(os.path.join(output_dir, '2-interpolated.csv'),
+difference(base_file,
            os.path.join(correlated_dir, 'differenced.csv'))
 
-normalize(os.path.join(output_dir, '2-interpolated.csv'),
+normalize(base_file,
           os.path.join(correlated_dir, 'normalized.csv'),
           (-1,1))
 
-standardize(os.path.join(output_dir, '2-interpolated.csv'),
+standardize(base_file,
             os.path.join(correlated_dir, 'standardized.csv'))
 
 # 1st degree combinations
@@ -72,10 +99,10 @@ print('Creating groupings')
 
 groupings = {'USD': ['JPY','CZK','DKK','GBP','HUF','PLN','SEK','CHF','NOK','AUD','CAD','HKD','KRW','NZD','SGD','ZAR']}
 
-groupings_dir = os.path.join(output_dir, '4-groupings')
+groupings_dir = os.path.join(output_dir, '3-groupings')
 os.makedirs(groupings_dir, exist_ok=True)
 
-create_groupings(os.path.join(output_dir, '2-interpolated.csv'),
+create_groupings(base_file,
                  os.path.join(groupings_dir, 'raw'), groupings)
 
 create_groupings(os.path.join(correlated_dir, 'log-transformed.csv'),
@@ -126,7 +153,7 @@ create_groupings(os.path.join(correlated_dir, 'log-diff-standardized.csv'),
 
 print('Decorrelating variables')
 
-decorrelated_dir = os.path.join(output_dir, '5-decorrelated')
+decorrelated_dir = os.path.join(output_dir, '4-decorrelated')
 os.makedirs(decorrelated_dir, exist_ok=True)
 
 decorrelate(
@@ -195,7 +222,7 @@ decorrelate(
 
 # Get time lags
 
-features_dir = os.path.join(output_dir, '6-features')
+features_dir = os.path.join(output_dir, '5-features')
 os.makedirs(features_dir, exist_ok=True)
 
 nr_lags = 50
@@ -276,7 +303,7 @@ create_features_alt(
 
 ############################################
 
-splits_dir = os.path.join(output_dir, '7-split')
+splits_dir = os.path.join(output_dir, '6-split')
 
 split_data_alt(features_dir, splits_dir)
 

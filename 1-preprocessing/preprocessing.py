@@ -6,6 +6,30 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.feature_selection import RFECV
 from sklearn.model_selection import train_test_split
 
+def merge_datasets(output_file, *input_files):
+    """Merge columns from input datasets into a single output dataset.
+
+    Use the Date column a the key for merging.
+
+    Args:
+        output_file: Output csv file.
+        *input_files: Input csv files.
+
+    Returns:
+        None.
+    """
+
+def restrict_range(input_file, output_file):
+    """Restrict range of data to common scope of date values.
+
+    Args:
+        input_file: Input csv file.
+        output_file: Output csv file.
+
+    Returns:
+        None.
+    """
+
 def remove_variables_with_missing_values(input_file, output_file):
     """Remove variables with missing values.
 

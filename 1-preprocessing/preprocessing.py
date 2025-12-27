@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 def merge_datasets(output_file, *input_files):
     """Merge columns from input datasets into a single output dataset.
 
-    Use the Date column a the key for merging.
+    Use the Date column as the key for merging.
 
     Args:
         output_file: Output csv file.
@@ -18,17 +18,40 @@ def merge_datasets(output_file, *input_files):
     Returns:
         None.
     """
+    
+    # Get min and max for the Date for each dataset
+    date_ranges = []
+    for file in input_files:
+        df = pd.read_csv(file)
+        df['Date'] = pd.to_datetime(df['Date'])
+        min_date = df['Date'].min()
+        max_date = df['Date'].max()
+        date_ranges.append((min_date, max_date))
+    
+    # Find the smallest min and the largest max
+    overall_min = min(start for start, end in date_ranges)
+    overall_max = max(end for start, end in date_ranges)
 
-def restrict_range(input_file, output_file):
-    """Restrict range of data to common scope of date values.
-
-    Args:
-        input_file: Input csv file.
-        output_file: Output csv file.
-
-    Returns:
-        None.
-    """
+    # Generate a Date column with a range of dates from min to max
+    full_date_range = pd.date_range(start=overall_min, end=overall_max, freq='D')
+    output_df = pd.DataFrame({'Date': full_date_range})
+    output_df.set_index('Date', inplace=True)
+  
+    # Copy the columns from the input files in to the output file
+    # matching by Date
+    for file in input_files:
+        df = pd.read_csv(file)
+        df['Date'] = pd.to_datetime(df['Date'])
+        df.set_index('Date', inplace=True)
+        output_df = output_df.join(df, how='left')
+    
+    output_df.reset_index(inplace=True)
+    
+    # Remove all rows with missing values
+    output_df.dropna(inplace=True)
+    
+    # Save output dataset
+    output_df.to_csv(output_file, index=False)
 
 def remove_variables_with_missing_values(input_file, output_file):
     """Remove variables with missing values.
@@ -44,9 +67,6 @@ def remove_variables_with_missing_values(input_file, output_file):
 
     # Read the CSV file
     df = pd.read_csv(input_file)
-
-    # Create the output directory if it doesn't exist
-    os.makedirs('data', exist_ok=True)
 
     # Drop columns with missing values
     df_selected = df.dropna(axis=1, how='any')

@@ -24,10 +24,6 @@ remove_variables_with_missing_values(
         os.path.join(input_dir, 'real-cpi-deflated-eer-abbr.csv'),
         os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-no-nan.csv'))
 
-interpolate(
-        os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-no-nan.csv'),
-        os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-interpolated.csv'))
-
 # Common creation of merged dataset
 
 merged_dir = os.path.join(output_dir, '1-merged')
@@ -36,15 +32,11 @@ os.makedirs(merged_dir, exist_ok=True)
 merge_datasets(
         os.path.join(merged_dir, 'merged_dataset.csv'),
         os.path.join(missing_dir, 'eurofxref-interpolated.csv'),
-        os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-interpolated.csv'))
-
-restrict_range(
-        os.path.join(merged_dir, 'merged_dataset.csv'),
-        os.path.join(merged_dir, 'restricted_range.csv'))
+        os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-no-nan.csv'))
 
 # All combinations of preprocessing steps
 
-base_file = os.path.join(merged_dir, 'restrict_range.csv')
+base_file = os.path.join(merged_dir, 'merged_dataset.csv')
 
 correlated_dir = os.path.join(output_dir, '2-correlated')
 os.makedirs(correlated_dir, exist_ok=True)

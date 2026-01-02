@@ -8,7 +8,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 # Set the directory containing the CSV files
-input_dir = '../../data/1-preprocessing/7-split/diff-normalized/USD/11'
+with open("../../data/3-training-testing/mlp/optimal_dataset_dir.txt", 'r') as file:
+    input_dir = file.read().rstrip()
 
 common_name = 'all'
 
@@ -22,7 +23,6 @@ param_grid = {
     'solver': ['adam','sgd','lbfgs'],
     'alpha': np.arange(0.1, 0.31, 0.1),
     'tol': np.arange(0.0001, 0.001, 0.0001)
-
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))
@@ -38,7 +38,7 @@ y_test = test_data.iloc[:, -1]
 model = MLPRegressor(activation='tanh',
                      shuffle=False,
                      random_state=0,
-                     max_iter=1000)
+                     max_iter=2000)
 
 # Perform grid search
 grid_search = GridSearchCV(

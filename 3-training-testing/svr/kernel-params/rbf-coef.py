@@ -9,7 +9,8 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # Set the directory containing the CSV files
-input_dir = '../../../data/1-preprocessing/svr/8-split/USD'
+with open("../../../data/3-training-testing/svr/optimal_dataset_dir.txt", 'r') as file:
+    input_dir = f"../{file.read().rstrip()}"
 
 common_name = 'rbf-coef'
 
@@ -27,7 +28,7 @@ y_train = train_data.iloc[:, -1]
 X_test = test_data.iloc[:, 1:-1]
 y_test = test_data.iloc[:, -1]
 
-output_dir = "../../data/3-training-testing/svr-kernel-params"
+output_dir = "../../../data/3-training-testing/svr/kernel-params"
 
 os.makedirs(output_dir, exist_ok=True)
 

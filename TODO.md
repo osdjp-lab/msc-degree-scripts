@@ -4,10 +4,10 @@
 
 + Add README.md for raw data sources
 + Add suitable datasets
-- Add dataset merge step
-- Add preprocessing of added datasets
-- Review necessity of decorrelation preprocessing step
-- Cherry pick or copy paste and re-add switch from forward fill to interpolate
++ Add dataset merge step
++ Add preprocessing of added datasets
++ Cherry pick or copy paste and re-add switch from forward fill to interpolate
+- Remove decorrelation preprocessing step
 - Review different data frequencies (daily, monthly, quarterly)
 - Add frequency based preprocessing split - multiple paths: daily (monthly, quarterly -> daily) and monthly, quarterly (daily -> monthly, quarterly)
 

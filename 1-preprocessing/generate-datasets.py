@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import shutil
 from preprocessing import *
 
 input_dir = '../data/0-raw'
@@ -33,6 +34,9 @@ merge_datasets(
         os.path.join(merged_dir, 'merged_dataset.csv'),
         os.path.join(missing_dir, 'eurofxref-interpolated.csv'),
         os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-no-nan.csv'))
+
+# shutil.copy(os.path.join(missing_dir, 'eurofxref-interpolated.csv'),
+#             os.path.join(merged_dir, 'merged_dataset.csv'))
 
 # All combinations of preprocessing steps
 
@@ -89,7 +93,12 @@ standardize(os.path.join(correlated_dir, 'log-differenced.csv'),
 
 print('Creating groupings')
 
-groupings = {'USD': ['JPY','CZK','DKK','GBP','HUF','PLN','SEK','CHF','NOK','AUD','CAD','HKD','KRW','NZD','SGD','ZAR']}
+data = pd.read_csv(base_file, index_col='Date')
+
+# groupings = {'USD': ['JPY','CZK','DKK','GBP','HUF','PLN','SEK','CHF','NOK','AUD','CAD','HKD','KRW','NZD','SGD','ZAR']}
+
+# Select all columns
+groupings = {'USD': [i for i in data.columns]}
 
 groupings_dir = os.path.join(output_dir, '3-groupings')
 os.makedirs(groupings_dir, exist_ok=True)

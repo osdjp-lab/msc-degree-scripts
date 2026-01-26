@@ -16,7 +16,7 @@ common_name = 'features'
 
 # Define the hyperparameter grid
 param_grid = {
-    'max_features': ['sqrt', 'log2', 0.3, 1.0],
+    'max_features': ['sqrt', 'log2', 0.3, 1.0] + [i for i in range(1,53)],
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

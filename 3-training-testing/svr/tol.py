@@ -16,7 +16,7 @@ common_name = 'tol'
 
 # Define the hyperparameter grid
 param_grid = {
-    'tol': np.linspace(0.00001, 1, 1000)
+    'tol': np.linspace(0.00001, 0.1, 1000)
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

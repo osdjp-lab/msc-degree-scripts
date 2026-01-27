@@ -16,7 +16,7 @@ common_name = 'epsilon'
 
 # Define the hyperparameter grid
 param_grid = {
-    'epsilon': np.linspace(0, 1, 1000)
+    'epsilon': np.logspace(-3, -1, 1000)
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

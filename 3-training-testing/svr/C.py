@@ -16,7 +16,7 @@ common_name = 'C'
 
 # Define the hyperparameter grid
 param_grid = {
-    'C': np.logspace(-100.0, 10.0, 100)
+    'C': np.logspace(-100.0, 100.0, 100)
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

@@ -16,10 +16,13 @@ common_name = 'all'
 
 # Define the hyperparameter grid
 param_grid = {
-    'kernel': ['linear','poly','rbf'],
-    'tol': np.linspace(0.00001, 1, 10),
-    'C': np.logspace(-100.0, 10.0, 10),
-    'epsilon': np.linspace(0, 1, 10)
+    #'coef0': np.linspace(0, 0.30, 3),
+    #'degree': [int(i) for i in np.linspace(20, 100, 3)],
+    'kernel': ['poly','rbf'],
+    'gamma': np.logspace(-3, 0, 3),
+    'tol': np.logspace(-5, -1, 5),
+    'C': np.logspace(-2, 2, 5),
+    'epsilon': np.logspace(-3, -1, 3)
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))
@@ -42,10 +45,10 @@ model = SVR()
 grid_search = GridSearchCV(
     estimator=model,
     param_grid=param_grid,
-    cv=5,  # 5-fold cross-validation
+    #cv=5,  # 5-fold cross-validation
     scoring='neg_mean_squared_error',
-    n_jobs=-1,  # use all available CPU cores
-    verbose=1
+    n_jobs=4,  # use all available CPU cores
+    verbose=2
 )
 
 # Fit the model

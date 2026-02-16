@@ -16,13 +16,20 @@ common_name = 'all'
 
 # Define the hyperparameter grid
 param_grid = {
-    #'coef0': np.linspace(0, 0.30, 3),
-    #'degree': [int(i) for i in np.linspace(20, 100, 3)],
-    'kernel': ['poly','rbf'],
+    # Initial search
+    'kernel': ['rbf'],
     'gamma': np.logspace(-3, 0, 3),
-    'tol': np.logspace(-5, -1, 5),
-    'C': np.logspace(-2, 2, 5),
-    'epsilon': np.logspace(-3, -1, 3)
+    'tol': [1e-6],
+    'C': np.arange(100, 1000, 5),
+    'epsilon': [1e-6]
+
+    # Optimal sets
+    # 41-USD
+    #'kernel': ['rbf'],
+    #'gamma': [0.001],
+    #'tol': [1e-6],
+    #'C': [905],
+    #'epsilon': [1e-6]
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

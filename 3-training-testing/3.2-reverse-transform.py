@@ -8,6 +8,8 @@ import numpy as np
 import datetime
 from sklearn.preprocessing import MinMaxScaler
 
+currency = '12-USD'
+
 # # # # # # # # # #
 
 def rev_diff(initial, differenced):
@@ -18,7 +20,7 @@ def rev_diff(initial, differenced):
         target_idx = matching_indices[0]
         prev_idx = target_idx - 1
         prev_date = initial.at[prev_idx, 'Date']
-        prev_value = initial.at[prev_idx, 'USD']
+        prev_value = initial.at[prev_idx, currency]
     
     first = {'Date': pd.Series(prev_date),
              'y_test': pd.Series(prev_value),
@@ -40,7 +42,7 @@ def rev_log(log_transformed):
 
 def rev_norm(un_norm, norm):
     scaler = MinMaxScaler(feature_range=(-1, 1))
-    scaler.fit(un_norm[['USD']])
+    scaler.fit(un_norm[[currency]])
     
     norm['y_test'] = scaler.inverse_transform(norm[['y_test']])
     norm['y_pred'] = scaler.inverse_transform(norm[['y_pred']])
@@ -49,7 +51,7 @@ def rev_norm(un_norm, norm):
 
 def rev_std(un_std, std):
     scaler = StandardScaler()
-    scaler.fit(un_std[['USD']])
+    scaler.fit(un_std[[currency]])
     
     std['y_test'] = scaler.inverse_transform(std[['y_test']])
     std['y_pred'] = scaler.inverse_transform(std[['y_pred']])
@@ -90,7 +92,7 @@ for model in ('mlp', 'svr', 'rf'):
             test_set_forecast = pd.read_csv(input_path)
 
             if method == 'd':
-                ref_dataset = '../data/1-preprocessing/4-decorrelated/raw/USD.csv'
+                ref_dataset = f'../data/1-preprocessing/4-decorrelated/raw/{currency}.csv'
 
                 undifferenced_unsplit = pd.read_csv(ref_dataset)
                 
@@ -98,8 +100,8 @@ for model in ('mlp', 'svr', 'rf'):
                 r_diff.to_csv(output_path, index=False)
             
             if method == 'dn':
-                ref_dataset_1 = '../data/1-preprocessing/4-decorrelated/raw/USD.csv'
-                ref_dataset_2 = '../data/1-preprocessing/4-decorrelated/differenced/USD.csv'
+                ref_dataset_1 = f'../data/1-preprocessing/4-decorrelated/raw/{currency}.csv'
+                ref_dataset_2 = f'../data/1-preprocessing/4-decorrelated/differenced/{currency}.csv'
                 
                 un_norm = pd.read_csv(ref_dataset_2)
                 undifferenced_unsplit = pd.read_csv(ref_dataset_1)
@@ -109,8 +111,8 @@ for model in ('mlp', 'svr', 'rf'):
                 r_norm_diff.to_csv(output_path, index=False)
             
             if method == 'ds':
-                ref_dataset_1 = '../data/1-preprocessing/4-decorrelated/raw/USD.csv'
-                ref_dataset_2 = '../data/1-preprocessing/4-decorrelated/differenced/USD.csv'
+                ref_dataset_1 = f'../data/1-preprocessing/4-decorrelated/raw/{currency}.csv'
+                ref_dataset_2 = f'../data/1-preprocessing/4-decorrelated/differenced/{currency}.csv'
                 
                 un_std = pd.read_csv(ref_dataset_2)
                 undifferenced_unsplit = pd.read_csv(ref_dataset_1)
@@ -120,7 +122,7 @@ for model in ('mlp', 'svr', 'rf'):
                 r_std_diff.to_csv(output_path, index=False)
             
             if method == 'ld':
-                ref_dataset = '../data/1-preprocessing/4-decorrelated/log-transformed/USD.csv'
+                ref_dataset = f'../data/1-preprocessing/4-decorrelated/log-transformed/{currency}.csv'
                 
                 undifferenced_unsplit = pd.read_csv(ref_dataset)
 
@@ -129,8 +131,8 @@ for model in ('mlp', 'svr', 'rf'):
                 r_diff_log.to_csv(output_path, index=False)
             
             if method == 'ldn':
-                ref_dataset_1 = '../data/1-preprocessing/4-decorrelated/log-transformed/USD.csv'
-                ref_dataset_2 = '../data/1-preprocessing/4-decorrelated/log-differenced/USD.csv'
+                ref_dataset_1 = f'../data/1-preprocessing/4-decorrelated/log-transformed/{currency}.csv'
+                ref_dataset_2 = f'../data/1-preprocessing/4-decorrelated/log-differenced/{currency}.csv'
                 
                 un_norm = pd.read_csv(ref_dataset_2)
                 undifferenced_unsplit = pd.read_csv(ref_dataset_1)
@@ -141,8 +143,8 @@ for model in ('mlp', 'svr', 'rf'):
                 r_norm_diff_log.to_csv(output_path, index=False)
             
             if method == 'lds':
-                ref_dataset_1 = '../data/1-preprocessing/4-decorrelated/log-transformed/USD.csv'
-                ref_dataset_2 = '../data/1-preprocessing/4-decorrelated/log-differenced/USD.csv'
+                ref_dataset_1 = f'../data/1-preprocessing/4-decorrelated/log-transformed/{currency}.csv'
+                ref_dataset_2 = f'../data/1-preprocessing/4-decorrelated/log-differenced/{currency}.csv'
                 
                 un_std = pd.read_csv(ref_dataset_2)
                 undifferenced_unsplit = pd.read_csv(ref_dataset_1)
@@ -153,7 +155,7 @@ for model in ('mlp', 'svr', 'rf'):
                 r_std_diff_log.to_csv(output_path, index=False)
             
             if method == 'ln':
-                ref_dataset = '../data/1-preprocessing/4-decorrelated/log-transformed/USD.csv'
+                ref_dataset = f'../data/1-preprocessing/4-decorrelated/log-transformed/{currency}.csv'
                 
                 un_norm = pd.read_csv(ref_dataset)
                 
@@ -162,7 +164,7 @@ for model in ('mlp', 'svr', 'rf'):
                 r_norm_log.to_csv(output_path, index=False)
             
             if method == 'ls':
-                ref_dataset = '../data/1-preprocessing/4-decorrelated/log-transformed/USD.csv'
+                ref_dataset = f'../data/1-preprocessing/4-decorrelated/log-transformed/{currency}.csv'
                 
                 un_std = pd.read_csv(ref_dataset)
                 
@@ -175,7 +177,7 @@ for model in ('mlp', 'svr', 'rf'):
                 r_log.to_csv(output_path, index=False)
             
             if method == 'n':
-                ref_dataset = '../data/1-preprocessing/4-decorrelated/raw/USD.csv'
+                ref_dataset = f'../data/1-preprocessing/4-decorrelated/raw/{currency}.csv'
 
                 un_norm = pd.read_csv(ref_dataset)
                 
@@ -186,7 +188,7 @@ for model in ('mlp', 'svr', 'rf'):
                 test_set_forecast.to_csv(output_path, index=False)
             
             if method == 's':
-                ref_dataset = '../data/1-preprocessing/4-decorrelated/raw/USD.csv'
+                ref_dataset = f'../data/1-preprocessing/4-decorrelated/raw/{currency}.csv'
 
                 un_std = pd.read_csv(ref_dataset)
                 

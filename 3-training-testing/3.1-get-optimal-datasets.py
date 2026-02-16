@@ -28,7 +28,7 @@ for model in ('mlp', 'svr', 'rf'):
     method, offset = optimal_offset_dataset.split('-')
     
     # ../.. due to relative path (used by scripts in subdirectories) 
-    input_dir = f"../../data/1-preprocessing/6-split/{mapping[method]}/USD/{offset}"
+    input_dir = f"../../data/1-preprocessing/6-split/{mapping[method]}/41-USD/{offset}"
     
     output_dir = f"../data/3-training-testing/{model}"
     os.makedirs(output_dir, exist_ok=True)

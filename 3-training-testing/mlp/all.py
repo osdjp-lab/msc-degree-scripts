@@ -22,15 +22,15 @@ param_grid = {
     # Initial search
     'hidden_layer_sizes': np.arange(1, 11, 1),
     'solver': ['lbfgs'],
-    'alpha': np.arange(0.1, 0.31, 0.1),
-    'tol': [1e-10]
+    'alpha': np.logspace(-10, -1, 10),
+    'tol': np.logspace(-10, -1, 10),
     
     # Optimal sets
     # 41-USD
-    'hidden_layer_sizes': [1],
-    'solver': ['lbfgs'],
-    'alpha': [0.1],
-    'tol': [1e-10]
+    #'hidden_layer_sizes': [1],
+    #'solver': ['lbfgs'],
+    #'alpha': [1e-5],
+    #'tol': np.logspace(-10, -5, 6)
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

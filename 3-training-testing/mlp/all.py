@@ -19,10 +19,18 @@ os.makedirs(output_dir, exist_ok=True)
 
 # Define the hyperparameter grid
 param_grid = {
-    'hidden_layer_sizes': np.arange(1, 102, 20),
-    'solver': ['adam','sgd','lbfgs'],
+    # Initial search
+    'hidden_layer_sizes': np.arange(1, 11, 1),
+    'solver': ['lbfgs'],
     'alpha': np.arange(0.1, 0.31, 0.1),
-    'tol': np.arange(0.0001, 0.001, 0.0001)
+    'tol': [1e-10]
+    
+    # Optimal sets
+    # 41-USD
+    'hidden_layer_sizes': [1],
+    'solver': ['lbfgs'],
+    'alpha': [0.1],
+    'tol': [1e-10]
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

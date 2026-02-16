@@ -74,7 +74,7 @@ plt.yticks(fontsize=textsize)
 # Show the plot
 plt.show()
 
-print("min_avg__mse")
+print("min_avg_mse")
 
 plt.figure(figsize=(10, 6))
 

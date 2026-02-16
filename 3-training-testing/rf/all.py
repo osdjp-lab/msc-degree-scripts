@@ -16,9 +16,16 @@ common_name = 'all'
 
 # Define the hyperparameter grid
 param_grid = {
-    'n_estimators': np.arange(20, 31, 1),
-    'max_depth': np.arange(1, 6, 1),
-    'max_features': [i for i in range(15, 25)] + [i for i in range(38,43)]
+    # Initial search
+    'n_estimators': np.arange(3, 8, 1),
+    'max_depth': np.arange(1, 5, 1),
+    'max_features': np.arange(1, 40, 1)
+
+    # Optimal sets
+    # 41-USD
+    #'n_estimators': [5],
+    #'max_depth': [3],
+    #'max_features': [3]
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

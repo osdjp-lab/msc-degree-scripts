@@ -21,7 +21,7 @@ os.makedirs(output_dir, exist_ok=True)
 param_grid = {
     # Initial search
     'hidden_layer_sizes': np.arange(1, 11, 1),
-    'solver': ['lbfgs'],
+    'solver': ['adam','sgd','lbfgs'],
     'alpha': np.logspace(-10, -1, 10),
     'tol': np.logspace(-10, -1, 10),
     

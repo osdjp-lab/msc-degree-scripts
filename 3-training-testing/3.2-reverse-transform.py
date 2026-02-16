@@ -6,9 +6,9 @@ import os
 import pandas as pd
 import numpy as np
 import datetime
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
-currency = '12-USD'
+currency = '41-USD'
 
 # # # # # # # # # #
 

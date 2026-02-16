@@ -30,13 +30,18 @@ remove_variables_with_missing_values(
 merged_dir = os.path.join(output_dir, '1-merged')
 os.makedirs(merged_dir, exist_ok=True)
 
-merge_datasets(
-        os.path.join(merged_dir, 'merged_dataset.csv'),
-        os.path.join(missing_dir, 'eurofxref-interpolated.csv'),
-        os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-no-nan.csv'))
+# merge_datasets(
+#         os.path.join(merged_dir, 'merged_dataset.csv'),
+#         os.path.join(missing_dir, 'eurofxref-interpolated.csv'),
+#         os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-no-nan.csv'))
 
+# Only eurofxref dataset
 # shutil.copy(os.path.join(missing_dir, 'eurofxref-interpolated.csv'),
 #             os.path.join(merged_dir, 'merged_dataset.csv'))
+
+# Only real-cpi-deflated-eer dataset
+shutil.copy(os.path.join(missing_dir, 'real-cpi-deflated-eer-abbr-no-nan.csv'),
+            os.path.join(merged_dir, 'merged_dataset.csv'))
 
 # All combinations of preprocessing steps
 
@@ -98,7 +103,7 @@ data = pd.read_csv(base_file, index_col='Date')
 # groupings = {'USD': ['JPY','CZK','DKK','GBP','HUF','PLN','SEK','CHF','NOK','AUD','CAD','HKD','KRW','NZD','SGD','ZAR']}
 
 # Select all columns
-groupings = {'USD': [i for i in data.columns]}
+groupings = {'41-USD': [i for i in data.columns]}
 
 groupings_dir = os.path.join(output_dir, '3-groupings')
 os.makedirs(groupings_dir, exist_ok=True)

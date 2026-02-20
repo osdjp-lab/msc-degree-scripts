@@ -16,7 +16,7 @@ common_name = 'gamma'
 
 # Define the hyperparameter grid
 param_grid = {
-    'gamma': np.linspace(0.001, 0.2, 1000)
+    'gamma': np.logspace(-6, 2, 9)
 }
 
 train_data = pd.read_csv(os.path.join(input_dir, "train_data.csv"))

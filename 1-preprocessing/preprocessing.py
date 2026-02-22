@@ -19,7 +19,7 @@ def merge_datasets(output_file, *input_files):
     Returns:
         None.
     """
-    
+
     # Get min and max for the Date for each dataset
     date_ranges = []
     for file in input_files:
@@ -28,7 +28,7 @@ def merge_datasets(output_file, *input_files):
         min_date = df['Date'].min()
         max_date = df['Date'].max()
         date_ranges.append((min_date, max_date))
-    
+
     # Find the smallest min and the largest max
     overall_min = min(start for start, end in date_ranges)
     overall_max = max(end for start, end in date_ranges)
@@ -37,7 +37,7 @@ def merge_datasets(output_file, *input_files):
     full_date_range = pd.date_range(start=overall_min, end=overall_max, freq='D')
     output_df = pd.DataFrame({'Date': full_date_range})
     output_df.set_index('Date', inplace=True)
-  
+
     # Copy the columns from the input files in to the output file
     # matching by Date
     for file in input_files:
@@ -45,12 +45,12 @@ def merge_datasets(output_file, *input_files):
         df['Date'] = pd.to_datetime(df['Date'])
         df.set_index('Date', inplace=True)
         output_df = output_df.join(df, how='left')
-    
+
     output_df.reset_index(inplace=True)
-    
+
     # Remove all rows with missing values
     output_df.dropna(inplace=True)
-    
+
     # Save output dataset
     output_df.to_csv(output_file, index=False)
 
@@ -417,30 +417,30 @@ def select_features(input_dir, output_dir, cutoff=0.1):
 
         for file in [f for f in os.listdir(current_dir) if f.endswith('.csv')]:
             print(f"file = {file}")
-    
+
             # Load data
             data = pd.read_csv(os.path.join(current_dir, file))
-    
+
             # Get base file name
             base_name = os.path.splitext(file)[0]
-    
+
             # Get feature column names excluding date and target columns
             feature_columns = data.columns[1:-1]
-    
+
             # Get target column name
             target_column = data.columns[-1]
-    
+
             # Create metadata output directory
             meta_dir = os.path.join(result_dir, f"{base_name}-meta")
             os.makedirs(meta_dir, exist_ok=True)
-    
+
             # Calculate the Pearson correlation matrix
             # [x, y] - x selects rows; y selects columns
             corr_matrix = data.iloc[:, 1:].corr(method='pearson')
-    
+
             # Save the full correlation matrix to a new CSV file
             corr_matrix.to_csv(os.path.join(meta_dir, "all-full.csv"))
-    
+
             # Feature target decorrelation - remove abs(corr_coef) >= 0.8
             # corr_coefs = corr_matrix[target_column]
             # highly_correlated_with_target = corr_matrix.columns[
@@ -448,29 +448,29 @@ def select_features(input_dir, output_dir, cutoff=0.1):
             #     (corr_coefs != 1.0) &
             #     (corr_matrix.columns != target_column)
             # ].tolist()
-    
+
             weakly_correlated_with_target = []
             for column in feature_columns:
                 corr_coef = corr_matrix.loc[column, target_column]
                 if abs(corr_coef) < cutoff:
                     weakly_correlated_with_target.append(column)
-    
+
             # Drop features weakly correlated with target from data
             data = data.drop(columns=weakly_correlated_with_target)
-    
+
             # Save dropped feature correlation matrix
             dropped_corr_matrix = corr_matrix.copy().filter(items=[target_column], axis=1).filter(items=weakly_correlated_with_target, axis=0)
-    
+
             # Save the dropped feature correlation matrix to a new CSV file
             dropped_corr_matrix.to_csv(os.path.join(meta_dir, "target-dropped-full.csv"))
-    
+
             # Drop features weakly correlated with target from correlation matrix
             corr_matrix = corr_matrix.drop(columns=weakly_correlated_with_target)
             corr_matrix = corr_matrix.drop(index=weakly_correlated_with_target)
-    
+
             # Save reduced correlation matrix
             corr_matrix.to_csv(os.path.join(meta_dir, "reduced-full.csv"))
- 
+
             # Save reduced feature target set to output file
             data.to_csv(os.path.join(result_dir, f"{base_name}.csv"), index=False)
 
@@ -573,27 +573,27 @@ def decorrelate(input_dir, output_dir, cutoff=0.9):
 
         for file in [f for f in os.listdir(current_dir) if f.endswith('.csv')]:
             print(f"file = {file}")
-    
+
             # Load data
             data = pd.read_csv(os.path.join(current_dir, file))
-    
+
             # Get base file name
             base_name = os.path.splitext(file)[0]
-    
+
             # Get feature column names excluding date and target columns
             feature_columns = data.columns[1:-1]
-    
+
             # Create metadata output directory
             meta_dir = os.path.join(result_dir, f"{base_name}-meta")
             os.makedirs(meta_dir, exist_ok=True)
-    
+
             # Calculate the Pearson correlation matrix
             # [x, y] - x selects rows; y selects columns
             corr_matrix = data.iloc[:, 1:-1].corr(method='pearson')
-    
+
             # Save the feature correlation matrix to a new CSV file
             corr_matrix.to_csv(os.path.join(meta_dir, "all-features.csv"))
-    
+
             # Cross feature decorrelation - remove abs(corr_coef) >= 0.8
             # corr_feature_dict = {
             #     feature: [
@@ -604,7 +604,7 @@ def decorrelate(input_dir, output_dir, cutoff=0.9):
             #     ]
             #     for feature in feature_columns
             # }
-    
+
             corr_feature_dict = {}
             for feature_1 in feature_columns:
                 corr_feature_dict[feature_1] = []
@@ -619,41 +619,41 @@ def decorrelate(input_dir, output_dir, cutoff=0.9):
             # Save corr_feature_dict to json
             with open(os.path.join(meta_dir, "corr_features.json"), 'w') as f:
                 json.dump(corr_feature_dict, f)
-    
+
             # Pseudocode
             # Going through the dictionary once for every keys feature list
             # remove the corresponding keys from the dictionary.
             # Finally merge all remaining key feature lists
             # into a complete feature drop list.
-    
+
             # Process correlation dictionary
             corr_features = set()
             for feature_1 in corr_feature_dict.keys():
                 if feature_1 not in corr_features:
                     for feature_2 in corr_feature_dict[feature_1]:
                         corr_features.add(feature_2)
-    
+
             # Drop strongly intercorrelated features from data
             data = data.drop(columns=corr_features)
 
             # Get retained features
             retained_features = feature_columns.drop(corr_features)
-    
+
             # Save dropped vs retained feature correlation matrix
             dropped_vs_retained_corr_matrix = corr_matrix.copy().filter(items=retained_features, axis=1).filter(items=corr_features, axis=0)
             dropped_vs_retained_corr_matrix.to_csv(os.path.join(meta_dir, "dropped-vs-retained.csv"))
-    
+
             # Save dropped vs dropped feature correlation matrix
             dropped_vs_dropped_corr_matrix = corr_matrix.copy().filter(items=corr_features, axis=1).filter(items=corr_features, axis=0)
             dropped_vs_dropped_corr_matrix.to_csv(os.path.join(meta_dir, "dropped-vs-dropped.csv"))
-            
+
             # Drop strongly intercorrelated features from correlation matrix
             corr_matrix = corr_matrix.drop(columns=corr_features)
             corr_matrix = corr_matrix.drop(index=corr_features)
-    
+
             # Save decorrelated features set correlation matrix
             corr_matrix.to_csv(os.path.join(meta_dir, "decorrelated.csv"))
-    
+
             # Save reduced feature target set to output file
             data.to_csv(os.path.join(result_dir, f"{base_name}.csv"), index=False)
 

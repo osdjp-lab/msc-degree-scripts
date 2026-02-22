@@ -100,10 +100,11 @@ print('Creating groupings')
 
 data = pd.read_csv(base_file, index_col='Date')
 
-# groupings = {'USD': ['JPY','CZK','DKK','GBP','HUF','PLN','SEK','CHF','NOK','AUD','CAD','HKD','KRW','NZD','SGD','ZAR']}
-
-# Select all columns
-groupings = {'41-USD': [i for i in data.columns]}
+# Target column is not removed from features
+# due to itself being a feature when time lagged
+groupings = {'12-USD': [i for i in data.columns],
+             '18-USD': [i for i in data.columns],
+             '41-USD': [i for i in data.columns]}
 
 groupings_dir = os.path.join(output_dir, '3-groupings')
 os.makedirs(groupings_dir, exist_ok=True)
@@ -157,108 +158,39 @@ create_groupings(os.path.join(correlated_dir, 'log-diff-standardized.csv'),
 
 ############################################
 
-print('Decorrelating variables')
+# Create time lags
 
-decorrelated_dir = os.path.join(output_dir, '4-decorrelated')
-os.makedirs(decorrelated_dir, exist_ok=True)
-
-decorrelate(
-            os.path.join(groupings_dir, 'raw'),
-            os.path.join(decorrelated_dir, 'raw')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'log-transformed'),
-            os.path.join(decorrelated_dir, 'log-transformed')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'differenced'),
-            os.path.join(decorrelated_dir, 'differenced')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'normalized'),
-            os.path.join(decorrelated_dir, 'normalized')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'standardized'),
-            os.path.join(decorrelated_dir, 'standardized')
-            )
-
-# Combinations
-
-decorrelate(
-            os.path.join(groupings_dir, 'log-differenced'),
-            os.path.join(decorrelated_dir, 'log-differenced')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'log-normalized'),
-            os.path.join(decorrelated_dir, 'log-normalized')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'log-standardized'),
-            os.path.join(decorrelated_dir, 'log-standardized')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'diff-normalized'),
-            os.path.join(decorrelated_dir, 'diff-normalized')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'diff-standardized'),
-            os.path.join(decorrelated_dir, 'diff-standardized')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'log-diff-normalized'),
-            os.path.join(decorrelated_dir, 'log-diff-normalized')
-            )
-
-decorrelate(
-            os.path.join(groupings_dir, 'log-diff-standardized'),
-            os.path.join(decorrelated_dir, 'log-diff-standardized')
-            )
-
-############################################
-
-# Get time lags
-
-features_dir = os.path.join(output_dir, '5-features')
+features_dir = os.path.join(output_dir, '4-features')
 os.makedirs(features_dir, exist_ok=True)
 
-nr_lags = 50
+nr_lags = 12
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'raw'),
+            os.path.join(groupings_dir, 'raw'),
             os.path.join(features_dir, 'raw'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'log-transformed'),
+            os.path.join(groupings_dir, 'log-transformed'),
             os.path.join(features_dir, 'log-transformed'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'differenced'),
+            os.path.join(groupings_dir, 'differenced'),
             os.path.join(features_dir, 'differenced'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'normalized'),
+            os.path.join(groupings_dir, 'normalized'),
             os.path.join(features_dir, 'normalized'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'standardized'),
+            os.path.join(groupings_dir, 'standardized'),
             os.path.join(features_dir, 'standardized'),
             nr_lags
             )
@@ -266,50 +198,192 @@ create_features_alt(
 # Combinations
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'log-differenced'),
+            os.path.join(groupings_dir, 'log-differenced'),
             os.path.join(features_dir, 'log-differenced'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'log-normalized'),
+            os.path.join(groupings_dir, 'log-normalized'),
             os.path.join(features_dir, 'log-normalized'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'log-standardized'),
+            os.path.join(groupings_dir, 'log-standardized'),
             os.path.join(features_dir, 'log-standardized'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'diff-normalized'),
+            os.path.join(groupings_dir, 'diff-normalized'),
             os.path.join(features_dir, 'diff-normalized'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'diff-standardized'),
+            os.path.join(groupings_dir, 'diff-standardized'),
             os.path.join(features_dir, 'diff-standardized'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'log-diff-normalized'),
+            os.path.join(groupings_dir, 'log-diff-normalized'),
             os.path.join(features_dir, 'log-diff-normalized'),
             nr_lags
             )
 
 create_features_alt(
-            os.path.join(decorrelated_dir, 'log-diff-standardized'),
+            os.path.join(groupings_dir, 'log-diff-standardized'),
             os.path.join(features_dir, 'log-diff-standardized'),
             nr_lags
             )
 
 ############################################
 
-splits_dir = os.path.join(output_dir, '6-split')
+print('Selecting features')
 
-split_data_alt(features_dir, splits_dir)
+# Remove features with a low correlation with the target variable
+
+select_featuresd_dir = os.path.join(output_dir, '5-selection')
+os.makedirs(select_featuresd_dir, exist_ok=True)
+
+select_features(
+            os.path.join(features_dir, 'raw'),
+            os.path.join(select_featuresd_dir, 'raw')
+            )
+
+select_features(
+            os.path.join(features_dir, 'log-transformed'),
+            os.path.join(select_featuresd_dir, 'log-transformed')
+            )
+
+select_features(
+            os.path.join(features_dir, 'differenced'),
+            os.path.join(select_featuresd_dir, 'differenced')
+            )
+
+select_features(
+            os.path.join(features_dir, 'normalized'),
+            os.path.join(select_featuresd_dir, 'normalized')
+            )
+
+select_features(
+            os.path.join(features_dir, 'standardized'),
+            os.path.join(select_featuresd_dir, 'standardized')
+            )
+
+# Combinations
+
+select_features(
+            os.path.join(features_dir, 'log-differenced'),
+            os.path.join(select_featuresd_dir, 'log-differenced')
+            )
+
+select_features(
+            os.path.join(features_dir, 'log-normalized'),
+            os.path.join(select_featuresd_dir, 'log-normalized')
+            )
+
+select_features(
+            os.path.join(features_dir, 'log-standardized'),
+            os.path.join(select_featuresd_dir, 'log-standardized')
+            )
+
+select_features(
+            os.path.join(features_dir, 'diff-normalized'),
+            os.path.join(select_featuresd_dir, 'diff-normalized')
+            )
+
+select_features(
+            os.path.join(features_dir, 'diff-standardized'),
+            os.path.join(select_featuresd_dir, 'diff-standardized')
+            )
+
+select_features(
+            os.path.join(features_dir, 'log-diff-normalized'),
+            os.path.join(select_featuresd_dir, 'log-diff-normalized')
+            )
+
+select_features(
+            os.path.join(features_dir, 'log-diff-standardized'),
+            os.path.join(select_featuresd_dir, 'log-diff-standardized')
+            )
+
+############################################
+
+print('Decorrelating features')
+
+# Remove intercorrelated features with a lower correlation in favor of those with a higher correlation with the target variable
+
+decorrelated_dir = os.path.join(output_dir, '6-decorrelated')
+os.makedirs(decorrelated_dir, exist_ok=True)
+
+decorrelate(
+            os.path.join(features_dir, 'raw'),
+            os.path.join(decorrelated_dir, 'raw')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'log-transformed'),
+            os.path.join(decorrelated_dir, 'log-transformed')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'differenced'),
+            os.path.join(decorrelated_dir, 'differenced')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'normalized'),
+            os.path.join(decorrelated_dir, 'normalized')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'standardized'),
+            os.path.join(decorrelated_dir, 'standardized')
+            )
+
+# Combinations
+
+decorrelate(
+            os.path.join(features_dir, 'log-differenced'),
+            os.path.join(decorrelated_dir, 'log-differenced')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'log-normalized'),
+            os.path.join(decorrelated_dir, 'log-normalized')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'log-standardized'),
+            os.path.join(decorrelated_dir, 'log-standardized')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'diff-normalized'),
+            os.path.join(decorrelated_dir, 'diff-normalized')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'diff-standardized'),
+            os.path.join(decorrelated_dir, 'diff-standardized')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'log-diff-normalized'),
+            os.path.join(decorrelated_dir, 'log-diff-normalized')
+            )
+
+decorrelate(
+            os.path.join(features_dir, 'log-diff-standardized'),
+            os.path.join(decorrelated_dir, 'log-diff-standardized')
+            )
+
+############################################
+
+splits_dir = os.path.join(output_dir, '7-split')
+
+split_data_alt(decorrelated_dir, splits_dir)
 

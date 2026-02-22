@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-input_dir = '../../data/1-preprocessing/6-split'
+input_dir = '../../data/1-preprocessing/7-split'
 output_dir = '../../data/2-window-selection/1-fit-results/mlp'
 os.makedirs(output_dir, exist_ok=True)
 

@@ -6,10 +6,17 @@ pkgs.mkShell {
             numpy
             pandas
             scikit-learn
-            optuna
             statsmodels
             matplotlib
+            pip
+            virtualenv
         ]))
         pkgs.csvkit
     ];
+
+    shellHook = ''
+      python -m venv .venv
+      source .venv/bin/activate
+      pip install optuna optuna-integration
+    '';
 }

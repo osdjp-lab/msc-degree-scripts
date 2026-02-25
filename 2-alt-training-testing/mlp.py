@@ -1,148 +1,222 @@
 #!/usr/bin/env python3
-
+"""Train an MLPRegressor on many dataset/target/offset combinations
+with hyper‑parameter optimisation via OptunaSearchCV."""
 import os
-import pandas as pd
+from pathlib import Path
+
 import numpy as np
 import optuna
+import pandas as pd
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.neural_network import MLPRegressor
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-input_dir = '../data/1-preprocessing/7-split'
-output_dir = '../data/2-alt-training-testing/1-fit-results/mlp'
-os.makedirs(output_dir, exist_ok=True)
+# ----------------------------------------------------------------------
+# Paths
+# ----------------------------------------------------------------------
+INPUT_DIR = Path("../data/1-preprocessing/7-split")
+OUTPUT_DIR = Path("../data/2-alt-training-testing/1-fit-results/mlp")
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Key points:
-# 1. Optimize the fit of each model for each selected dataset_type, target and offset
-# 2. Save the found optimal hyperparameters
-# 3. Testing MSE between the actual and forecast values on the training and test sets
+# ----------------------------------------------------------------------
+# Helper to build the Optuna search space (uses current Optuna API)
+# ----------------------------------------------------------------------
+def get_search_space() -> dict:
+    """Return the dictionary that OptunaSearchCV expects."""
+    return {
+        # hidden_layer_sizes must be a *tuple*; we let Optuna pick the number of units
+        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
+        "solver": optuna.distributions.CategoricalDistribution(["adam"]),
+        "alpha": optuna.distributions.FloatDistribution(
+            low=1e-10, high=1e-1, log=True
+        ),
+        "tol": optuna.distributions.FloatDistribution(
+            low=1e-10, high=1e-1, log=True
+        ),
+    }
 
-# Order:
-# 1. dataset_type {dn,ds,ldn,lds,ld,ln,ls,l,n,r,s}
-# 2. target {12-USD,18-USD,41-USD}
-# 3. offset {1,2,3,4,5,6,7,8,9,10,11,12}
+# ----------------------------------------------------------------------
+# Main loop
+# ----------------------------------------------------------------------
+for dataset_type in os.listdir(INPUT_DIR):
+    if "normalized" not in dataset_type:
+        continue
 
-# Output:
-# Model -> Dataset type -> Target -> Offset
+    dataset_path = INPUT_DIR / dataset_type
 
-for dataset_type in os.listdir(input_dir):
-    if 'normalized' in dataset_type:
-        for target in os.listdir(os.path.join(input_dir, dataset_type)):
-           
-            train_mse_results = pd.DataFrame(columns=['offset', 'mse'])
-            train_mae_results = pd.DataFrame(columns=['offset', 'mae'])
-            train_r2_results = pd.DataFrame(columns=['offset', 'r2'])
-            train_hitrate_results = pd.DataFrame(columns=['offset', 'hitrate'])
-            
-            test_mse_results = pd.DataFrame(columns=['offset', 'mse'])
-            test_mae_results = pd.DataFrame(columns=['offset', 'mae'])
-            test_r2_results = pd.DataFrame(columns=['offset', 'r2'])
-            test_hitrate_results = pd.DataFrame(columns=['offset', 'hitrate'])
+    for target in os.listdir(dataset_path):
+        target_path = dataset_path / target
 
-            for offset in os.listdir(os.path.join(input_dir, dataset_type, target)):
-                print(f"{dataset_type}/{target}/{offset}")
+        # Containers for aggregated metrics (reset for each target)
+        train_mse_results = pd.DataFrame(columns=["offset", "mse"])
+        train_mae_results = pd.DataFrame(columns=["offset", "mae"])
+        train_r2_results = pd.DataFrame(columns=["offset", "r2"])
+        train_hitrate_results = pd.DataFrame(columns=["offset", "hitrate"])
 
-                source_dir = os.path.join(input_dir, dataset_type, target, offset)
-                result_dir = os.path.join(output_dir, dataset_type, target, offset)
-                os.makedirs(result_dir, exist_ok=True)
+        test_mse_results = pd.DataFrame(columns=["offset", "mse"])
+        test_mae_results = pd.DataFrame(columns=["offset", "mae"])
+        test_r2_results = pd.DataFrame(columns=["offset", "r2"])
+        test_hitrate_results = pd.DataFrame(columns=["offset", "hitrate"])
 
-                train_data = pd.read_csv(os.path.join(source_dir, "train_data.csv"))
-                test_data = pd.read_csv(os.path.join(source_dir, "test_data.csv"))
+        for offset in os.listdir(target_path):
+            print(f"{dataset_type}/{target}/{offset}")
 
-                # Split the data into features and target
-                train_date = train_data.iloc[:,0]
-                X_train = train_data.iloc[:, 1:-1]
-                y_train = train_data.iloc[:, -1]
+            source_dir = target_path / offset
+            result_dir = OUTPUT_DIR / dataset_type / target / offset
+            result_dir.mkdir(parents=True, exist_ok=True)
 
-                test_date = test_data.iloc[:,0]
-                X_test = test_data.iloc[:, 1:-1]
-                y_test = test_data.iloc[:, -1]
+            # --------------------------------------------------------------
+            # Load data
+            # --------------------------------------------------------------
+            train_data = pd.read_csv(source_dir / "train_data.csv")
+            test_data = pd.read_csv(source_dir / "test_data.csv")
 
-                # Fit the MLPRegressor model
-                model = MLPRegressor(activation="tanh",
-                                     shuffle=False,
-                                     random_state=0,
-                                     max_iter=100)
+            train_date = train_data.iloc[:, 0]
+            X_train = train_data.iloc[:, 1:-1]
+            y_train = train_data.iloc[:, -1]
 
-                param_distributions = {
-                    'hidden_layer_sizes': optuna.distributions.IntDistribution(1, 30),
-                    #'solver': optuna.distributions.CategoricalDistribution(['adam','sgd','lbfgs']),
-                    'solver': optuna.distributions.CategoricalDistribution(['adam']),
-                    'alpha': optuna.distributions.FloatDistribution(1e-10, 1e-1, log=True),
-                    'tol': optuna.distributions.FloatDistribution(1e-10, 1e-1, log=True)
-                }
-                
-                optuna_search = optuna.integration.OptunaSearchCV(
-                    model, param_distributions, n_trials=100, verbose=2
-                )
-                
-                optuna_search.fit(X_train, y_train)
-                
-                print("Best trial:")
-                trial = optuna_search.study_.best_trial
-                
-                print("  Value: ", trial.value)
-                print("  Params: ")
-                for key, value in trial.params.items():
-                    print(f"    {key}: {value}")
+            test_date = test_data.iloc[:, 0]
+            X_test = test_data.iloc[:, 1:-1]
+            y_test = test_data.iloc[:, -1]
 
-                # Training set prediction evaluation
+            # --------------------------------------------------------------
+            # Model + Optuna optimisation
+            # --------------------------------------------------------------
+            base_model = MLPRegressor(
+                activation="tanh",
+                shuffle=False,
+                random_state=0,
+                max_iter=10000,
+            )
 
-                # Predict the training set
-                y_train_pred = optuna_search.predict(X_train)
+            optuna_search = optuna.integration.OptunaSearchCV(
+                estimator=base_model,
+                param_distributions=get_search_space(),
+                n_trials=100,
+                scoring="neg_mean_squared_error",  # explicit scoring metric
+                cv=3,
+                verbose=2,
+                n_jobs=-1,
+            )
+            optuna_search.fit(X_train, y_train)
 
-                # Calculate scoring metrics
-                train_mse = mean_squared_error(y_train, y_train_pred)
-                train_mae = mean_absolute_error(y_train, y_train_pred)
-                train_r2 = r2_score(y_train, y_train_pred)
-                if 'diff' in dataset_type:
-                    train_hitrate = (np.sign(y_train_pred) == np.sign(y_train)).mean()
-                else:
-                    train_hitrate = (np.sign(pd.Series(y_train_pred, name='y_train_pred').diff()) == np.sign(y_train.diff())).mean()
+            # --------------------------------------------------------------
+            # Best trial information
+            # --------------------------------------------------------------
+            best_trial = optuna_search.study_.best_trial
+            print("Best trial:")
+            print(f"  Value: {best_trial.value}")
+            print("  Params:")
+            for k, v in best_trial.params.items():
+                print(f"    {k}: {v}")
 
-                # Add the results to the DataFrames
-                train_mse_results = pd.concat([train_mse_results, pd.DataFrame({'offset': [offset], 'mse': [train_mse]})])
-                train_mae_results = pd.concat([train_mae_results, pd.DataFrame({'offset': [offset], 'mae': [train_mae]})])
-                train_r2_results = pd.concat([train_r2_results, pd.DataFrame({'offset': [offset], 'r2': [train_r2]})])
-                train_hitrate_results = pd.concat([train_hitrate_results, pd.DataFrame({'offset': [offset], 'hitrate': [train_hitrate]})])
+            # --------------------------------------------------------------
+            # Evaluation on training set
+            # --------------------------------------------------------------
+            y_train_pred = optuna_search.predict(X_train)
 
-                # Test set prediction evaluation
+            train_mse = mean_squared_error(y_train, y_train_pred)
+            train_mae = mean_absolute_error(y_train, y_train_pred)
+            train_r2 = r2_score(y_train, y_train_pred)
 
-                # Predict the test set
-                y_test_pred = optuna_search.predict(X_test)
+            if "diff" in dataset_type:
+                train_hitrate = (np.sign(y_train_pred) == np.sign(y_train)).mean()
+            else:
+                train_hitrate = (
+                    np.sign(pd.Series(y_train_pred, name="y_train_pred").diff())
+                    == np.sign(y_train.diff())
+                ).mean()
 
-                # Calculate scoring metrics
-                test_mse = mean_squared_error(y_test, y_test_pred)
-                test_mae = mean_absolute_error(y_test, y_test_pred)
-                test_r2 = r2_score(y_test, y_test_pred)
-                if 'diff' in dataset_type:
-                    test_hitrate = (np.sign(y_test_pred) == np.sign(y_test)).mean()
-                else:
-                    test_hitrate = (np.sign(pd.Series(y_test_pred, name='y_test_pred').diff()) == np.sign(y_test.diff())).mean()
+            # Append training metrics
+            train_mse_results = pd.concat(
+                [train_mse_results, pd.DataFrame({"offset": [offset], "mse": [train_mse]})]
+            )
+            train_mae_results = pd.concat(
+                [train_mae_results, pd.DataFrame({"offset": [offset], "mae": [train_mae]})]
+            )
+            train_r2_results = pd.concat(
+                [train_r2_results, pd.DataFrame({"offset": [offset], "r2": [train_r2]})]
+            )
+            train_hitrate_results = pd.concat(
+                [
+                    train_hitrate_results,
+                    pd.DataFrame({"offset": [offset], "hitrate": [train_hitrate]}),
+                ]
+            )
 
-                # Add the results to the DataFrames
-                test_mse_results = pd.concat([test_mse_results, pd.DataFrame({'offset': [offset], 'mse': [test_mse]})])
-                test_mae_results = pd.concat([test_mae_results, pd.DataFrame({'offset': [offset], 'mae': [test_mae]})])
-                test_r2_results = pd.concat([test_r2_results, pd.DataFrame({'offset': [offset], 'r2': [test_r2]})])
-                test_hitrate_results = pd.concat([test_hitrate_results, pd.DataFrame({'offset': [offset], 'hitrate': [test_hitrate]})])
+            # --------------------------------------------------------------
+            # Evaluation on test set
+            # --------------------------------------------------------------
+            y_test_pred = optuna_search.predict(X_test)
 
-                # Save forecasts
-                output_df = pd.concat([train_date, pd.Series(y_train, name='y_train'), pd.Series(y_train_pred, name="y_train_pred")], axis=1)
-                output_df.to_csv(os.path.join(result_dir, 'train_pred.csv'), index=False)
-                output_df = pd.concat([test_date, pd.Series(y_test, name='y_test'), pd.Series(y_test_pred, name="y_test_pred")], axis=1)
-                output_df.to_csv(os.path.join(result_dir, 'test_pred.csv'), index=False)
+            test_mse = mean_squared_error(y_test, y_test_pred)
+            test_mae = mean_absolute_error(y_test, y_test_pred)
+            test_r2 = r2_score(y_test, y_test_pred)
 
-            train_mse_results.to_csv(os.path.join(output_dir, dataset_type, target, 'train_mse_results.csv'), index=False)
-            train_mae_results.to_csv(os.path.join(output_dir, dataset_type, target, 'train_mae_results.csv'), index=False)
-            train_r2_results.to_csv(os.path.join(output_dir, dataset_type, target, 'train_r2_results.csv'), index=False)
-            train_hitrate_results.to_csv(os.path.join(output_dir, dataset_type, target, 'train_hitrate_results.csv'), index=False)
+            if "diff" in dataset_type:
+                test_hitrate = (np.sign(y_test_pred) == np.sign(y_test)).mean()
+            else:
+                test_hitrate = (
+                    np.sign(pd.Series(y_test_pred, name="y_test_pred").diff())
+                    == np.sign(y_test.diff())
+                ).mean()
 
-            test_mse_results.to_csv(os.path.join(output_dir, dataset_type, target, 'test_mse_results.csv'), index=False)
-            test_mae_results.to_csv(os.path.join(output_dir, dataset_type, target, 'test_mae_results.csv'), index=False)
-            test_r2_results.to_csv(os.path.join(output_dir, dataset_type, target, 'test_r2_results.csv'), index=False)
-            test_hitrate_results.to_csv(os.path.join(output_dir, dataset_type, target, 'test_hitrate_results.csv'), index=False)
+            # Append test metrics
+            test_mse_results = pd.concat(
+                [test_mse_results, pd.DataFrame({"offset": [offset], "mse": [test_mse]})]
+            )
+            test_mae_results = pd.concat(
+                [test_mae_results, pd.DataFrame({"offset": [offset], "mae": [test_mae]})]
+            )
+            test_r2_results = pd.concat(
+                [test_r2_results, pd.DataFrame({"offset": [offset], "r2": [test_r2]})]
+            )
+            test_hitrate_results = pd.concat(
+                [
+                    test_hitrate_results,
+                    pd.DataFrame({"offset": [offset], "hitrate": [test_hitrate]}),
+                ]
+            )
 
-            print('Set complete')
+            # --------------------------------------------------------------
+            # Save predictions
+            # --------------------------------------------------------------
+            train_out = pd.concat(
+                [
+                    train_date,
+                    pd.Series(y_train, name="y_train"),
+                    pd.Series(y_train_pred, name="y_train_pred"),
+                ],
+                axis=1,
+            )
+            train_out.to_csv(result_dir / "train_pred.csv", index=False)
 
-print('Calculations complete')
+            test_out = pd.concat(
+                [
+                    test_date,
+                    pd.Series(y_test, name="y_test"),
+                    pd.Series(y_test_pred, name="y_test_pred"),
+                ],
+                axis=1,
+            )
+            test_out.to_csv(result_dir / "test_pred.csv", index=False)
+
+        # --------------------------------------------------------------
+        # Save aggregated metrics for the current target
+        # --------------------------------------------------------------
+        agg_path = OUTPUT_DIR / dataset_type / target
+        agg_path.mkdir(parents=True, exist_ok=True)
+
+        train_mse_results.to_csv(agg_path / "train_mse_results.csv", index=False)
+        train_mae_results.to_csv(agg_path / "train_mae_results.csv", index=False)
+        train_r2_results.to_csv(agg_path / "train_r2_results.csv", index=False)
+        train_hitrate_results.to_csv(agg_path / "train_hitrate_results.csv", index=False)
+
+        test_mse_results.to_csv(agg_path / "test_mse_results.csv", index=False)
+        test_mae_results.to_csv(agg_path / "test_mae_results.csv", index=False)
+        test_r2_results.to_csv(agg_path / "test_r2_results.csv", index=False)
+        test_hitrate_results.to_csv(agg_path / "test_hitrate_results.csv", index=False)
+
+        print("Set complete")
+
+print("Calculations complete")
 

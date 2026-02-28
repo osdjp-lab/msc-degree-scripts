@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
 """Train an SVR on many dataset/target/offset combinations
-with hyper‑parameter optimisation via OptunaSearchCV."""
+with searching for best hyperparameters with GridSearchCV."""
 
 import os
 import json
 from pathlib import Path
 
 import numpy as np
-import optuna
 import pandas as pd
 from sklearn.metrics import (
     mean_absolute_error,
@@ -16,20 +15,19 @@ from sklearn.metrics import (
     r2_score,
 )
 from sklearn.svm import SVR
+from sklearn.model_selection import GridSearchCV
 
-INPUT_DIR = Path("../data/1-preprocessing/7-split")
-OUTPUT_DIR = Path("../data/2-alt-training-testing/1-fit-results/svr")
+INPUT_DIR = Path("../../data/1-preprocessing/7-split")
+OUTPUT_DIR = Path("../../data/2-training-testing/grid-search/svr")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-def get_search_space() -> dict:
-    """Return the dictionary that OptunaSearchCV expects."""
-    return {
-        "kernel": optuna.distributions.CategoricalDistribution(['rbf', 'poly']),
-        "gamma": optuna.distributions.FloatDistribution(low=1e-3, high=3, log=True),
-        "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
-        "C": optuna.distributions.IntDistribution(low=100, high=1000),
-        "epsilon": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
-    }
+param_grid = {
+    'kernel': ['rbf', 'poly'],
+    'gamma': np.logspace(-3, 0, 3),
+    'tol': [1e-6],
+    'C': np.arange(100, 1000, 5),
+    'epsilon': [1e-6],
+}
 
 for dataset_type in os.listdir(INPUT_DIR):
     if "standardized" not in dataset_type:
@@ -73,25 +71,30 @@ for dataset_type in os.listdir(INPUT_DIR):
             y_test = test_data.iloc[:, -1]
 
             # --------------------------------------------------------------
-            # Model + Optuna optimisation
+            # Model + GridSearch
             # --------------------------------------------------------------
             base_model = SVR()
 
-            optuna_search = optuna.integration.OptunaSearchCV(
+            # Perform grid search
+            grid_search = GridSearchCV(
                 estimator=base_model,
-                param_distributions=get_search_space(),
-                n_trials=1000,
-                scoring="neg_mean_squared_error",
-                cv=3,
-                verbose=2,
-                n_jobs=-1,
+                param_grid=param_grid,
+                cv=3,  # 3-fold cross-validation
+                scoring='neg_mean_squared_error',
+                n_jobs=-1,  # use all available CPU cores
+                verbose=1
             )
-            optuna_search.fit(X_train, y_train)
 
+            # Fit the model
+            grid_search.fit(X_train, y_train)
+            
+            # Get the best model
+            best_model = grid_search.best_estimator_
+            
             # --------------------------------------------------------------
             # Save best‑trial information
             # --------------------------------------------------------------
-            best_trial = optuna_search.study_.best_trial
+            best_trial = grid_search.best_params_
 
             best_params_path = result_dir / "best_params.json"
             with best_params_path.open("w") as f:
@@ -114,7 +117,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             # --------------------------------------------------------------
             # Evaluation on training set
             # --------------------------------------------------------------
-            y_train_pred = optuna_search.predict(X_train)
+            y_train_pred = best_model.predict(X_train)
 
             train_mse = mean_squared_error(y_train, y_train_pred)
             train_mae = mean_absolute_error(y_train, y_train_pred)
@@ -148,7 +151,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             # --------------------------------------------------------------
             # Evaluation on test set
             # --------------------------------------------------------------
-            y_test_pred = optuna_search.predict(X_test)
+            y_test_pred = best_model.predict(X_test)
 
             test_mse = mean_squared_error(y_test, y_test_pred)
             test_mae = mean_absolute_error(y_test, y_test_pred)
@@ -180,7 +183,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             )
 
             # --------------------------------------------------------------
-            # Save predictions
+            # Save forecasts
             # --------------------------------------------------------------
             train_out = pd.concat(
                 [

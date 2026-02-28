@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Train an MLPRegressor on many dataset/target/offset combinations
+"""Train an RandomForestRegressor on many dataset/target/offset combinations
 with hyper‑parameter optimisation via OptunaSearchCV."""
 
 import os
@@ -15,23 +15,22 @@ from sklearn.metrics import (
     mean_squared_error,
     r2_score,
 )
-from sklearn.neural_network import MLPRegressor
+from sklearn.ensemble import RandomForestRegressor
 
-INPUT_DIR = Path("../data/1-preprocessing/7-split")
-OUTPUT_DIR = Path("../data/2-alt-training-testing/1-fit-results/mlp")
+INPUT_DIR = Path("../../data/1-preprocessing/7-split")
+OUTPUT_DIR = Path("../../data/2-training-testing/optuna/rf")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def get_search_space() -> dict:
     """Return the dictionary that OptunaSearchCV expects."""
     return {
-        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
-        "solver": optuna.distributions.CategoricalDistribution(['adam', 'sgd', 'lbfgs']),
-        "alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
-        "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
+        "n_estimators": optuna.distributions.IntDistribution(low=1, high=40),
+        "max_depth": optuna.distributions.IntDistribution(low=1, high=40),
+        "max_features": optuna.distributions.IntDistribution(low=1, high=44),
     }
 
 for dataset_type in os.listdir(INPUT_DIR):
-    if "normalized" not in dataset_type:
+    if "raw" not in dataset_type:
         continue
 
     dataset_path = INPUT_DIR / dataset_type
@@ -74,17 +73,17 @@ for dataset_type in os.listdir(INPUT_DIR):
             # --------------------------------------------------------------
             # Model + Optuna optimisation
             # --------------------------------------------------------------
-            base_model = MLPRegressor(
-                activation="tanh",
-                shuffle=False,
+            base_model = RandomForestRegressor(
+                # oob_score=True,
                 random_state=0,
-                max_iter=10000,
+                verbose=0,
+                n_jobs=-1
             )
 
             optuna_search = optuna.integration.OptunaSearchCV(
                 estimator=base_model,
                 param_distributions=get_search_space(),
-                n_trials=100,
+                n_trials=1000,
                 scoring="neg_mean_squared_error",
                 cv=3,
                 verbose=2,

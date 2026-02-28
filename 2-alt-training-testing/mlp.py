@@ -1,42 +1,35 @@
 #!/usr/bin/env python3
+
 """Train an MLPRegressor on many dataset/target/offset combinations
 with hyper‑parameter optimisation via OptunaSearchCV."""
+
 import os
+import json
 from pathlib import Path
 
 import numpy as np
 import optuna
 import pandas as pd
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_squared_error,
+    r2_score,
+)
 from sklearn.neural_network import MLPRegressor
 
-# ----------------------------------------------------------------------
-# Paths
-# ----------------------------------------------------------------------
 INPUT_DIR = Path("../data/1-preprocessing/7-split")
 OUTPUT_DIR = Path("../data/2-alt-training-testing/1-fit-results/mlp")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# ----------------------------------------------------------------------
-# Helper to build the Optuna search space (uses current Optuna API)
-# ----------------------------------------------------------------------
 def get_search_space() -> dict:
     """Return the dictionary that OptunaSearchCV expects."""
     return {
-        # hidden_layer_sizes must be a *tuple*; we let Optuna pick the number of units
         "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
-        "solver": optuna.distributions.CategoricalDistribution(["adam"]),
-        "alpha": optuna.distributions.FloatDistribution(
-            low=1e-10, high=1e-1, log=True
-        ),
-        "tol": optuna.distributions.FloatDistribution(
-            low=1e-10, high=1e-1, log=True
-        ),
+        "solver": optuna.distributions.CategoricalDistribution(['adam', 'sgd', 'lbfgs']),
+        "alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
+        "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
     }
 
-# ----------------------------------------------------------------------
-# Main loop
-# ----------------------------------------------------------------------
 for dataset_type in os.listdir(INPUT_DIR):
     if "normalized" not in dataset_type:
         continue
@@ -92,7 +85,7 @@ for dataset_type in os.listdir(INPUT_DIR):
                 estimator=base_model,
                 param_distributions=get_search_space(),
                 n_trials=100,
-                scoring="neg_mean_squared_error",  # explicit scoring metric
+                scoring="neg_mean_squared_error",
                 cv=3,
                 verbose=2,
                 n_jobs=-1,
@@ -100,12 +93,25 @@ for dataset_type in os.listdir(INPUT_DIR):
             optuna_search.fit(X_train, y_train)
 
             # --------------------------------------------------------------
-            # Best trial information
+            # Save best‑trial information
             # --------------------------------------------------------------
             best_trial = optuna_search.study_.best_trial
+
+            best_params_path = result_dir / "best_params.json"
+            with best_params_path.open("w") as f:
+                json.dump(
+                    {
+                        "value": best_trial.value,
+                        "params": best_trial.params,
+                    },
+                    f,
+                    indent=2,
+                )
+            # (optional) CSV version if needed
+            # pd.DataFrame([best_trial.params]).to_csv(result_dir / "best_params.csv", index=False)
+
             print("Best trial:")
             print(f"  Value: {best_trial.value}")
-            print("  Params:")
             for k, v in best_trial.params.items():
                 print(f"    {k}: {v}")
 
@@ -178,7 +184,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             )
 
             # --------------------------------------------------------------
-            # Save predictions
+            # Save forecasts
             # --------------------------------------------------------------
             train_out = pd.concat(
                 [
@@ -219,4 +225,3 @@ for dataset_type in os.listdir(INPUT_DIR):
         print("Set complete")
 
 print("Calculations complete")
-

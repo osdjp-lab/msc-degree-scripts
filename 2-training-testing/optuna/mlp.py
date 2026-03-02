@@ -24,8 +24,15 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 def get_search_space() -> dict:
     """Return the dictionary that OptunaSearchCV expects."""
     return {
-        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
-        "solver": optuna.distributions.CategoricalDistribution(['adam', 'sgd', 'lbfgs']),
+        # v1
+        #"hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
+        #"solver": optuna.distributions.CategoricalDistribution(['adam', 'sgd', 'lbfgs']),
+        #"alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
+        #"tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
+
+        # v2
+        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=50),
+        "solver": optuna.distributions.CategoricalDistribution(['adam']),
         "alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
         "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
     }
@@ -84,7 +91,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             optuna_search = optuna.integration.OptunaSearchCV(
                 estimator=base_model,
                 param_distributions=get_search_space(),
-                n_trials=100,
+                n_trials=1000,
                 scoring="neg_mean_squared_error",
                 cv=3,
                 verbose=2,

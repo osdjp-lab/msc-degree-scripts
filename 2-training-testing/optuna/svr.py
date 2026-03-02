@@ -35,6 +35,34 @@ for dataset_type in os.listdir(INPUT_DIR):
     if "standardized" not in dataset_type:
         continue
 
+    # Unviable
+    # if dataset_type == 'raw':
+    #     continue
+    # if dataset_type == 'differenced':
+    #     continue
+    # if dataset_type == 'log-differenced':
+    #     continue
+    # if dataset_type == 'log-transformed':
+    #     continue
+
+    # Viable
+    # if dataset_type == 'normalized':
+    #     continue
+    # if dataset_type == 'diff-normalized':
+    #     continue
+    # if dataset_type == 'log-normalized':
+    #     continue
+    # if dataset_type == 'log-diff-normalized':
+    #     continue
+    # if dataset_type == 'standardized':
+    #     continue
+    # if dataset_type == 'diff-standardized':
+    #     continue
+    # if dataset_type == 'log-standardized':
+    #     continue
+    # if dataset_type == 'log-diff-standardized':
+    #     continue
+
     dataset_path = INPUT_DIR / dataset_type
 
     for target in os.listdir(dataset_path):

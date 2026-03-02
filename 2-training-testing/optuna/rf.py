@@ -30,7 +30,7 @@ def get_search_space() -> dict:
     }
 
 for dataset_type in os.listdir(INPUT_DIR):
-    if "raw" not in dataset_type:
+    if "log-differenced" not in dataset_type:
         continue
 
     dataset_path = INPUT_DIR / dataset_type

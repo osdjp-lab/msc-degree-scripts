@@ -37,7 +37,7 @@ for model in os.listdir(INPUT_DIR):
 
     plt.bar(mse['type'].to_numpy(), mse['avg_mse'].to_numpy(), label=str(model).upper())
 
-    plt.xlabel('Type', fontsize=textsize)
+    plt.xlabel('Preprocessing steps', fontsize=textsize)
     plt.ylabel('MSE', fontsize=textsize)
 
     # Add legend

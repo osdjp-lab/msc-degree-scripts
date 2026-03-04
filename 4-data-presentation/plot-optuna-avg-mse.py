@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-INPUT_DIR = Path("../data/2-initial-selection/default")
+INPUT_DIR = Path("../data/3-training-testing/optuna")
 
 mapping = {'differenced' : 'd',
            'diff-normalized' : 'dn',

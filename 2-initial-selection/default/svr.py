@@ -1,45 +1,56 @@
 #!/usr/bin/env python3
 
-"""Train an MLPRegressor on many dataset/target/offset combinations
-with hyper‑parameter optimisation via OptunaSearchCV."""
+"""Train an SVR on many dataset/target/offset combinations
+using default model parameters."""
 
 import os
 import json
 from pathlib import Path
 
 import numpy as np
-import optuna
 import pandas as pd
 from sklearn.metrics import (
     mean_absolute_error,
     mean_squared_error,
     r2_score,
 )
-from sklearn.neural_network import MLPRegressor
+from sklearn.svm import SVR
 
 INPUT_DIR = Path("../../data/1-preprocessing/7-split")
-OUTPUT_DIR = Path("../../data/2-training-testing/optuna/mlp")
+OUTPUT_DIR = Path("../../data/2-initial-selection/default/svr")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-def get_search_space() -> dict:
-    """Return the dictionary that OptunaSearchCV expects."""
-    return {
-        # v1
-        #"hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
-        #"solver": optuna.distributions.CategoricalDistribution(['adam', 'sgd', 'lbfgs']),
-        #"alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
-        #"tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
-
-        # v2
-        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=50),
-        "solver": optuna.distributions.CategoricalDistribution(['adam']),
-        "alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
-        "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
-    }
-
 for dataset_type in os.listdir(INPUT_DIR):
-    if "normalized" not in dataset_type:
-        continue
+    # if "standardized" not in dataset_type:
+    #     continue
+
+    # Unviable
+    # if dataset_type == 'raw':
+    #     continue
+    # if dataset_type == 'differenced':
+    #     continue
+    # if dataset_type == 'log-differenced':
+    #     continue
+    # if dataset_type == 'log-transformed':
+    #     continue
+
+    # Viable
+    # if dataset_type == 'normalized':
+    #     continue
+    # if dataset_type == 'diff-normalized':
+    #     continue
+    # if dataset_type == 'log-normalized':
+    #     continue
+    # if dataset_type == 'log-diff-normalized':
+    #     continue
+    # if dataset_type == 'standardized':
+    #     continue
+    # if dataset_type == 'diff-standardized':
+    #     continue
+    # if dataset_type == 'log-standardized':
+    #     continue
+    # if dataset_type == 'log-diff-standardized':
+    #     continue
 
     dataset_path = INPUT_DIR / dataset_type
 
@@ -81,51 +92,14 @@ for dataset_type in os.listdir(INPUT_DIR):
             # --------------------------------------------------------------
             # Model + Optuna optimisation
             # --------------------------------------------------------------
-            base_model = MLPRegressor(
-                activation="tanh",
-                shuffle=False,
-                random_state=0,
-                max_iter=10000,
-            )
+            model = SVR()
 
-            optuna_search = optuna.integration.OptunaSearchCV(
-                estimator=base_model,
-                param_distributions=get_search_space(),
-                n_trials=1000,
-                scoring="neg_mean_squared_error",
-                cv=3,
-                verbose=2,
-                n_jobs=-1,
-            )
-            optuna_search.fit(X_train, y_train)
-
-            # --------------------------------------------------------------
-            # Save best‑trial information
-            # --------------------------------------------------------------
-            best_trial = optuna_search.study_.best_trial
-
-            best_params_path = result_dir / "best_params.json"
-            with best_params_path.open("w") as f:
-                json.dump(
-                    {
-                        "value": best_trial.value,
-                        "params": best_trial.params,
-                    },
-                    f,
-                    indent=2,
-                )
-            # (optional) CSV version if needed
-            # pd.DataFrame([best_trial.params]).to_csv(result_dir / "best_params.csv", index=False)
-
-            print("Best trial:")
-            print(f"  Value: {best_trial.value}")
-            for k, v in best_trial.params.items():
-                print(f"    {k}: {v}")
+            model.fit(X_train, y_train)
 
             # --------------------------------------------------------------
             # Evaluation on training set
             # --------------------------------------------------------------
-            y_train_pred = optuna_search.predict(X_train)
+            y_train_pred = model.predict(X_train)
 
             train_mse = mean_squared_error(y_train, y_train_pred)
             train_mae = mean_absolute_error(y_train, y_train_pred)
@@ -159,7 +133,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             # --------------------------------------------------------------
             # Evaluation on test set
             # --------------------------------------------------------------
-            y_test_pred = optuna_search.predict(X_test)
+            y_test_pred = model.predict(X_test)
 
             test_mse = mean_squared_error(y_test, y_test_pred)
             test_mae = mean_absolute_error(y_test, y_test_pred)

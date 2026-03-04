@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """Train an MLPRegressor on many dataset/target/offset combinations
-with searching for best hyperparameters with GridSearchCV."""
+using default model parameters."""
 
 import os
 import json
@@ -15,22 +15,14 @@ from sklearn.metrics import (
     r2_score,
 )
 from sklearn.neural_network import MLPRegressor
-from sklearn.model_selection import GridSearchCV
 
 INPUT_DIR = Path("../../data/1-preprocessing/7-split")
-OUTPUT_DIR = Path("../../data/2-training-testing/grid-search/mlp")
+OUTPUT_DIR = Path("../../data/2-initial-selection/default/mlp")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-param_grid = {
-    'hidden_layer_sizes': np.arange(1, 30, 1),
-    'solver': ['adam','sgd','lbfgs'],
-    'alpha': np.logspace(-10, -1, 10),
-    'tol': np.logspace(-8, -1, 10),
-}
-
 for dataset_type in os.listdir(INPUT_DIR):
-    if "normalized" not in dataset_type:
-        continue
+    # if "normalized" not in dataset_type:
+    #     continue
 
     dataset_path = INPUT_DIR / dataset_type
 
@@ -70,58 +62,21 @@ for dataset_type in os.listdir(INPUT_DIR):
             y_test = test_data.iloc[:, -1]
 
             # --------------------------------------------------------------
-            # Model + GridSearch
+            # Model + Optuna optimisation
             # --------------------------------------------------------------
-            base_model = MLPRegressor(
+            model = MLPRegressor(
                 activation="tanh",
                 shuffle=False,
                 random_state=0,
                 max_iter=10000,
             )
 
-            # Perform grid search
-            grid_search = GridSearchCV(
-                estimator=base_model,
-                param_grid=param_grid,
-                cv=3,  # 3-fold cross-validation
-                scoring='neg_mean_squared_error',
-                n_jobs=-1,  # use all available CPU cores
-                verbose=1
-            )
-
-            # Fit the model
-            grid_search.fit(X_train, y_train)
-            
-            # Get the best model
-            best_model = grid_search.best_estimator_
-            
-            # --------------------------------------------------------------
-            # Save best‑trial information
-            # --------------------------------------------------------------
-            best_trial = grid_search.best_params_
-
-            best_params_path = result_dir / "best_params.json"
-            with best_params_path.open("w") as f:
-                json.dump(
-                    {
-                        "value": best_trial.value,
-                        "params": best_trial.params,
-                    },
-                    f,
-                    indent=2,
-                )
-            # (optional) CSV version if needed
-            # pd.DataFrame([best_trial.params]).to_csv(result_dir / "best_params.csv", index=False)
-
-            print("Best trial:")
-            print(f"  Value: {best_trial.value}")
-            for k, v in best_trial.params.items():
-                print(f"    {k}: {v}")
+            model.fit(X_train, y_train)
 
             # --------------------------------------------------------------
             # Evaluation on training set
             # --------------------------------------------------------------
-            y_train_pred = best_model.predict(X_train)
+            y_train_pred = model.predict(X_train)
 
             train_mse = mean_squared_error(y_train, y_train_pred)
             train_mae = mean_absolute_error(y_train, y_train_pred)
@@ -155,7 +110,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             # --------------------------------------------------------------
             # Evaluation on test set
             # --------------------------------------------------------------
-            y_test_pred = best_model.predict(X_test)
+            y_test_pred = model.predict(X_test)
 
             test_mse = mean_squared_error(y_test, y_test_pred)
             test_mae = mean_absolute_error(y_test, y_test_pred)

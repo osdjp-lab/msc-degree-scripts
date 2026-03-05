@@ -6,9 +6,16 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-offset = 9
+model = 'svr'
 
-plot_file= f"../../data/3-training-testing/optuna/mlp/normalized/41-USD/{offset}/test_pred_rev.csv"
+# MSE
+dataset_type = 'log-diff-standardized'
+# Hitrate
+# dataset_type = 'log-diff-standardized'
+
+offset = 1
+
+plot_file= f"../../data/3-training-testing/optuna/{model}/{dataset_type}/41-USD/{offset}/test_pred_rev.csv"
 
 data = pd.read_csv(plot_file)
 

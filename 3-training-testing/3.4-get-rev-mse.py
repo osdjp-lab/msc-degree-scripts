@@ -71,13 +71,10 @@ for model in os.listdir(INPUT_DIR):
                 train_mae = mean_absolute_error(y_train, y_train_pred)
                 train_r2 = r2_score(y_train, y_train_pred)
 
-                if "diff" in dataset_type:
-                    train_hitrate = (np.sign(y_train_pred) == np.sign(y_train)).mean()
-                else:
-                    train_hitrate = (
-                        np.sign(pd.Series(y_train_pred, name="y_train_pred").diff())
-                        == np.sign(y_train.diff())
-                    ).mean()
+                train_hitrate = (
+                    np.sign(pd.Series(y_train_pred, name="y_train_pred").diff())
+                    == np.sign(y_train.diff())
+                ).mean()
 
                 # Append training metrics
                 train_mse_results = pd.concat(
@@ -104,13 +101,10 @@ for model in os.listdir(INPUT_DIR):
                 test_mae = mean_absolute_error(y_test, y_test_pred)
                 test_r2 = r2_score(y_test, y_test_pred)
 
-                if "diff" in dataset_type:
-                    test_hitrate = (np.sign(y_test_pred) == np.sign(y_test)).mean()
-                else:
-                    test_hitrate = (
-                        np.sign(pd.Series(y_test_pred, name="y_test_pred").diff())
-                        == np.sign(y_test.diff())
-                    ).mean()
+                test_hitrate = (
+                    np.sign(pd.Series(y_test_pred, name="y_test_pred").diff())
+                    == np.sign(y_test.diff())
+                ).mean()
 
                 # Append test metrics
                 test_mse_results = pd.concat(

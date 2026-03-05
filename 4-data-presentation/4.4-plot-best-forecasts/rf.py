@@ -13,7 +13,7 @@ dataset_type = 'raw'
 # Hitrate
 # dataset_type = 'log-transformed'
 
-offset = 12
+offset = 1
 
 plot_file= f"../../data/3-training-testing/optuna/{model}/{dataset_type}/41-USD/{offset}/test_pred_rev.csv"
 

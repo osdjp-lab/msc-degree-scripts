@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-INPUT_DIR = Path("../data/3-training-testing/optuna")
+INPUT_DIR = Path("../../data/3-training-testing/optuna")
 
 mapping = {'differenced' : 'd',
            'diff-normalized' : 'dn',
@@ -25,7 +25,7 @@ mapping = {'differenced' : 'd',
 
 for model in os.listdir(INPUT_DIR):
 
-    mse = pd.read_csv(INPUT_DIR / model / 'rev_mse_results.csv').sort_values(by='avg_mse')
+    mse = pd.read_csv(INPUT_DIR / model / 'mse_results.csv').sort_values(by='avg_mse')
 
     mse = mse.drop(mse[mse['type'] == 'raw'].index)
 

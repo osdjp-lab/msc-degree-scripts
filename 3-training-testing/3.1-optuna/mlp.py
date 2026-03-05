@@ -31,10 +31,10 @@ def get_search_space() -> dict:
         #"tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
 
         # v2
-        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=50),
+        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=10),
         "solver": optuna.distributions.CategoricalDistribution(['adam']),
-        "alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
-        "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
+        "alpha": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
+        "tol": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
     }
 
 for dataset_type in os.listdir(INPUT_DIR):
@@ -93,7 +93,7 @@ for dataset_type in os.listdir(INPUT_DIR):
                 param_distributions=get_search_space(),
                 n_trials=1000,
                 scoring="neg_mean_squared_error",
-                cv=3,
+                cv=5,
                 verbose=2,
                 n_jobs=-1,
             )

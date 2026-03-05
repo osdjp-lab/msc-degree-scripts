@@ -30,8 +30,6 @@ def get_search_space() -> dict:
     }
 
 for dataset_type in os.listdir(INPUT_DIR):
-    if "log-differenced" not in dataset_type:
-        continue
 
     dataset_path = INPUT_DIR / dataset_type
 
@@ -85,7 +83,7 @@ for dataset_type in os.listdir(INPUT_DIR):
                 param_distributions=get_search_space(),
                 n_trials=1000,
                 scoring="neg_mean_squared_error",
-                cv=3,
+                cv=5,
                 verbose=2,
                 n_jobs=-1,
             )

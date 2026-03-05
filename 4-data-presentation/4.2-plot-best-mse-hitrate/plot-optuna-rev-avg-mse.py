@@ -27,7 +27,8 @@ for model in os.listdir(INPUT_DIR):
 
     mse = pd.read_csv(INPUT_DIR / model / 'rev_mse_results.csv').sort_values(by='avg_mse')
 
-    mse = mse.drop(mse[mse['type'] == 'raw'].index)
+    # Exclude raw dataset results
+    # mse = mse.drop(mse[mse['type'] == 'raw'].index)
 
     mse['type'] = mse['type'].map(mapping)
 

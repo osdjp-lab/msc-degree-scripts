@@ -27,7 +27,8 @@ for model in os.listdir(INPUT_DIR):
 
     hitrate = pd.read_csv(INPUT_DIR / model / 'rev_hitrate_results.csv').sort_values(by='avg_hitrate')
 
-    hitrate = hitrate.drop(hitrate[hitrate['type'] == 'raw'].index)
+    # Exclude raw dataset results
+    # hitrate = hitrate.drop(hitrate[hitrate['type'] == 'raw'].index)
 
     hitrate['type'] = hitrate['type'].map(mapping)
 

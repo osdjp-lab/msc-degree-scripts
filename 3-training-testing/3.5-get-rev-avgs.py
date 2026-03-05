@@ -58,20 +58,11 @@ for model in os.listdir(INPUT_DIR):
                 df_avg = df_avg.sort_values('offset').reset_index(drop=True)
                 df_avg.to_csv(target_path / f"rev_avg_{metric}.csv", index=False)
 
-        mse_results[dataset_type] = np.mean([
-            pd.read_csv(dataset_path / '12-USD' / 'rev_avg_mse.csv')['avg_mse'].mean(),
-            pd.read_csv(dataset_path / '18-USD' / 'rev_avg_mse.csv')['avg_mse'].mean(),
-            pd.read_csv(dataset_path / '41-USD' / 'rev_avg_mse.csv')['avg_mse'].mean()])
+        mse_results[dataset_type] = pd.read_csv(dataset_path / '41-USD' / 'rev_avg_mse.csv')['avg_mse'].mean()
         
-        mae_results[dataset_type] = np.mean([
-            pd.read_csv(dataset_path / '12-USD' / 'rev_avg_mae.csv')['avg_mae'].mean(),
-            pd.read_csv(dataset_path / '18-USD' / 'rev_avg_mae.csv')['avg_mae'].mean(),
-            pd.read_csv(dataset_path / '41-USD' / 'rev_avg_mae.csv')['avg_mae'].mean()])
+        mae_results[dataset_type] = pd.read_csv(dataset_path / '41-USD' / 'rev_avg_mae.csv')['avg_mae'].mean()
         
-        hitrate_results[dataset_type] = np.mean([
-            pd.read_csv(dataset_path / '12-USD' / 'rev_avg_hitrate.csv')['avg_hitrate'].mean(),
-            pd.read_csv(dataset_path / '18-USD' / 'rev_avg_hitrate.csv')['avg_hitrate'].mean(),
-            pd.read_csv(dataset_path / '41-USD' / 'rev_avg_hitrate.csv')['avg_hitrate'].mean()])
+        hitrate_results[dataset_type] = pd.read_csv(dataset_path / '41-USD' / 'rev_avg_hitrate.csv')['avg_hitrate'].mean()
 
     df = pd.DataFrame(list(mse_results.items()), columns=['type', 'avg_mse'])
     df.to_csv(model_path / 'rev_mse_results.csv', index=False)

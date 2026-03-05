@@ -102,9 +102,12 @@ data = pd.read_csv(base_file, index_col='Date')
 
 # Target column is not removed from features
 # due to itself being a feature when time lagged
-groupings = {'12-USD': [i for i in data.columns],
-             '18-USD': [i for i in data.columns],
-             '41-USD': [i for i in data.columns]}
+
+# groupings = {'12-USD': [i for i in data.columns],
+#              '18-USD': [i for i in data.columns],
+#              '41-USD': [i for i in data.columns]}
+
+groupings = {'41-USD': [col for col in data.columns if col.startswith('41')]}
 
 groupings_dir = os.path.join(output_dir, '3-groupings')
 os.makedirs(groupings_dir, exist_ok=True)

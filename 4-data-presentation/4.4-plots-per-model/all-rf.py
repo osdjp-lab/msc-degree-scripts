@@ -7,8 +7,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-model = 'mlp'
-dataset_type = 'log-normalized'
+model = 'rf'
+# MSE
+# dataset_type = 'raw'
+# Hitrate
+dataset_type = 'log-transformed'
 base_dir = Path("../../data/3-training-testing/optuna") / model / dataset_type / "41-USD"
 
 # Load data for all offsets 1-12
@@ -37,13 +40,46 @@ ax.plot(dates, y_test.to_numpy(), 'k-', linewidth=3, label='Real')
 
 # Plot each y_test_pred with auto-color cycling, smooth lines only (no markers, no dashes)
 for offset in range(1, 13):
+    # Manual by similarity
+
+    # Select offset plot for MSE
+    # if offset not in (1,2):
+    #     continue
+    # if offset not in (3,4,5,6,7,8,9,10,11,12):
+    #     continue
+
+    # Select offset plot for Hitrate
+    # if offset not in (1,2):
+    #     continue
+    # if offset not in (3,):
+    #     continue
+    # if offset not in (4,5,6,7,8,9,10,11,12):
+    #     continue
+
+    # By MSE
+    # if offset not in (1,2,6,8):
+    #     continue
+    # if offset not in (4,7,9,10):
+    #     continue
+    # if offset not in (3,5,11,12):
+    #     continue
+ 
+    # By MSE
+    # if offset not in (1,12,7,8):
+    #     continue
+    # if offset not in (9,6,5,2):
+    #     continue
+    if offset not in (11,4,10,3):
+        continue
+    
     if offset not in all_data:
         continue
     data = all_data[offset]
     ax.plot(data['dates'], data['y_test_pred'].to_numpy(), label=f'Offset {offset}', linewidth=2)
 
 # Formatting
-ax.set_title('Real vs Forecasts (Offsets 1-12)', fontsize=28)
+ax.set_title('Real vs Forecasts', fontsize=28)
+# ax.set_title('Real vs Forecasts (Offsets 1-12)', fontsize=28)
 ax.set_xlabel('Date', fontsize=28)
 ax.set_ylabel("USD", fontsize=28)
 ax.legend(loc='upper left', fontsize=20)

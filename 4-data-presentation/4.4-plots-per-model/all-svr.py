@@ -37,6 +37,25 @@ ax.plot(dates, y_test.to_numpy(), 'k-', linewidth=3, label='Real')
 
 # Plot each y_test_pred with auto-color cycling, smooth lines only (no markers, no dashes)
 for offset in range(1, 13):
+    # Manual by similarity
+
+    # Select offset plot for MSE
+    # if offset not in (1,4,7,12):
+    #     continue
+    # if offset not in (3,5,6,8):
+    #     continue
+    # if offset not in (2,9,10,11):
+    #     continue
+    
+    # By MSE
+    
+    # if offset not in (4,7,1,12):
+    #     continue
+    # if offset not in (3,2,9,5):
+    #     continue
+    if offset not in (6,8,11,10):
+        continue
+
     if offset not in all_data:
         continue
     data = all_data[offset]

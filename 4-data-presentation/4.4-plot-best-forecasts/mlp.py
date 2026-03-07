@@ -12,6 +12,9 @@ model = 'mlp'
 dataset_type = 'log-normalized'
 # Hitrate
 # dataset_type = 'normalized'
+# Other
+# dataset_type = 'log-diff-normalized'
+# dataset_type = 'diff-normalized'
 
 offset = 1
 
@@ -33,9 +36,9 @@ plt.plot(date, y_test.to_numpy(), label='Real')
 plt.plot(date, y_pred.to_numpy(), label='Forecast')
 
 # Set title and labels
-plt.title(f'Real vs forecast', fontsize=textsize)
+plt.title(f'Real vs forecast (Offset {offset})', fontsize=textsize)
 plt.xlabel('Date', fontsize=textsize)
-plt.ylabel(f"USD-{offset}", fontsize=textsize)
+plt.ylabel(f"USD", fontsize=textsize)
 
 # Add legend
 plt.legend(fontsize=textsize)
@@ -46,4 +49,5 @@ plt.yticks(fontsize=textsize)
 
 # Show the plot
 plt.show()
+# plt.savefig(f"mlp-ln-{offset}.png", format='png', dpi=300, bbox_inches='tight')
 

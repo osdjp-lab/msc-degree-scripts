@@ -18,9 +18,9 @@ mse = pd.read_csv(INPUT_DIR / 'rev_avg_mse.csv').sort_values(by='offset')
 
 textsize = 28
 
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(12, 6))
 
-plt.bar(mse['offset'].to_numpy(), mse['avg_mse'].to_numpy(), label="MLP Log-Normalized")
+plt.bar(mse['offset'].to_numpy(), mse['avg_mse'].to_numpy(), label="MLP-ln")
 
 plt.xlabel('Offset', fontsize=textsize)
 plt.ylabel('MSE', fontsize=textsize)
@@ -28,10 +28,10 @@ plt.ylabel('MSE', fontsize=textsize)
 # Add legend
 plt.legend(fontsize=textsize)
 
-plt.ylim(0, 250)
+plt.xticks(mse['offset'].to_numpy())
 
 # Increase tick label size
-plt.xticks(fontsize=textsize)
+plt.xticks(fontsize=textsize-4)
 plt.yticks(fontsize=textsize)
 
 # Show the plot
@@ -47,9 +47,9 @@ mse = pd.read_csv(INPUT_DIR / 'rev_avg_mse.csv').sort_values(by='offset')
 
 textsize = 28
 
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(12, 6))
 
-plt.bar(mse['offset'].to_numpy(), mse['avg_mse'].to_numpy(), label="RF Raw")
+plt.bar(mse['offset'].to_numpy(), mse['avg_mse'].to_numpy(), label="RF-r")
 
 plt.xlabel('Offset', fontsize=textsize)
 plt.ylabel('MSE', fontsize=textsize)
@@ -57,8 +57,10 @@ plt.ylabel('MSE', fontsize=textsize)
 # Add legend
 plt.legend(fontsize=textsize)
 
+plt.xticks(mse['offset'].to_numpy())
+
 # Increase tick label size
-plt.xticks(fontsize=textsize)
+plt.xticks(fontsize=textsize-4)
 plt.yticks(fontsize=textsize)
 
 # Show the plot
@@ -74,9 +76,9 @@ mse = pd.read_csv(INPUT_DIR / 'rev_avg_mse.csv').sort_values(by='offset')
 
 textsize = 28
 
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(12, 6))
 
-plt.bar(mse['offset'].to_numpy(), mse['avg_mse'].to_numpy(), label="SVR Log-Diff-Standardized")
+plt.bar(mse['offset'].to_numpy(), mse['avg_mse'].to_numpy(), label="SVR-lds")
 
 plt.xlabel('Offset', fontsize=textsize)
 plt.ylabel('MSE', fontsize=textsize)
@@ -84,10 +86,10 @@ plt.ylabel('MSE', fontsize=textsize)
 # Add legend
 plt.legend(fontsize=textsize)
 
-plt.ylim(0, 90)
+plt.xticks(mse['offset'].to_numpy())
 
 # Increase tick label size
-plt.xticks(fontsize=textsize)
+plt.xticks(fontsize=textsize-4)
 plt.yticks(fontsize=textsize)
 
 # Show the plot

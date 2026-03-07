@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 # MLP
 ######
 
-INPUT_DIR = Path("../../data/3-training-testing/optuna/mlp/log-diff-normalized/41-USD/")
+INPUT_DIR = Path("../../data/2-training-testing/optuna/mlp/log-diff-normalized/41-USD/")
 
 hitrate = pd.read_csv(INPUT_DIR / 'rev_avg_hitrate.csv').sort_values(by='offset')
 
@@ -41,7 +41,7 @@ plt.show()
 # RF
 #####
 
-INPUT_DIR = Path("../../data/3-training-testing/optuna/rf/log-transformed/41-USD/")
+INPUT_DIR = Path("../../data/2-training-testing/optuna/rf/log-transformed/41-USD/")
 
 hitrate = pd.read_csv(INPUT_DIR / 'rev_avg_hitrate.csv').sort_values(by='offset')
 
@@ -70,7 +70,7 @@ plt.show()
 # SVR
 ######
 
-INPUT_DIR = Path("../../data/3-training-testing/optuna/svr/log-diff-standardized/41-USD/")
+INPUT_DIR = Path("../../data/2-training-testing/optuna/svr/log-diff-standardized/41-USD/")
 
 hitrate = pd.read_csv(INPUT_DIR / 'rev_avg_hitrate.csv').sort_values(by='offset')
 

@@ -5,9 +5,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-MLP_DIR = Path("../../data/3-training-testing/optuna/mlp/log-normalized/41-USD/")
-RF_DIR = Path("../../data/3-training-testing/optuna/rf/raw/41-USD/")
-SVR_DIR = Path("../../data/3-training-testing/optuna/svr/log-diff-standardized/41-USD/")
+MLP_DIR = Path("../../data/2-training-testing/optuna/mlp/log-normalized/41-USD/")
+RF_DIR = Path("../../data/2-training-testing/optuna/rf/raw/41-USD/")
+SVR_DIR = Path("../../data/2-training-testing/optuna/svr/log-diff-standardized/41-USD/")
 
 OUTPUT_DIR = Path("./forecast-comparison/mse")
 os.makedirs(OUTPUT_DIR, exist_ok=True)

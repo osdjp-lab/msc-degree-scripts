@@ -18,7 +18,7 @@ from sklearn.metrics import (
 from sklearn.svm import SVR
 
 INPUT_DIR = Path("../../data/1-preprocessing/7-split")
-OUTPUT_DIR = Path("../../data/3-training-testing/optuna/svr")
+OUTPUT_DIR = Path("../../data/2-training-testing/optuna/svr")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def get_search_space() -> dict:

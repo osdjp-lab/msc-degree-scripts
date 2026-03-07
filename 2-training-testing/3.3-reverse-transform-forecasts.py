@@ -71,7 +71,7 @@ def rev_std(un_std, std, target):
 
 # # # # # # # # # #
 
-INPUT_DIR = Path("../data/3-training-testing/optuna")
+INPUT_DIR = Path("../data/2-training-testing/optuna")
 
 for model in os.listdir(INPUT_DIR):
 

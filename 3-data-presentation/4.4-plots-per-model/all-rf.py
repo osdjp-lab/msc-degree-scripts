@@ -12,7 +12,7 @@ model = 'rf'
 # dataset_type = 'raw'
 # Hitrate
 dataset_type = 'log-transformed'
-base_dir = Path("../../data/3-training-testing/optuna") / model / dataset_type / "41-USD"
+base_dir = Path("../../data/2-training-testing/optuna") / model / dataset_type / "41-USD"
 
 # Load data for all offsets 1-12
 all_data = {}

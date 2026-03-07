@@ -10,7 +10,7 @@ from pathlib import Path
 # Configuration
 model = 'mlp'
 dataset_type = 'log-normalized'
-base_dir = Path("../../data/3-training-testing/optuna") / model / dataset_type / "41-USD"
+base_dir = Path("../../data/2-training-testing/optuna") / model / dataset_type / "41-USD"
 
 output_dir = "./mlp-mse-ln"
 

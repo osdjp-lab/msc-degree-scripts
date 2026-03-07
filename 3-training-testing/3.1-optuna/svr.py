@@ -24,10 +24,10 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 def get_search_space() -> dict:
     """Return the dictionary that OptunaSearchCV expects."""
     return {
-        "kernel": optuna.distributions.CategoricalDistribution(['rbf', 'poly']),
-        "gamma": optuna.distributions.FloatDistribution(low=1e-3, high=3, log=True),
-        "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
-        "C": optuna.distributions.IntDistribution(low=100, high=1000),
+        "kernel": optuna.distributions.CategoricalDistribution(['rbf']),
+        #"gamma": optuna.distributions.FloatDistribution(low=1e-3, high=3, log=True),
+        "tol": optuna.distributions.FloatDistribution(low=1e-6, high=1e-1, log=True),
+        "C": optuna.distributions.IntDistribution(low=100, high=2000),
         "epsilon": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
     }
 

@@ -25,16 +25,17 @@ def get_search_space() -> dict:
     """Return the dictionary that OptunaSearchCV expects."""
     return {
         # v1
-        #"hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
+        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
         #"solver": optuna.distributions.CategoricalDistribution(['adam', 'sgd', 'lbfgs']),
-        #"alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
-        #"tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
+        "solver": optuna.distributions.CategoricalDistribution(['adam']),
+        "alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
+        "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
 
         # v2
-        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=10),
-        "solver": optuna.distributions.CategoricalDistribution(['adam']),
-        "alpha": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
-        "tol": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
+        # "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=10),
+        # "solver": optuna.distributions.CategoricalDistribution(['adam']),
+        # "alpha": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
+        # "tol": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
     }
 
 for dataset_type in os.listdir(INPUT_DIR):
@@ -91,7 +92,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             optuna_search = optuna.integration.OptunaSearchCV(
                 estimator=base_model,
                 param_distributions=get_search_space(),
-                n_trials=1000,
+                n_trials=100,
                 scoring="neg_mean_squared_error",
                 cv=5,
                 verbose=2,

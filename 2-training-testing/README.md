@@ -1,9 +1,5 @@
 # Notes
 
-- Check other hyperparameter tuning methods beyond GridSearch
-
-svm-2: "During the following experiments ... one specific parameter is varied while all the others are fixed on a certain value."
-
 ## Parameter breakdown
 
 ### MLP

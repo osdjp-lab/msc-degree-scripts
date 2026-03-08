@@ -92,7 +92,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             optuna_search = optuna.integration.OptunaSearchCV(
                 estimator=base_model,
                 param_distributions=get_search_space(),
-                n_trials=100,
+                n_trials=1000,
                 scoring="neg_mean_squared_error",
                 cv=5,
                 verbose=2,

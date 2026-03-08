@@ -6,9 +6,9 @@ import numpy as np
 from pathlib import Path
 
 # File paths
-mlp_mse = Path("../../data/2-training-testing/optuna/mlp/rev_mse_results.csv")
-rf_mse = Path("../../data/2-training-testing/optuna/rf/rev_mse_results.csv")
-svr_mse = Path("../../data/2-training-testing/optuna/svr/rev_mse_results.csv")
+mlp_mse = Path("../../data/2-training-testing/mlp/rev_mse_results.csv")
+rf_mse = Path("../../data/2-training-testing/rf/rev_mse_results.csv")
+svr_mse = Path("../../data/2-training-testing/svr/rev_mse_results.csv")
 
 # Read all CSV files and find minimum avg_mse for each model
 mlp_data = pd.read_csv(mlp_mse)

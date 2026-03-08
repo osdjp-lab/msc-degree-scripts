@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Train an SVR on many dataset/target/offset combinations
+"""Train an RandomForestRegressor on many dataset/target/offset combinations
 with hyper‑parameter optimisation via OptunaSearchCV."""
 
 import os
@@ -15,53 +15,21 @@ from sklearn.metrics import (
     mean_squared_error,
     r2_score,
 )
-from sklearn.svm import SVR
+from sklearn.ensemble import RandomForestRegressor
 
 INPUT_DIR = Path("../../data/1-preprocessing/7-split")
-OUTPUT_DIR = Path("../../data/2-training-testing/optuna/svr")
+OUTPUT_DIR = Path("../../data/2-training-testing/rf")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def get_search_space() -> dict:
     """Return the dictionary that OptunaSearchCV expects."""
     return {
-        "kernel": optuna.distributions.CategoricalDistribution(['rbf']),
-        #"gamma": optuna.distributions.FloatDistribution(low=1e-3, high=3, log=True),
-        "tol": optuna.distributions.FloatDistribution(low=1e-6, high=1e-1, log=True),
-        "C": optuna.distributions.IntDistribution(low=100, high=2000),
-        "epsilon": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
+        "n_estimators": optuna.distributions.IntDistribution(low=1, high=40),
+        "max_depth": optuna.distributions.IntDistribution(low=1, high=40),
+        "max_features": optuna.distributions.IntDistribution(low=1, high=44),
     }
 
 for dataset_type in os.listdir(INPUT_DIR):
-    if "standardized" not in dataset_type:
-        continue
-
-    # Unviable
-    # if dataset_type == 'raw':
-    #     continue
-    # if dataset_type == 'differenced':
-    #     continue
-    # if dataset_type == 'log-differenced':
-    #     continue
-    # if dataset_type == 'log-transformed':
-    #     continue
-
-    # Viable
-    # if dataset_type == 'normalized':
-    #     continue
-    # if dataset_type == 'diff-normalized':
-    #     continue
-    # if dataset_type == 'log-normalized':
-    #     continue
-    # if dataset_type == 'log-diff-normalized':
-    #     continue
-    # if dataset_type == 'standardized':
-    #     continue
-    # if dataset_type == 'diff-standardized':
-    #     continue
-    # if dataset_type == 'log-standardized':
-    #     continue
-    # if dataset_type == 'log-diff-standardized':
-    #     continue
 
     dataset_path = INPUT_DIR / dataset_type
 
@@ -103,7 +71,12 @@ for dataset_type in os.listdir(INPUT_DIR):
             # --------------------------------------------------------------
             # Model + Optuna optimisation
             # --------------------------------------------------------------
-            base_model = SVR()
+            base_model = RandomForestRegressor(
+                # oob_score=True,
+                random_state=0,
+                verbose=0,
+                n_jobs=-1
+            )
 
             optuna_search = optuna.integration.OptunaSearchCV(
                 estimator=base_model,

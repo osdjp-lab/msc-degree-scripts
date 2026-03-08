@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Train an MLPRegressor on many dataset/target/offset combinations
+"""Train an SVR on many dataset/target/offset combinations
 with hyper‑parameter optimisation via OptunaSearchCV."""
 
 import os
@@ -15,32 +15,53 @@ from sklearn.metrics import (
     mean_squared_error,
     r2_score,
 )
-from sklearn.neural_network import MLPRegressor
+from sklearn.svm import SVR
 
 INPUT_DIR = Path("../../data/1-preprocessing/7-split")
-OUTPUT_DIR = Path("../../data/2-training-testing/optuna/mlp")
+OUTPUT_DIR = Path("../../data/2-training-testing/svr")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def get_search_space() -> dict:
     """Return the dictionary that OptunaSearchCV expects."""
     return {
-        # v1
-        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
-        #"solver": optuna.distributions.CategoricalDistribution(['adam', 'sgd', 'lbfgs']),
-        "solver": optuna.distributions.CategoricalDistribution(['adam']),
-        "alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
-        "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
-
-        # v2
-        # "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=10),
-        # "solver": optuna.distributions.CategoricalDistribution(['adam']),
-        # "alpha": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
-        # "tol": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
+        "kernel": optuna.distributions.CategoricalDistribution(['rbf']),
+        #"gamma": optuna.distributions.FloatDistribution(low=1e-3, high=3, log=True),
+        "tol": optuna.distributions.FloatDistribution(low=1e-6, high=1e-1, log=True),
+        "C": optuna.distributions.IntDistribution(low=100, high=2000),
+        "epsilon": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
     }
 
 for dataset_type in os.listdir(INPUT_DIR):
-    if "normalized" not in dataset_type:
+    if "standardized" not in dataset_type:
         continue
+
+    # Unviable
+    # if dataset_type == 'raw':
+    #     continue
+    # if dataset_type == 'differenced':
+    #     continue
+    # if dataset_type == 'log-differenced':
+    #     continue
+    # if dataset_type == 'log-transformed':
+    #     continue
+
+    # Viable
+    # if dataset_type == 'normalized':
+    #     continue
+    # if dataset_type == 'diff-normalized':
+    #     continue
+    # if dataset_type == 'log-normalized':
+    #     continue
+    # if dataset_type == 'log-diff-normalized':
+    #     continue
+    # if dataset_type == 'standardized':
+    #     continue
+    # if dataset_type == 'diff-standardized':
+    #     continue
+    # if dataset_type == 'log-standardized':
+    #     continue
+    # if dataset_type == 'log-diff-standardized':
+    #     continue
 
     dataset_path = INPUT_DIR / dataset_type
 
@@ -82,12 +103,7 @@ for dataset_type in os.listdir(INPUT_DIR):
             # --------------------------------------------------------------
             # Model + Optuna optimisation
             # --------------------------------------------------------------
-            base_model = MLPRegressor(
-                activation="tanh",
-                shuffle=False,
-                random_state=0,
-                max_iter=10000,
-            )
+            base_model = SVR()
 
             optuna_search = optuna.integration.OptunaSearchCV(
                 estimator=base_model,

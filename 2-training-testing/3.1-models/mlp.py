@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Train an RandomForestRegressor on many dataset/target/offset combinations
+"""Train an MLPRegressor on many dataset/target/offset combinations
 with hyper‑parameter optimisation via OptunaSearchCV."""
 
 import os
@@ -15,21 +15,32 @@ from sklearn.metrics import (
     mean_squared_error,
     r2_score,
 )
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.neural_network import MLPRegressor
 
 INPUT_DIR = Path("../../data/1-preprocessing/7-split")
-OUTPUT_DIR = Path("../../data/2-training-testing/optuna/rf")
+OUTPUT_DIR = Path("../../data/2-training-testing/mlp")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def get_search_space() -> dict:
     """Return the dictionary that OptunaSearchCV expects."""
     return {
-        "n_estimators": optuna.distributions.IntDistribution(low=1, high=40),
-        "max_depth": optuna.distributions.IntDistribution(low=1, high=40),
-        "max_features": optuna.distributions.IntDistribution(low=1, high=44),
+        # v1
+        "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=30),
+        #"solver": optuna.distributions.CategoricalDistribution(['adam', 'sgd', 'lbfgs']),
+        "solver": optuna.distributions.CategoricalDistribution(['adam']),
+        "alpha": optuna.distributions.FloatDistribution(low=1e-10, high=1e-1, log=True),
+        "tol": optuna.distributions.FloatDistribution(low=1e-8, high=1e-1, log=True),
+
+        # v2
+        # "hidden_layer_sizes": optuna.distributions.IntDistribution(low=1, high=10),
+        # "solver": optuna.distributions.CategoricalDistribution(['adam']),
+        # "alpha": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
+        # "tol": optuna.distributions.FloatDistribution(low=1e-3, high=1e-1, log=True),
     }
 
 for dataset_type in os.listdir(INPUT_DIR):
+    if "normalized" not in dataset_type:
+        continue
 
     dataset_path = INPUT_DIR / dataset_type
 
@@ -71,11 +82,11 @@ for dataset_type in os.listdir(INPUT_DIR):
             # --------------------------------------------------------------
             # Model + Optuna optimisation
             # --------------------------------------------------------------
-            base_model = RandomForestRegressor(
-                # oob_score=True,
+            base_model = MLPRegressor(
+                activation="tanh",
+                shuffle=False,
                 random_state=0,
-                verbose=0,
-                n_jobs=-1
+                max_iter=10000,
             )
 
             optuna_search = optuna.integration.OptunaSearchCV(

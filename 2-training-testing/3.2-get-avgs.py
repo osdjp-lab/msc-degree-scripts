@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-INPUT_DIR= Path("../data/2-training-testing/optuna")
+INPUT_DIR= Path("../data/2-training-testing")
 
 for model in os.listdir(INPUT_DIR):
     if not os.path.isdir(INPUT_DIR / model): 

@@ -6,9 +6,9 @@ import numpy as np
 from pathlib import Path
 
 # File paths
-mlp_hitrate = Path("../../data/2-training-testing/optuna/mlp/rev_hitrate_results.csv")
-rf_hitrate = Path("../../data/2-training-testing/optuna/rf/rev_hitrate_results.csv")
-svr_hitrate = Path("../../data/2-training-testing/optuna/svr/rev_hitrate_results.csv")
+mlp_hitrate = Path("../../data/2-training-testing/mlp/rev_hitrate_results.csv")
+rf_hitrate = Path("../../data/2-training-testing/rf/rev_hitrate_results.csv")
+svr_hitrate = Path("../../data/2-training-testing/svr/rev_hitrate_results.csv")
 
 # Read all CSV files and find maximum avg_hitrate for each model
 mlp_data = pd.read_csv(mlp_hitrate)

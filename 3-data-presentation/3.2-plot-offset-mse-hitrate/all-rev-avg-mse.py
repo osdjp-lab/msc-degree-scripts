@@ -12,21 +12,21 @@ import matplotlib.pyplot as plt
 # MLP
 ######
 
-INPUT_DIR_MLP = Path("../../data/2-training-testing/optuna/mlp/log-normalized/41-USD/")
+INPUT_DIR_MLP = Path("../../data/2-training-testing/mlp/log-normalized/41-USD/")
 mse_mlp = pd.read_csv(INPUT_DIR_MLP / 'rev_avg_mse.csv').sort_values(by='offset')
 
 ######
 # RF
 ######
 
-INPUT_DIR_RF = Path("../../data/2-training-testing/optuna/rf/raw/41-USD/")
+INPUT_DIR_RF = Path("../../data/2-training-testing/rf/raw/41-USD/")
 mse_rf = pd.read_csv(INPUT_DIR_RF / 'rev_avg_mse.csv').sort_values(by='offset')
 
 ######
 # SVR
 ######
 
-INPUT_DIR_SVR = Path("../../data/2-training-testing/optuna/svr/log-diff-standardized/41-USD/")
+INPUT_DIR_SVR = Path("../../data/2-training-testing/svr/log-diff-standardized/41-USD/")
 mse_svr = pd.read_csv(INPUT_DIR_SVR / 'rev_avg_mse.csv').sort_values(by='offset')
 
 textsize = 28

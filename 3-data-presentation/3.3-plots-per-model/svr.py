@@ -15,7 +15,7 @@ dataset_type = 'log-diff-standardized'
 
 offset = 1
 
-plot_file= f"../../data/2-training-testing/optuna/{model}/{dataset_type}/41-USD/{offset}/test_pred_rev.csv"
+plot_file= f"../../data/2-training-testing/{model}/{dataset_type}/41-USD/{offset}/test_pred_rev.csv"
 
 data = pd.read_csv(plot_file)
 

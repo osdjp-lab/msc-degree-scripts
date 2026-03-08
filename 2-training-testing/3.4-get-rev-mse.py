@@ -14,7 +14,7 @@ from sklearn.metrics import (
     r2_score,
 )
 
-INPUT_DIR = Path("../data/2-training-testing/optuna")
+INPUT_DIR = Path("../data/2-training-testing")
 
 for model in os.listdir(INPUT_DIR):
 

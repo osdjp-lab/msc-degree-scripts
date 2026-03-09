@@ -9,27 +9,33 @@ from pathlib import Path
 mlp_hitrate = Path("../../data/2-training-testing/mlp/rev_hitrate_results.csv")
 rf_hitrate = Path("../../data/2-training-testing/rf/rev_hitrate_results.csv")
 svr_hitrate = Path("../../data/2-training-testing/svr/rev_hitrate_results.csv")
+arima_hitrate = Path("../../data/2-training-testing/arima/rev_hitrate_results.csv")
+rw_hitrate = Path("../../data/2-training-testing/rw/rev_hitrate_results.csv")
 
 # Read all CSV files and find maximum avg_hitrate for each model
 mlp_data = pd.read_csv(mlp_hitrate)
 rf_data = pd.read_csv(rf_hitrate)
 svr_data = pd.read_csv(svr_hitrate)
+arima_data = pd.read_csv(arima_hitrate)
+rw_data = pd.read_csv(rw_hitrate)
 
 # Get the highest avg_hitrate value from each file
 mlp_max = mlp_data['avg_hitrate'].max()
 rf_max = rf_data['avg_hitrate'].max()
 svr_max = svr_data['avg_hitrate'].max()
+arima_max = arima_data['avg_hitrate'].max()
+rw_max = rw_data['avg_hitrate'].max()
 
 # Data for 3-bar chart
-models = ['MLP', 'RF', 'SVR']
-max_values = [mlp_max, rf_max, svr_max]
+models = ['MLP', 'RF', 'SVR', 'ARIMA', 'RW']
+max_values = [mlp_max, rf_max, svr_max, arima_max, rw_max]
 
 textsize = 24
 
 # Create 3-bar chart
 fig, ax = plt.subplots(figsize=(8, 6))
 
-bars = ax.bar(models, max_values, color=['#1f77b4', '#ff7f0e', '#2ca02c'], width=0.6)
+bars = ax.bar(models, max_values, color=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'], width=0.6)
 
 # Customize
 ax.set_xlabel('Model', fontsize=textsize)

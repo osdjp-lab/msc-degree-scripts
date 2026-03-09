@@ -95,3 +95,62 @@ plt.yticks(fontsize=textsize)
 # Show the plot
 plt.show()
 
+########
+# ARIMA
+########
+
+INPUT_DIR = Path("../../data/2-training-testing/arima/log-differenced/41-USD/")
+
+mse = pd.read_csv(INPUT_DIR / 'rev_avg_mse.csv').sort_values(by='offset')
+
+textsize = 28
+
+plt.figure(figsize=(12, 6))
+
+plt.bar(mse['offset'].to_numpy(), mse['avg_mse'].to_numpy(), label="ARIMA-ld")
+
+plt.xlabel('Offset', fontsize=textsize)
+plt.ylabel('MSE', fontsize=textsize)
+
+# Add legend
+plt.legend(fontsize=textsize)
+
+plt.xticks(mse['offset'].to_numpy())
+
+# Increase tick label size
+plt.xticks(fontsize=textsize-4)
+plt.yticks(fontsize=textsize)
+
+# Show the plot
+plt.show()
+
+#####
+# RW
+#####
+
+INPUT_DIR = Path("../../data/2-training-testing/rw/raw/41-USD/")
+
+mse = pd.read_csv(INPUT_DIR / 'rev_avg_mse.csv').sort_values(by='offset')
+
+textsize = 28
+
+plt.figure(figsize=(12, 6))
+
+plt.bar(mse['offset'].to_numpy(), mse['avg_mse'].to_numpy(), label="RW-r")
+
+plt.xlabel('Offset', fontsize=textsize)
+plt.ylabel('MSE', fontsize=textsize)
+
+# Add legend
+plt.legend(fontsize=textsize)
+
+plt.xticks(mse['offset'].to_numpy())
+
+# Increase tick label size
+plt.xticks(fontsize=textsize-4)
+plt.yticks(fontsize=textsize)
+
+# Show the plot
+plt.show()
+
+

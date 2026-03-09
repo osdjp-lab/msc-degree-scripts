@@ -9,27 +9,33 @@ from pathlib import Path
 mlp_mse = Path("../../data/2-training-testing/mlp/rev_mse_results.csv")
 rf_mse = Path("../../data/2-training-testing/rf/rev_mse_results.csv")
 svr_mse = Path("../../data/2-training-testing/svr/rev_mse_results.csv")
+arima_mse = Path("../../data/2-training-testing/arima/rev_mse_results.csv")
+rw_mse = Path("../../data/2-training-testing/rw/rev_mse_results.csv")
 
 # Read all CSV files and find minimum avg_mse for each model
 mlp_data = pd.read_csv(mlp_mse)
 rf_data = pd.read_csv(rf_mse)
 svr_data = pd.read_csv(svr_mse)
+arima_data = pd.read_csv(arima_mse)
+rw_data = pd.read_csv(rw_mse)
 
 # Get the lowest avg_mse value from each file
 mlp_min = mlp_data['avg_mse'].min()
 rf_min = rf_data['avg_mse'].min()
 svr_min = svr_data['avg_mse'].min()
+arima_min = arima_data['avg_mse'].min()
+rw_min = rw_data['avg_mse'].min()
 
 # Data for 3-bar chart
-models = ['MLP', 'RF', 'SVR']
-min_values = [mlp_min, rf_min, svr_min]
+models = ['MLP', 'RF', 'SVR', 'ARIMA', 'RW']
+min_values = [mlp_min, rf_min, svr_min, arima_min, rw_min]
 
 textsize = 24
 
 # Create 3-bar chart
 fig, ax = plt.subplots(figsize=(8, 6))
 
-bars = ax.bar(models, min_values, color=['#1f77b4', '#ff7f0e', '#2ca02c'], width=0.6)
+bars = ax.bar(models, min_values, color=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'], width=0.6)
 
 # Customize
 ax.set_xlabel('Model', fontsize=textsize)

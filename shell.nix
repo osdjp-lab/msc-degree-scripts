@@ -17,6 +17,6 @@ pkgs.mkShell {
     shellHook = ''
       python -m venv .venv
       source .venv/bin/activate
-      pip install optuna optuna-integration
+      pip install optuna optuna-integration pmdarima
     '';
 }

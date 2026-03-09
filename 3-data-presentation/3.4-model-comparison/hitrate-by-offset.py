@@ -8,6 +8,8 @@ from pathlib import Path
 MLP_DIR = Path("../../data/2-training-testing/mlp/log-diff-normalized/41-USD/")
 RF_DIR = Path("../../data/2-training-testing/rf/log-transformed/41-USD/")
 SVR_DIR = Path("../../data/2-training-testing/svr/log-diff-standardized/41-USD/")
+ARIMA_DIR = Path("../../data/2-training-testing/arima/diff-standardized/41-USD/")
+RW_DIR = Path("../../data/2-training-testing/rw/raw/41-USD/")
 
 OUTPUT_DIR = Path("./forecast-comparison/hitrate")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -21,11 +23,15 @@ for offset in range(1, 13):
     mlp_file = MLP_DIR / str(offset) / 'test_pred_rev.csv'
     rf_file = RF_DIR / str(offset) / 'test_pred_rev.csv' 
     svr_file = SVR_DIR / str(offset) / 'test_pred_rev.csv'
+    arima_file = ARIMA_DIR / str(offset) / 'test_pred_rev.csv'
+    rw_file = RW_DIR / str(offset) / 'test_pred_rev.csv'
     
     # Read CSVs
     df_mlp = pd.read_csv(mlp_file)
     df_rf = pd.read_csv(rf_file)
     df_svr = pd.read_csv(svr_file)
+    df_arima = pd.read_csv(arima_file)
+    df_rw = pd.read_csv(rw_file)
     
     # Use first file's y_test as Real (identical across files)
     df = pd.DataFrame({
@@ -33,7 +39,9 @@ for offset in range(1, 13):
         'Real': df_mlp['y_test'],
         'MLP': df_mlp['y_test_pred'],
         'RF': df_rf['y_test_pred'],
-        'SVR': df_svr['y_test_pred']
+        'SVR': df_svr['y_test_pred'],
+        'ARIMA': df_arima['y_test_pred'],
+        'RW': df_rw['y_test_pred']
     })
     
     # Convert Date to datetime for plotting
@@ -46,6 +54,8 @@ for offset in range(1, 13):
     plt.plot(df['Date'], df['MLP'], label='MLP', color='#1f77b4', alpha=0.8)
     plt.plot(df['Date'], df['RF'], label='RF', color='#ff7f0e', alpha=0.8)
     plt.plot(df['Date'], df['SVR'], label='SVR', color='#2ca02c', alpha=0.8)
+    plt.plot(df['Date'], df['ARIMA'], label='ARIMA', color='#d62728', alpha=0.8)
+    plt.plot(df['Date'], df['RW'], label='RW', color='#9467bd', alpha=0.8)
     
     plt.xlabel('Date', fontsize=textsize)
     plt.ylabel('USD', fontsize=textsize)
